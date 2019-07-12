@@ -2,6 +2,9 @@
 # Created by https://www.gitignore.io/api/git,node,latex,python,ionic3,android,androidstudio,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=git,node,latex,python,ionic3,android,androidstudio,visualstudiocode
 
+# Ignore training data for ML
+*.csv
+
 ### Android ###
 # Built application files
 *.apk
