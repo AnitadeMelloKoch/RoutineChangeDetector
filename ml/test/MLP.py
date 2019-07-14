@@ -6,7 +6,7 @@ sess = tf.InteractiveSession()
 
 #parameters
 initial_learning_rate = 0.0001
-epochs = 40
+epochs = 200
 
 #number of features for hidden layer 1
 hidden_1 = 225
