@@ -64,25 +64,3 @@ def read_user_data(filePath):
     (X,Y,M,timestamps) = parse_body_of_csv(csv_str, numFeatures)
 
     return (X, Y, M, timestamps, featureNames, labelNames)
-
-uuid = '00EABED2-271D-49D8-B599-1D4A09240601.features_labels.csv'
-(X,Y,M,timestamps,feature_names,label_names) = read_user_data(uuid)
-
-print(X)
-print(" ")
-print(Y)
-print(" ")
-print(M)
-print(" ")
-print(timestamps)
-print(" ")
-print(feature_names)
-print(" ")
-print(label_names)
-print(" ")
-print("dimensions of X")
-print(X.shape)
-print(Y.shape)
-print(M.shape)
-print(len(X))
-#print(X[1])
