@@ -5,26 +5,25 @@ from sklearn.metrics import roc_auc_score, accuracy_score
 sess = tf.InteractiveSession()
 
 #parameters
-initial_learning_rate = 0.0001
-epochs = 200
+initial_learning_rate = 0.001
+epochs = 30
 
 #number of features for hidden layer 1
 hidden_1 = 225
-
 hidden_2 = 225
 
-n_input = 225
+n_input = 275
 n_labels = 51
 n_output = 51
 
-regulariser_rate = 0.1
+regulariser_rate = 0.001
 
 # graph inputs
-x = tf.placeholder("float", [None, n_input], name="x")
+x = tf.placeholder("float", [None, n_input+n_labels], name="x")
 y = tf.placeholder("float", [None, n_labels], name="y")
 
 # initialize weights for layer 1
-weight_1 = tf.Variable(tf.random.normal([n_input, hidden_1]))
+weight_1 = tf.Variable(tf.random.normal([n_input+n_labels, hidden_1]))
 bias_1 = tf.Variable(tf.random.normal([hidden_1]))
 
 # initialize weights for layer 2
@@ -72,11 +71,13 @@ testing_accuracy = []
 # output_test =
 (data_in, data_out, missing_data, timestamps, featureNames, labelNames) = read_data.read_user_data('00EABED2-271D-49D8-B599-1D4A09240601.features_labels.csv')
 
+all_data = np.concatenate([data_in, missing_data], axis=1)
+
 training_num = int(len(data_in)*0.3)
 
-input_train = data_in[:training_num]
+input_train = all_data[:training_num]
 output_train = data_out[:training_num]
-input_test = data_in[training_num:]
+input_test = all_data[training_num:]
 output_test = data_out[training_num:]
 
 sess.run(tf.global_variables_initializer())

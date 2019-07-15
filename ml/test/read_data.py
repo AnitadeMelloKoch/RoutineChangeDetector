@@ -52,6 +52,44 @@ def parse_body_of_csv(csvString, numFeatures):
 
     return (X,Y.astype(int),M.astype(int),timestamps)
 
+def seperate_output_actions(labels, allOut):
+    actionLabels = labels[:9]
+    actionData = allOut[:,:9]
+    actionLabels = actionLabels + labels[14:16]
+    actionData = np.concatenate([actionData, allOut[:,14:16]], axis=1)
+    actionLabels = actionLabels + labels[19:30]
+    actionData = np.concatenate([actionData, allOut[:,19:30]], axis=1)
+    actionLabels = actionLabels + labels[33:40]
+    actionData = np.concatenate([actionData, allOut[:,33:40]], axis=1)
+    actionLabels = actionLabels + labels[41:43]
+    actionData = np.concatenate([actionData, allOut[:,41:43]], axis=1)
+    actionLabels.append(labels[44])
+    actionData = np.concatenate([actionData, allOut[:,[44]]], axis=1)
+    actionLabels = actionLabels + labels[49:]
+    actionData = np.concatenate([actionData, allOut[:,49:51]], axis=1)
+
+    return(actionLabels, actionData)
+
+def seperate_output_loc(labels, allOut):
+    locLabels = labels[9:14]
+    locData = allOut[:,9:14]
+    locLabels = locLabels + labels[16:18]
+    locData = np.concatenate([locData, allOut[:,16:18]], axis=1)
+    locLabels = locLabels + labels[30:33]
+    locData = np.concatenate([locData, allOut[:,30:33]], axis=1)
+    locLabels.append(labels[40])
+    locData = np.concatenate([locData, allOut[:,[40]]], axis=1)
+
+    return (locLabels, locData)
+
+def seperate_output_phone(labels, allOut):
+    phoneLabels = [labels[18]]
+    phoneData = allOut[:, [18]]
+    phoneLabels = phoneLabels + labels[46:49]
+    phoneData = np.concatenate([phoneData, allOut[:,46:49]],axis=1)
+
+    return (phoneLabels, phoneData)
+
 #read user data from a specific uuid
 
 def read_user_data(filePath):
