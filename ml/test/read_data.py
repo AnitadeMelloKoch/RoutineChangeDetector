@@ -79,6 +79,10 @@ def seperate_output_loc(labels, allOut):
     locData = np.concatenate([locData, allOut[:,30:33]], axis=1)
     locLabels.append(labels[40])
     locData = np.concatenate([locData, allOut[:,[40]]], axis=1)
+    locLabels.append(labels[43])
+    locData = np.concatenate([locData, allOut[:,[43]]], axis=1)
+    locLabels.append(labels[45])
+    locData = np.concatenate([locData, allOut[:,[45]]], axis=1)
 
     return (locLabels, locData)
 
