@@ -772,3 +772,8 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.gitignore.io/api/git,node,latex,python,ionic3,android,androidstudio,visualstudiocode
+
+### Ignores for Nick ###
+app/README.txt
+app/ExtraSensory.per_uuid_features_labels.zip
+app/ExtraSensory.per_uuid_features_labels/
