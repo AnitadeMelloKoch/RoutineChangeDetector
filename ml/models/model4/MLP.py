@@ -22,8 +22,14 @@ import argparse
 # regulariser_rate = 0.1
 
 
-def main(training_dir, checkpointdir, training_files, train_percent, initial_learning_rate, epochs, batch_size, hidden_1, hidden_2, hidden_3, hidden_4, hidden_5, n_input, n_labels, n_output_action, n_output_loc, n_output_phone, regulariser_rate):
+def main(training_dir, checkpointdir, training_files, train_percent, initial_learning_rate, epochs, batch_size, hidden_1, hidden_2, hidden_3, hidden_4, n_input, n_labels, n_output_action, n_output_loc, n_output_phone, regulariser_rate):
 
+        # make directory in current directory to save model in
+        try:
+                os.mkdir(checkpointdir + "/output")
+                print("output directory created. Models will be saved here")
+        except FileExistsError:
+                print("output directory already exists")
         sess = tf.compat.v1.InteractiveSession()
         
         # graph inputs
@@ -47,10 +53,6 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         #initialize weights for layer 4
         weight_4 = tf.Variable(tf.random.normal([hidden_3, hidden_4]))
         bias_4 = tf.Variable(tf.random.normal([hidden_4]))
-
-        #initialize weights for layer 5
-        weight_5 = tf.Variable(tf.random.normal([hidden_4, hidden_5]))
-        bias_5 = tf.Variable(tf.random.normal([hidden_5]))
 
         #initialize output weights for actions
         weight_out_action = tf.Variable(tf.random.normal([hidden_4, n_output_action]))
@@ -77,20 +79,17 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         # layer 4
         layer_4 = tf.nn.sigmoid(tf.add(tf.matmul(layer_3, weight_4), bias_4))
 
-        # layer 5
-        layer_5 = tf.nn.sigmoid(tf.add(tf.matmul(layer_4, weight_5), bias_5))
-
         # output layer
-        predicted_y_action = tf.sigmoid(tf.add(tf.matmul(layer_5, weight_out_action), bias_out_action))
-        predicted_y_loc = tf.sigmoid(tf.add(tf.matmul(layer_5, weight_out_loc), bias_out_loc))
-        predicted_y_phone = tf.sigmoid(tf.add(tf.matmul(layer_5, weight_out_phone),bias_out_phone))
+        predicted_y_action = tf.sigmoid(tf.add(tf.matmul(layer_4, weight_out_action), bias_out_action))
+        predicted_y_loc = tf.sigmoid(tf.add(tf.matmul(layer_4, weight_out_loc), bias_out_loc))
+        predicted_y_phone = tf.sigmoid(tf.add(tf.matmul(layer_4, weight_out_phone),bias_out_phone))
 
         # loss function for changing weights
         loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=predicted_y_action, labels=y_action)) \
                 + tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=predicted_y_loc, labels=y_loc)) \
                 + tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=predicted_y_phone, labels=y_phone)) \
                 + regulariser_rate*(tf.reduce_sum(tf.square(bias_1)) + tf.reduce_sum(tf.square(bias_2)) + tf.reduce_sum(tf.square(bias_3))
-                + tf.reduce_sum(tf.square(bias_4)) + tf.reduce_sum(tf.square(bias_5)))
+                + tf.reduce_sum(tf.square(bias_4)))
 
 
         # define learning rate
@@ -101,7 +100,6 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                                                                                 weight_2, 
                                                                                 weight_3,
                                                                                 weight_4,
-                                                                                weight_5,
                                                                                 weight_out_action, 
                                                                                 weight_out_loc, 
                                                                                 weight_out_phone, 
@@ -109,7 +107,6 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                                                                                 bias_2, 
                                                                                 bias_3,
                                                                                 bias_4,
-                                                                                bias_5,
                                                                                 bias_out_action, 
                                                                                 bias_out_loc, 
                                                                                 bias_out_phone])
@@ -160,12 +157,12 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                 arr = np.arange(input_train.shape[0])
                 np.random.shuffle(arr)
                 for index in range(0, input_train.shape[0], batch_size):
-                        sess.run(optimizer, {   x: input_train[arr[index:index+batch_size]], 
+                        sess.run(optimizer, {x: input_train[arr[index:index+batch_size]], 
                                                 y_action: output_train_action[arr[index:index+batch_size]],
                                                 y_loc: output_train_loc[arr[index:index+batch_size]],
                                                 y_phone: output_train_phone[arr[index:index+batch_size]]})   
 
-                saver.save(sess, (checkpointdir), global_step=1)
+                saver.save(sess, (checkpointdir +'/output/ckpnt'), global_step=1)
 
                 training_accuracy_action.append(sess.run(accuracy_action, feed_dict={x:input_train, 
                                                                                      y_action:output_train_action}))
@@ -219,7 +216,6 @@ if __name__ == '__main__':
         AP.add_argument("--hidden_2", type=int, default=225, help="Number of features extracted by second hidden layer")
         AP.add_argument("--hidden_3", type=int, default=225, help="Number of features extracted by third hidden layer")
         AP.add_argument("--hidden_4", type=int, default=225, help="Number of features extracted by fourth hidden layer")
-        AP.add_argument("--hidden_5", type=int, default=225, help="Number of features extracted by fifth hidden layer")
         AP.add_argument("--input", type=int, default=225, help="Number of inputs into network")
         AP.add_argument("--add_input", type=int, default=51, help="Number of additional inputs fed into the network")
         AP.add_argument("--actions",type=int, default=34, help="Number of action labels in output")
@@ -240,7 +236,6 @@ if __name__ == '__main__':
                 hidden_2=parsed.hidden_2, 
                 hidden_3=parsed.hidden_3,
                 hidden_4=parsed.hidden_4,
-                hidden_5=parsed.hidden_5,
                 n_input=parsed.input, 
                 n_labels=parsed.add_input, 
                 n_output_action=parsed.actions, 

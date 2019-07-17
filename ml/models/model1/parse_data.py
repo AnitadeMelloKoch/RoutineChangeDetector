@@ -39,8 +39,6 @@ def parse_body_of_csv(csvString, numFeatures):
 
     #read sensor features
     X = allData[:,1:(numFeatures+1)]
-    nan_data = np.isnan(X)
-    X[nan_data] = 0
 
     #read binary label values and missing label indicators
     binaryLabels = allData[:,(numFeatures+1):-1]
@@ -51,6 +49,8 @@ def parse_body_of_csv(csvString, numFeatures):
     #Y is label matrix
 
     return (X,Y.astype(int),M.astype(int),timestamps)
+
+#read user data from a specific uuid
 
 def seperate_output_actions(labels, allOut):
     actionLabels = labels[:9]
@@ -93,8 +93,6 @@ def seperate_output_phone(labels, allOut):
     phoneData = np.concatenate([phoneData, allOut[:,46:49]],axis=1)
 
     return (phoneLabels, phoneData)
-
-#read user data from a specific uuid
 
 def read_user_data(filePath):
 

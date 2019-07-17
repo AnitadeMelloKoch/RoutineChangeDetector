@@ -39,8 +39,6 @@ def parse_body_of_csv(csvString, numFeatures):
 
     #read sensor features
     X = allData[:,1:(numFeatures+1)]
-    nan_data = np.isnan(X)
-    X[nan_data] = 0
 
     #read binary label values and missing label indicators
     binaryLabels = allData[:,(numFeatures+1):-1]
@@ -106,47 +104,3 @@ def read_user_data(filePath):
     (X,Y,M,timestamps) = parse_body_of_csv(csv_str, numFeatures)
 
     return (X, Y, M, timestamps, featureNames, labelNames)
-
-uuid = '00EABED2-271D-49D8-B599-1D4A09240601.features_labels.csv'
-(X,Y,M,timestamps,feature_names,label_names) = read_user_data(uuid)
-(actionLabels, actionData) = seperate_output_actions(label_names, Y)
-(locLabels, locData) = seperate_output_loc(label_names, Y)
-(phoneLabels, phoneData) = seperate_output_phone(label_names, Y)
-
-print(phoneLabels)
-print(phoneData)
-print(len(phoneLabels))
-print(phoneData.shape)
-
-print(locData)
-print(locLabels)
-print(len(locLabels))
-print(locData.shape)
-
-print(actionData)
-print(actionLabels)
-print(len(actionLabels))
-print(actionData.shape)
-print(Y.shape)
-
-
-# print(X)
-# print(" ")
-# print(Y)
-# print(" ")
-# print(M)
-# print(" ")
-# print(timestamps)
-# print(" ")
-# print(feature_names)
-# print(" ")
-# print(label_names)
-# print(" ")
-# print("dimensions of X")
-# print(X.shape)
-# print(Y.shape)
-# print(M.shape)
-# print("two together")
-# print(np.concatenate([X,M],axis=1).shape)
-# print(len(X))
-#print(X[1])
