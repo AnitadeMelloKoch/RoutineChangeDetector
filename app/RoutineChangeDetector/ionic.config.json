@@ -1,7 +1,0 @@
-{
-  "name": "RoutineChangeDetector",
-  "integrations": {
-    "cordova": {}
-  },
-  "type": "angular"
-}
