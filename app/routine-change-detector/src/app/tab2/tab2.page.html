@@ -1,9 +1,69 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Tab Two
+      Accelerometer
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content></ion-content>
+<ion-content>
+  <ion-card>
+    <ion-item>
+      <ion-label>Accelerometer</ion-label>
+      <ion-label name="lbl:acc"></ion-label>
+    </ion-item>
+  </ion-card>
+  <ion-card>
+    <ion-item>
+      <ion-label>Gyroscope</ion-label>
+      <ion-label name="lbl:gyro"></ion-label>
+    </ion-item>
+  </ion-card>
+  <ion-card>
+    <ion-item>
+      <ion-label>Magnetometer</ion-label>
+      <ion-label name="lbl:magn"></ion-label>
+    </ion-item>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Location</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>Latitude</ion-label>
+        <ion-label id="lbl:loc:lat">Lat</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Longitude</ion-label>
+        <ion-label id="lbl:loc:lng">Long</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Accuracy</ion-label>
+        <ion-label id="lbl:loc:acc">Acc</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Altitude</ion-label>
+        <ion-label id="lbl:loc:alt">Alt</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Altitude Accuracy</ion-label>
+        <ion-label id="lbl:loc:alt:acc">AltAcc</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Heading</ion-label>
+        <ion-label id="lbl:loc:hdn">Head</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Speed</ion-label>
+        <ion-label id="lbl:loc:spd">Speed</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Timestamp</ion-label>
+        <ion-label id="lbl:loc:tme">time</ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
