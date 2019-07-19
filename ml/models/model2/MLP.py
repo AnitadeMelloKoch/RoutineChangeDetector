@@ -1,0 +1,224 @@
+import tensorflow as tf
+import numpy as np
+import get_data as get
+import os
+from sklearn.metrics import roc_auc_score, accuracy_score
+import argparse
+# #parameters
+# initial_learning_rate = 0.001
+# epochs = 30
+
+# #number of features for hidden layer 1
+# hidden_1 = 225
+# hidden_2 = 225
+
+# n_input = 225
+# n_labels = 51
+
+# n_output_action = 34
+# n_output_loc = 13
+# n_output_phone = 4
+
+# regulariser_rate = 0.1
+
+
+def main(training_dir, checkpointdir, training_files, train_percent, initial_learning_rate, epochs, batch_size, hidden_1, hidden_2, n_input, n_labels, n_output_action, n_output_loc, n_output_phone, regulariser_rate):
+
+        # make directory in current directory to save model in
+        try:
+                os.mkdir(checkpointdir + "/output")
+                print("output directory created. Models will be saved here")
+        except FileExistsError:
+                print("output directory already exists")
+        sess = tf.compat.v1.InteractiveSession()
+        
+        # graph inputs
+        x =  tf.compat.v1.placeholder("float", [None, n_input+n_labels], name="x")
+        y_action =  tf.compat.v1.placeholder("float", [None, n_output_action], name="y_action")
+        y_loc =  tf.compat.v1.placeholder("float", [None, n_output_loc], name="y_location")
+        y_phone =  tf.compat.v1.placeholder("float", [None, n_output_phone], name="y_phone")
+
+        # initialize weights for layer 1
+        weight_1 = tf.Variable(tf.random.normal([n_input+n_labels, hidden_1]))
+        bias_1 = tf.Variable(tf.random.normal([hidden_1]))
+
+        # initialize weights for layer 2
+        weight_2 = tf.Variable(tf.random.normal([hidden_1, hidden_2]))
+        bias_2 = tf.Variable(tf.random.normal([hidden_2]))
+
+        #initialize output weights for actions
+        weight_out_action = tf.Variable(tf.random.normal([hidden_2, n_output_action]))
+        bias_out_action = tf.Variable(tf.random.normal([n_output_action]))
+
+        #initialize output weights for location
+        weight_out_loc = tf.Variable(tf.random.normal([hidden_2, n_output_loc]))
+        bias_out_loc = tf.Variable(tf.random.normal([n_output_loc]))
+
+        #initialize output weights for phone
+        weight_out_phone = tf.Variable(tf.random.normal([hidden_2, n_output_phone]))
+        bias_out_phone = tf.Variable(tf.random.normal([n_output_phone]))
+
+        # layer 1
+        layer_1 = tf.nn.relu(tf.add(tf.matmul(x, weight_1), bias_1))
+        # haven't added any dropout yet
+
+        # layer 2
+        layer_2 = tf.nn.relu(tf.add(tf.matmul(layer_1, weight_2), bias_2))
+
+        # output layer
+        predicted_y_action = tf.sigmoid(tf.add(tf.matmul(layer_2, weight_out_action), bias_out_action))
+        predicted_y_loc = tf.sigmoid(tf.add(tf.matmul(layer_2, weight_out_loc), bias_out_loc))
+        predicted_y_phone = tf.sigmoid(tf.add(tf.matmul(layer_2, weight_out_phone),bias_out_phone))
+
+        # loss function for changing weights
+        loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=predicted_y_action, labels=y_action)) \
+                + tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=predicted_y_loc, labels=y_loc)) \
+                + tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=predicted_y_phone, labels=y_phone)) \
+                + regulariser_rate*(tf.reduce_sum(tf.square(bias_1))+ tf.reduce_sum(tf.square(bias_2)))
+
+
+        # define learning rate
+        learning_rate = tf.compat.v1.train.exponential_decay(initial_learning_rate, 0, 5, 0.85, staircase=True)
+        # define optimizer
+        optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate).minimize(loss, var_list=[weight_1, 
+                                                                                weight_2, 
+                                                                                weight_out_action, 
+                                                                                weight_out_loc, 
+                                                                                weight_out_phone, 
+                                                                                bias_1, 
+                                                                                bias_2, 
+                                                                                bias_out_action, 
+                                                                                bias_out_loc, 
+                                                                                bias_out_phone])
+
+        # Accuracy metric
+        correct_pred_action = tf.equal(tf.argmax(y_action, 1), tf.argmax(predicted_y_action,1))
+        correct_pred_loc = tf.equal(tf.argmax(y_loc, 1), tf.argmax(predicted_y_loc,1))
+        correct_pred_phone = tf.equal(tf.argmax(y_phone, 1), tf.argmax(predicted_y_phone, 1))
+        accuracy_action = tf.reduce_mean(tf.cast(correct_pred_action, tf.float32))
+        accuracy_loc = tf.reduce_mean(tf.cast(correct_pred_loc, tf.float32))
+        accuracy_phone = tf.reduce_mean(tf.cast(correct_pred_phone, tf.float32))
+
+        accuracy_overall = (accuracy_action + accuracy_loc + accuracy_phone)/3
+
+        ####
+        # Training
+        batch_size = 200
+        training_accuracy_action = []
+        training_accuracy_loc = []
+        training_accuracy_phone = []
+        training_accuracy_overall = []
+        training_loss = []
+        testing_accuracy_overall = []
+        testing_accuracy_action = []
+        testing_accuracy_loc = []
+        testing_accuracy_phone = []
+        saver = tf.train.Saver()
+
+        (data_in, action_data, loc_data, phone_data) = get.get_formatted_data(training_dir, training_files)
+        # action_data[0] etc gives labels for the set
+        action_out = action_data[1]
+        loc_out = loc_data[1]
+        phone_out = phone_data[1]
+
+        training_num = int(len(data_in)*train_percent)
+
+        input_train = data_in[:training_num]
+        output_train_action = action_out[:training_num]
+        output_train_loc = loc_out[:training_num]
+        output_train_phone = phone_out[:training_num]
+        input_test = data_in[training_num:]
+        output_test_action = action_out[training_num:]
+        output_test_loc = loc_out[training_num:]
+        output_test_phone = phone_out[training_num:]
+
+        sess.run(tf.compat.v1.global_variables_initializer())
+        print("Start training")
+        for epoch in range(epochs):
+                arr = np.arange(input_train.shape[0])
+                np.random.shuffle(arr)
+                for index in range(0, input_train.shape[0], batch_size):
+                        sess.run(optimizer, {x: input_train[arr[index:index+batch_size]], 
+                                                y_action: output_train_action[arr[index:index+batch_size]],
+                                                y_loc: output_train_loc[arr[index:index+batch_size]],
+                                                y_phone: output_train_phone[arr[index:index+batch_size]]})   
+
+                saver.save(sess, (checkpointdir +'/output/ckpnt'), global_step=1)
+
+                training_accuracy_action.append(sess.run(accuracy_action, feed_dict={x:input_train, 
+                                                                                     y_action:output_train_action}))
+                training_accuracy_loc.append(sess.run(accuracy_loc, feed_dict={x:input_train, 
+                                                                               y_loc:output_train_loc}))
+                training_accuracy_phone.append(sess.run(accuracy_phone, feed_dict={x:input_train, 
+                                                                                   y_phone:output_train_phone}))
+                training_accuracy_overall.append(sess.run(accuracy_overall, feed_dict={x:input_train,
+                                                                                       y_phone:output_train_phone,
+                                                                                       y_loc:output_train_loc,
+                                                                                       y_action:output_train_action}))
+
+                training_loss.append(sess.run(loss, feed_dict={x: input_train,
+                                                               y_action: output_train_action,
+                                                               y_loc: output_train_loc,
+                                                               y_phone: output_train_phone}))
+
+                testing_accuracy_action.append(accuracy_score(output_test_action.argmax(1),
+                                                    sess.run(predicted_y_action, {x: input_test}).argmax(1)))
+                testing_accuracy_loc.append(accuracy_score(output_test_loc.argmax(1),
+                                                    sess.run(predicted_y_loc, {x: input_test}).argmax(1)))
+                testing_accuracy_phone.append(accuracy_score(output_test_phone.argmax(1),
+                                                    sess.run(predicted_y_phone, {x: input_test}).argmax(1)))
+                testing_accuracy_overall.append((testing_accuracy_action[epoch]+testing_accuracy_loc[epoch]+testing_accuracy_phone[epoch])/3)
+
+        
+                                        
+                print("Epoch:{0}, Train loss: {1:.2f} Train acc: {2:.3f} Test acc: {3:.3f}".format(epoch,
+                                                                                                   training_loss[epoch],
+                                                                                                   training_accuracy_overall[epoch],
+                                                                                                   testing_accuracy_overall[epoch]))
+                print("          for action           Train acc: {0:.3f} Test acc: {1:.3f}".format( training_accuracy_action[epoch],
+                                                                                                    testing_accuracy_action[epoch]))
+                print("          for location         Train acc: {0:.3f} Test acc: {1:.3f}".format(training_accuracy_loc[epoch],
+                                                                                                   testing_accuracy_loc[epoch]))
+                print("          for phone            Train acc: {0:.3f} Test acc: {1:.3f}".format(training_accuracy_phone[epoch],
+                                                                                                   testing_accuracy_phone[epoch]))
+
+        print("Training complete")
+
+if __name__ == '__main__':
+        AP = argparse.ArgumentParser()
+        AP.add_argument("--training_directory", type=str, help="Directory that contains all files for training")
+        AP.add_argument("--checkpoint_directory", type=str, help="Directory to output checkpoints into")
+        AP.add_argument("--file_number", type=int, default=-1, help="Number of files to be used in training. Pass -1 to train on all files in the directory")
+        AP.add_argument("--train_percent", type=float, default=0.7, help="Percentage of data to be used for training")
+        AP.add_argument("--initial_learning", type=float, default=0.001, help="Define the initial learning rate for the optimizer")
+        AP.add_argument("--epochs", type=int, default=20, help="Number of epochs to train")
+        AP.add_argument("--batchsize", type=int, default=200, help="Batch size of training step")
+        AP.add_argument("--hidden_1", type=int, default=225, help="Number of features extracted by first hidden layer")
+        AP.add_argument("--hidden_2", type=int, default=225, help="Number of features extracted by second hidden layer")
+        AP.add_argument("--input", type=int, default=225, help="Number of inputs into network")
+        AP.add_argument("--add_input", type=int, default=51, help="Number of additional inputs fed into the network")
+        AP.add_argument("--actions",type=int, default=34, help="Number of action labels in output")
+        AP.add_argument("--locations",type=int, default=13, help="Number of location labels in output")
+        AP.add_argument("--phone_placement",type=int, default=4, help="Number of phone placement labels in output")
+        AP.add_argument("--regulariser_rate",type=float, default=0.1, help="Regulariser rate for loss function")
+
+        parsed = AP.parse_args()
+
+        main(training_dir=parsed.training_directory,
+                checkpointdir=parsed.checkpoint_directory,
+                training_files=parsed.file_number,
+                train_percent=parsed.train_percent,
+                initial_learning_rate=parsed.initial_learning, 
+                epochs=parsed.epochs,
+                batch_size=parsed.batchsize, 
+                hidden_1=parsed.hidden_1, 
+                hidden_2=parsed.hidden_2, 
+                n_input=parsed.input, 
+                n_labels=parsed.add_input, 
+                n_output_action=parsed.actions, 
+                n_output_loc=parsed.locations, 
+                n_output_phone=parsed.phone_placement, 
+                regulariser_rate=parsed.regulariser_rate)
+
+        
+
