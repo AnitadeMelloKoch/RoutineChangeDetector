@@ -165,7 +165,7 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                                                 y_loc: output_train_loc[arr[index:index+batch_size]],
                                                 y_phone: output_train_phone[arr[index:index+batch_size]]})   
 
-                saver.save(sess, (checkpointdir), global_step=1)
+                saver.save(sess, (checkpointdir), global_step=10)
 
                 training_accuracy_action.append(sess.run(accuracy_action, feed_dict={x:input_train, 
                                                                                      y_action:output_train_action}))
