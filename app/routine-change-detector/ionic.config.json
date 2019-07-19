@@ -1,5 +1,7 @@
 {
   "name": "Routine Change Detector",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
