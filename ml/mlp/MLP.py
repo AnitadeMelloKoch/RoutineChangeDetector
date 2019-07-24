@@ -4,6 +4,7 @@ import get_data as get
 import os
 from sklearn.metrics import roc_auc_score, accuracy_score
 import argparse
+import matplotlib.pyplot as plt
 
 def main(training_dir, checkpointdir, training_files, train_percent, initial_learning_rate, epochs, batch_size, weighting_action, weighting_loc, weighting_phone, hidden_1, hidden_2, hidden_3, hidden_4, hidden_5, action_layer_1, n_input, n_labels, n_output_action, n_output_loc, n_output_phone, regulariser_rate):
 
@@ -129,7 +130,7 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         testing_accuracy_action = []
         testing_accuracy_loc = []
         testing_accuracy_phone = []
-        saver = tf.compat.v1.train.Saver()
+        saver = tf.compat.v1.train.Saver(max_to_keep=10)
 
         (data_in, action_data, loc_data, phone_data) = get.get_formatted_data(training_dir, training_files)
         # action_data[0] etc gives labels for the set
@@ -149,8 +150,8 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         output_test_phone = phone_out[training_num:]
 
         sess.run(tf.compat.v1.global_variables_initializer())
-        f.write("Starting training")
-        print("Start training \n")
+        f.write("Starting training\n \n")
+        print("Start training")
         for epoch in range(epochs):
                 arr = np.arange(input_train.shape[0])
                 np.random.shuffle(arr)
@@ -160,7 +161,7 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                                                 y_loc: output_train_loc[arr[index:index+batch_size]],
                                                 y_phone: output_train_phone[arr[index:index+batch_size]]})   
 
-                saver.save(sess, (checkpointdir), global_step=10)
+                saver.save(sess, (checkpointdir), global_step=1000)
 
                 training_accuracy_action.append(sess.run(accuracy_action, feed_dict={x:input_train, 
                                                                                      y_action:output_train_action}))
@@ -209,6 +210,41 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                                                                                                    testing_accuracy_loc[epoch]))
                 f.write("          for phone            Train acc: {0:.3f} Test acc: {1:.3f}\n".format(training_accuracy_phone[epoch],
                                                                                                    testing_accuracy_phone[epoch]))
+
+        tf.io.write_graph(tf.compat.v1.get_default_graph(), checkpointdir, 'model.pb', as_text=False)
+        
+        iterations = list(range(epochs))
+        plt.figure()
+        plt.plot(iterations, training_accuracy_overall, label='Overall_train')
+        plt.plot(iterations, testing_accuracy_overall, label='Overall_test')
+        plt.ylabel('Accuracy')
+        plt.xlabel('iterations')
+        plt.legend()
+        plt.savefig('overall.png')
+
+        plt.figure()
+        plt.plot(iterations, training_accuracy_action, label='action_train')
+        plt.plot(iterations, testing_accuracy_action, label='action_test')
+        plt.ylabel('Accuracy')
+        plt.xlabel('iterations')
+        plt.legend()
+        plt.savefig('action.png')
+
+        plt.figure()
+        plt.plot(iterations, training_accuracy_loc, label='loc_train')
+        plt.plot(iterations, testing_accuracy_loc, label='loc_test')
+        plt.ylabel('Accuracy')
+        plt.xlabel('iterations')
+        plt.legend()
+        plt.savefig('loc.png')
+
+        plt.figure()
+        plt.plot(iterations, training_accuracy_phone, label='phone_train')
+        plt.plot(iterations, testing_accuracy_phone, label='phone_test')
+        plt.ylabel('Accuracy')
+        plt.xlabel('iterations')
+        plt.legend()
+        plt.savefig('phone.png')
 
         print("Training complete")
         print("=============================================================")
