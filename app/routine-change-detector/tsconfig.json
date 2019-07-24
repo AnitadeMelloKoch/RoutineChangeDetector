@@ -4,6 +4,7 @@
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
     "declaration": false,
     "module": "es2015",
     "moduleResolution": "node",
@@ -11,6 +12,7 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "es5",
+    "types": ["node"],
     "typeRoots": [
       "node_modules/@types"
     ],
@@ -18,5 +20,8 @@
       "es2018",
       "dom"
     ]
-  }
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }
