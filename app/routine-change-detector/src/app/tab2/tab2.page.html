@@ -10,19 +10,19 @@
   <ion-card>
     <ion-item>
       <ion-label>Accelerometer</ion-label>
-      <ion-label id="lbl:acc"></ion-label>
+      <ion-label id="lbl:acc">{{acceleration}}</ion-label>
     </ion-item>
   </ion-card>
   <ion-card>
     <ion-item>
       <ion-label>Gyroscope</ion-label>
-      <ion-label id="lbl:gyro"></ion-label>
+      <ion-label id="lbl:gyro">{{gyroscope}}</ion-label>
     </ion-item>
   </ion-card>
   <ion-card>
     <ion-item>
       <ion-label>Magnetometer</ion-label>
-      <ion-label id="lbl:magn"></ion-label>
+      <ion-label id="lbl:magn">{{magnetometer}}</ion-label>
     </ion-item>
   </ion-card>
 
@@ -33,35 +33,35 @@
     <ion-card-content>
       <ion-item>
         <ion-label>Latitude</ion-label>
-        <ion-label id="lbl:loc:lat">Lat</ion-label>
+        <ion-label name="lbl:loc:lat">{{geoData.latitude}}</ion-label>
       </ion-item>
       <ion-item>
         <ion-label>Longitude</ion-label>
-        <ion-label id="lbl:loc:lng">Long</ion-label>
+        <ion-label id="lbl:loc:lng">{{geoData.longitude}}</ion-label>
       </ion-item>
       <ion-item>
         <ion-label>Accuracy</ion-label>
-        <ion-label id="lbl:loc:acc">Acc</ion-label>
+        <ion-label id="lbl:loc:acc">{{geoData.accuracy}}</ion-label>
       </ion-item>
       <ion-item>
         <ion-label>Altitude</ion-label>
-        <ion-label id="lbl:loc:alt">Alt</ion-label>
+        <ion-label id="lbl:loc:alt">{{geoData.altitude}}</ion-label>
       </ion-item>
       <ion-item>
         <ion-label>Altitude Accuracy</ion-label>
-        <ion-label id="lbl:loc:alt:acc">AltAcc</ion-label>
+        <ion-label id="lbl:loc:alt:acc">{{geoData.altitudeAccuracy}}</ion-label>
       </ion-item>
       <ion-item>
         <ion-label>Heading</ion-label>
-        <ion-label id="lbl:loc:hdn">Head</ion-label>
+        <ion-label id="lbl:loc:hdn">{{geoData.heading}}</ion-label>
       </ion-item>
       <ion-item>
         <ion-label>Speed</ion-label>
-        <ion-label id="lbl:loc:spd">Speed</ion-label>
+        <ion-label id="lbl:loc:spd">{{geoData.speed}}</ion-label>
       </ion-item>
       <ion-item>
         <ion-label>Timestamp</ion-label>
-        <ion-label id="lbl:loc:tme">time</ion-label>
+        <ion-label id="lbl:loc:tme">{{geoData.timestamp}}</ion-label>
       </ion-item>
     </ion-card-content>
   </ion-card>
