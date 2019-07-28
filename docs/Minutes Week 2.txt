@@ -1,0 +1,11 @@
+Feedback:
+Nicholas:
+	Having difficulties with calculating audio MFCC's on the device. In order to progress with the application development, the MFCC's will be calculated on a
+	server. This issue can be re-visited.
+
+	User interface was also discussed. Should be incrementally developed following Agile practices.
+
+Anita:
+	Doing anomaly detection using multiple different types of algorithms. 
+	Feedback from Prof Aharonson: need to decide between false positives and false negatives, and which is more acceptable.
+		(FOR SVM) Also suggests that many models like to use non-linear models, even though the linear is easiest to implement.
