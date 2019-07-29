@@ -14,6 +14,8 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Media } from '@ionic-native/media/ngx';
 import { File } from '@ionic-native/file/ngx';
 
+import { BackgroundMode } from '@ionic-native/background-mode/ngx'
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -24,6 +26,7 @@ import { File } from '@ionic-native/file/ngx';
     Geolocation,
     Media,
     File,
+    BackgroundMode,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
