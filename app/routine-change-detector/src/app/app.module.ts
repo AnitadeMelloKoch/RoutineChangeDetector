@@ -15,6 +15,7 @@ import { Media } from '@ionic-native/media/ngx';
 import { File } from '@ionic-native/file/ngx';
 
 import { BackgroundMode } from '@ionic-native/background-mode/ngx'
+import { AppStateService } from 'src/app/services/AppState/app-state.service'
 
 @NgModule({
   declarations: [AppComponent],
@@ -23,11 +24,12 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx'
   providers: [
     StatusBar,
     SplashScreen,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     Geolocation,
     Media,
     File,
     BackgroundMode,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    AppStateService
   ],
   bootstrap: [AppComponent]
 })
