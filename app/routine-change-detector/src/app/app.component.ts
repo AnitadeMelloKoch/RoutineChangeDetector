@@ -7,6 +7,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx'
 import { AppStateService } from 'src/app/services/AppState/app-state.service'
 
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html'
@@ -31,7 +32,6 @@ export class AppComponent {
         this.backgroundMode.overrideBackButton()
         //this.backgroundMode.excludeFromTaskList()
       }
-      
     });
   }
 }

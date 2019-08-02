@@ -17,6 +17,8 @@ import { File } from '@ionic-native/file/ngx';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx'
 import { AppStateService } from 'src/app/services/AppState/app-state.service'
 
+import { BatteryStatus } from '@ionic-native/battery-status/ngx'
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -29,7 +31,8 @@ import { AppStateService } from 'src/app/services/AppState/app-state.service'
     Media,
     File,
     BackgroundMode,
-    AppStateService
+    AppStateService,
+    BatteryStatus
   ],
   bootstrap: [AppComponent]
 })
