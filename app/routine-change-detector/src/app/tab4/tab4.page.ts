@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { NavController } from '@ionic/angular';
 
-// import { BatteryStatus, BatteryStatusResponse }  from '@ionic-native/battery-status/ngx';
 import { fromEvent } from 'rxjs';
 
 import { File } from '@ionic-native/file/ngx'
 import { Platform } from '@ionic/angular';
+
+declare var PhoneCallTrap: any;
+declare var RingerMode: any;
 
 @Component({
   selector: 'app-tab4',
@@ -50,7 +52,25 @@ export class Tab4Page {
       */
     })
 
-   }
+    PhoneCallTrap.onCall(function(state) {
+      console.log("CHANGE STATE: " + state);
+  
+      switch (state) {
+          case "RINGING":
+              console.log("Phone is ringing");
+              break;
+          case "OFFHOOK":
+              console.log("Phone is off-hook");
+              break;
+  
+          case "IDLE":
+              console.log("Phone is idle");
+              break;
+      }
+    })
+    RingerMode.getRingerMode((ret) => {console.log(ret)})
+
+  }
 
   ngOnInit() {
   }
