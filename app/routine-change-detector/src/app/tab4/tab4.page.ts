@@ -6,6 +6,8 @@ import { fromEvent } from 'rxjs';
 import { File } from '@ionic-native/file/ngx'
 import { Platform } from '@ionic/angular';
 
+import { Network } from '@ionic-native/network/ngx'
+
 declare var PhoneCallTrap: any;
 declare var RingerMode: any;
 
@@ -21,7 +23,7 @@ export class Tab4Page {
   // private fileName: string
   // private filePath: string
 
-  constructor( private navCtrl: NavController, /*private batteryStatus: BatteryStatus,*/ private file: File, private platform: Platform ) {
+  constructor( private navCtrl: NavController, private file: File, private platform: Platform, private network: Network) {
 
     // For debugging BatteryStatus
     /*if (this.platform.is('android')) {
@@ -33,7 +35,7 @@ export class Tab4Page {
       console.log(res)
     }).catch(err => console.log(err))   
     */
-    let subscr = fromEvent(window, 'batterystatus').subscribe(status => {
+    let _battery = fromEvent(window, 'batterystatus').subscribe(status => {
       console.log(status)
       console.log(status["level"], typeof(status["level"]))
       console.log(status["isPlugged"], typeof(status["isPlugged"]))
@@ -50,6 +52,9 @@ export class Tab4Page {
         }).catch(err => console.log(err))
       }   
       */
+    })
+    let _network = this.network.onchange().subscribe( () => {
+      console.log(this.network.type)
     })
 
     PhoneCallTrap.onCall(function(state) {

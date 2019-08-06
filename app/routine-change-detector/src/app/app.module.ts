@@ -19,6 +19,8 @@ import { AppStateService } from 'src/app/services/AppState/app-state.service'
 
 import { BatteryStatus } from '@ionic-native/battery-status/ngx'
 
+import { Network } from "@ionic-native/network/ngx"
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -32,7 +34,8 @@ import { BatteryStatus } from '@ionic-native/battery-status/ngx'
     File,
     BackgroundMode,
     AppStateService,
-    BatteryStatus
+    BatteryStatus,
+    Network
   ],
   bootstrap: [AppComponent]
 })
