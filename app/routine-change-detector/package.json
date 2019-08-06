@@ -21,7 +21,6 @@
     "@angular/platform-browser-dynamic": "^7.2.2",
     "@angular/router": "^7.2.2",
     "@ionic-native/background-mode": "^5.10.0",
-    "@ionic-native/battery-status": "^5.11.0",
     "@ionic-native/core": "^5.0.0",
     "@ionic-native/file": "^5.10.0",
     "@ionic-native/media": "^5.10.0",
@@ -33,7 +32,7 @@
     "cordova-android": "^8.0.0",
     "cordova-ios": "^5.0.1",
     "cordova-plugin-background-mode": "^0.7.2",
-    "cordova-plugin-battery-status": "^2.0.3",
+    "cordova-plugin-battery-status": "2.0.3",
     "cordova-plugin-file": "^6.0.2",
     "cordova-plugin-geolocation": "^4.0.2",
     "cordova-plugin-media": "^5.0.3",
@@ -96,10 +95,10 @@
         "KEEP_AVAUDIOSESSION_ALWAYS_ACTIVE": "NO"
       },
       "cordova-plugin-file": {},
-      "cordova-plugin-battery-status": {},
       "io.gvox.plugin.phonecalltrap": {},
       "cordova-plugin-ringermode": {},
-      "cordova-plugin-network-information": {}
+      "cordova-plugin-network-information": {},
+      "cordova-plugin-battery-status": {}
     },
     "platforms": [
       "ios",

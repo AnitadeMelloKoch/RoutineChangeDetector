@@ -9,17 +9,16 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { Geolocation } from '@ionic-native/geolocation/ngx';
 
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Media } from '@ionic-native/media/ngx';
 import { File } from '@ionic-native/file/ngx';
-
 import { BackgroundMode } from '@ionic-native/background-mode/ngx'
-import { AppStateService } from 'src/app/services/AppState/app-state.service'
-
-import { BatteryStatus } from '@ionic-native/battery-status/ngx'
-
 import { Network } from "@ionic-native/network/ngx"
+
+
+import { AppStateService } from 'src/app/services/AppState/app-state.service'
+import { AccelerometerService } from 'src/app/services/Accelerometer/accelerometer.service'
 
 @NgModule({
   declarations: [AppComponent],
@@ -29,13 +28,17 @@ import { Network } from "@ionic-native/network/ngx"
     StatusBar,
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    ////////////////////////////////////////////////////////////////
+    // Plugins
     Geolocation,
     Media,
     File,
     BackgroundMode,
+    Network,
+    ////////////////////////////////////////////////////////////////
+    // Services
     AppStateService,
-    BatteryStatus,
-    Network
+    AccelerometerService
   ],
   bootstrap: [AppComponent]
 })
