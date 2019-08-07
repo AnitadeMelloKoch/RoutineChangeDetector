@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AppComponent } from 'src/app/app.component';
-import { Platform } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +18,7 @@ export class AccelerometerService {
     return Math.sqrt(Math.pow(x,2)+Math.pow(y,2)+Math.pow(z,2))
   }
 
-  constructor(private platform: Platform) {
+  constructor() {
     // this.recordAcceleration()
   }
 

@@ -19,6 +19,8 @@ import { Network } from "@ionic-native/network/ngx"
 
 import { AppStateService } from 'src/app/services/AppState/app-state.service'
 import { AccelerometerService } from 'src/app/services/Accelerometer/accelerometer.service'
+import { GyroscopeService } from 'src/app/services/Gyroscope/gyroscope.service'
+import { MagnetometerService } from 'src/app/services/Magnetometer/magnetometer.service'
 
 @NgModule({
   declarations: [AppComponent],
@@ -29,7 +31,7 @@ import { AccelerometerService } from 'src/app/services/Accelerometer/acceleromet
     SplashScreen,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ////////////////////////////////////////////////////////////////
-    // Plugins
+    // Ionic-Native Plugins
     Geolocation,
     Media,
     File,
@@ -38,7 +40,9 @@ import { AccelerometerService } from 'src/app/services/Accelerometer/acceleromet
     ////////////////////////////////////////////////////////////////
     // Services
     AppStateService,
-    AccelerometerService
+    AccelerometerService,
+    GyroscopeService,
+    MagnetometerService
   ],
   bootstrap: [AppComponent]
 })
