@@ -21,6 +21,7 @@ import { AppStateService } from 'src/app/services/AppState/app-state.service'
 import { AccelerometerService } from 'src/app/services/Accelerometer/accelerometer.service'
 import { GyroscopeService } from 'src/app/services/Gyroscope/gyroscope.service'
 import { MagnetometerService } from 'src/app/services/Magnetometer/magnetometer.service'
+import { LocationService } from 'src/app/services/Location/location.service'
 
 @NgModule({
   declarations: [AppComponent],
@@ -42,7 +43,8 @@ import { MagnetometerService } from 'src/app/services/Magnetometer/magnetometer.
     AppStateService,
     AccelerometerService,
     GyroscopeService,
-    MagnetometerService
+    MagnetometerService,
+    LocationService
   ],
   bootstrap: [AppComponent]
 })

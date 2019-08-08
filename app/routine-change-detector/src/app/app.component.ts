@@ -11,6 +11,7 @@ import { AppStateService } from 'src/app/services/AppState/app-state.service'
 import { AccelerometerService } from 'src/app/services/Accelerometer/accelerometer.service'
 import { GyroscopeService } from 'src/app/services/Gyroscope/gyroscope.service'
 import { MagnetometerService } from './services/Magnetometer/magnetometer.service';
+import { LocationService } from './services/Location/location.service';
 
 
 @Component({
@@ -31,7 +32,8 @@ export class AppComponent {
     private appStateService: AppStateService,
     private accelerometerService: AccelerometerService,
     private gyroscopeService: GyroscopeService,
-    private magnetometerService: MagnetometerService
+    private magnetometerService: MagnetometerService,
+    private locationService: LocationService
   ) {
     this.initializeApp();
   }
