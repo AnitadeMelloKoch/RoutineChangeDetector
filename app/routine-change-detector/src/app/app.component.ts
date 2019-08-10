@@ -8,10 +8,7 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx'
 
 
 import { AppStateService } from 'src/app/services/AppState/app-state.service'
-import { AccelerometerService } from 'src/app/services/Accelerometer/accelerometer.service'
-import { GyroscopeService } from 'src/app/services/Gyroscope/gyroscope.service'
-import { MagnetometerService } from './services/Magnetometer/magnetometer.service';
-import { LocationService } from './services/Location/location.service';
+import { RecorderManagerService } from 'src/app/services/RecorderManager/recorder-manager.service'
 
 
 @Component({
@@ -30,10 +27,7 @@ export class AppComponent {
     private statusBar: StatusBar,
     private backgroundMode: BackgroundMode,
     private appStateService: AppStateService,
-    private accelerometerService: AccelerometerService,
-    private gyroscopeService: GyroscopeService,
-    private magnetometerService: MagnetometerService,
-    private locationService: LocationService
+    private recorderManagerService: RecorderManagerService
   ) {
     this.initializeApp();
   }

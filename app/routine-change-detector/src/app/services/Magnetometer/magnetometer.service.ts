@@ -10,7 +10,7 @@ export class MagnetometerService {
 
   private _magnetListener = (event: any) => {
     let mag = this._magnitude(event.alpha, event.beta, event.gamma)
-    console.log(mag)
+    // console.log(mag)
     this._magnetList.push(mag)
   }
 

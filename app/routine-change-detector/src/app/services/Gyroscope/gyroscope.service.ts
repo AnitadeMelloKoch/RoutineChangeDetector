@@ -10,7 +10,7 @@ export class GyroscopeService {
 
   private _gyroscopeListener = (event: any) => {
     let gyr = this._magnitude(event.rotationRate.alpha, event.rotationRate.beta, event.rotationRate.gamma)*(Math.PI/180)
-    console.log(gyr)
+    // console.log(gyr)
     this._gyroscopeList.push(gyr)
   }
 

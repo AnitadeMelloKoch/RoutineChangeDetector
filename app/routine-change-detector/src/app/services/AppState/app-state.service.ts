@@ -12,7 +12,6 @@ export class AppStateService {
     this.appState = AppState.ACTIVE
 
     this.platform.ready().then(() => {
-      console.log("Service Started")
       // this.backgroundMode.on('enable').subscribe(obsEvent => {console.log('enabled')})
       // this.backgroundMode.on('disable').subscribe(obsEvent => {console.log('disabled')})
       this.backgroundMode.on('activate').subscribe(obsEvent => {

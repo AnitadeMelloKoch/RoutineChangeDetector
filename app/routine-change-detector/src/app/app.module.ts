@@ -22,6 +22,8 @@ import { AccelerometerService } from 'src/app/services/Accelerometer/acceleromet
 import { GyroscopeService } from 'src/app/services/Gyroscope/gyroscope.service'
 import { MagnetometerService } from 'src/app/services/Magnetometer/magnetometer.service'
 import { LocationService } from 'src/app/services/Location/location.service'
+import { AudioSnippetService } from 'src/app/services/AudioSnippet/audio-snippet.service'
+import { RecorderManagerService } from 'src/app/services/RecorderManager/recorder-manager.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -44,7 +46,9 @@ import { LocationService } from 'src/app/services/Location/location.service'
     AccelerometerService,
     GyroscopeService,
     MagnetometerService,
-    LocationService
+    LocationService,
+    AudioSnippetService,
+    RecorderManagerService
   ],
   bootstrap: [AppComponent]
 })
