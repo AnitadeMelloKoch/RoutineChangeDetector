@@ -3,10 +3,11 @@ import numpy as np
 import get_data as get
 import os
 from sklearn.metrics import roc_auc_score, accuracy_score
+from sklearn.utils import shuffle
 import argparse
 import matplotlib.pyplot as plt
 
-def main(training_dir, checkpointdir, training_files, train_percent, initial_learning_rate, epochs, batch_size, weighting_action, weighting_loc, weighting_phone, hidden_1, hidden_2, hidden_3, hidden_4, hidden_5, action_layer_1, n_input, n_labels, n_output_action, n_output_loc, n_output_phone, regulariser_rate):
+def main(training_dir, checkpointdir, training_files, train_percent, initial_learning_rate, epochs, batch_size, weighting_action_1, weighting_action_2, weighting_loc, weighting_phone, hidden_1, hidden_2, hidden_3, hidden_4, hidden_5, hidden_6, action_1_layer_1, action_2_layer_1, n_input, n_labels, n_output_action_1, n_output_action_2, n_output_loc, n_output_phone, regulariser_rate):
 
         f = open("output.log", "w+")
 
@@ -14,7 +15,8 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         
         # graph inputs
         x =  tf.compat.v1.placeholder("float", [None, n_input+n_labels], name="x")
-        y_action =  tf.compat.v1.placeholder("float", [None, n_output_action], name="y_action")
+        y_action_1 =  tf.compat.v1.placeholder("float", [None, n_output_action_1], name="y_action_1")
+        y_action_2 = tf.compat.v1.placeholder("float", [None, n_output_action_2], name="y_action_2")
         y_loc =  tf.compat.v1.placeholder("float", [None, n_output_loc], name="y_location")
         y_phone =  tf.compat.v1.placeholder("float", [None, n_output_phone], name="y_phone")
 
@@ -38,20 +40,31 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         weight_5 = tf.Variable(tf.random.normal([hidden_4, hidden_5]))
         bias_5 = tf.Variable(tf.random.normal([hidden_5]))
 
-        #initialise weights for first action layer
-        weight_action_1 = tf.Variable(tf.random.normal([hidden_5, action_layer_1]))
-        bias_action_1 = tf.Variable(tf.random.normal([action_layer_1]))
+        #initialize weights for layer 6
+        weight_6 = tf.Variable(tf.random.normal([hidden_5, hidden_6]))
+        bias_6 = tf.Variable(tf.random.normal([hidden_6]))
+
+        #initialize weights for action 1 layer 1
+        weight_action_1_layer_1 = tf.Variable(tf.random.normal([hidden_6, action_1_layer_1]))
+        bias_action_1_layer_1 = tf.Variable(tf.random.normal([action_1_layer_1]))
+
+        #initialize weights for action 1 layer 1
+        weight_action_2_layer_1 = tf.Variable(tf.random.normal([hidden_6, action_2_layer_1]))
+        bias_action_2_layer_1 = tf.Variable(tf.random.normal([action_2_layer_1]))
 
         #initialize output weights for actions
-        weight_out_action = tf.Variable(tf.random.normal([action_layer_1, n_output_action]))
-        bias_out_action = tf.Variable(tf.random.normal([n_output_action]))
+        weight_out_action_1 = tf.Variable(tf.random.normal([action_1_layer_1, n_output_action_1]))
+        bias_out_action_1 = tf.Variable(tf.random.normal([n_output_action_1]))
+
+        weight_out_action_2 = tf.Variable(tf.random.normal([action_2_layer_1, n_output_action_2]))
+        bias_out_action_2 = tf.Variable(tf.random.normal([n_output_action_2]))
 
         #initialize output weights for location
-        weight_out_loc = tf.Variable(tf.random.normal([hidden_5, n_output_loc]))
+        weight_out_loc = tf.Variable(tf.random.normal([hidden_6, n_output_loc]))
         bias_out_loc = tf.Variable(tf.random.normal([n_output_loc]))
 
         #initialize output weights for phone
-        weight_out_phone = tf.Variable(tf.random.normal([hidden_5, n_output_phone]))
+        weight_out_phone = tf.Variable(tf.random.normal([hidden_6, n_output_phone]))
         bias_out_phone = tf.Variable(tf.random.normal([n_output_phone]))
 
         # layer 1
@@ -70,16 +83,24 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         # layer 5
         layer_5 = tf.nn.sigmoid(tf.add(tf.matmul(layer_4, weight_5), bias_5))
 
-        # action layer 1
-        action_spec_layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(layer_5, weight_action_1), bias_action_1))
+        # layer 6
+        layer_6 = tf.nn.sigmoid(tf.add(tf.matmul(layer_5, weight_6), bias_6))
+
+        # action 1 layer 1
+        layer_action_1_layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(layer_6, weight_action_1_layer_1), bias_action_1_layer_1))
+
+        # action 2 layer 1
+        layer_action_2_layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(layer_6, weight_action_2_layer_1), bias_action_2_layer_1))
 
         # output layer
-        predicted_y_action = tf.sigmoid(tf.add(tf.matmul(action_spec_layer_1, weight_out_action), bias_out_action))
-        predicted_y_loc = tf.sigmoid(tf.add(tf.matmul(layer_5, weight_out_loc), bias_out_loc))
-        predicted_y_phone = tf.sigmoid(tf.add(tf.matmul(layer_5, weight_out_phone),bias_out_phone))
+        predicted_y_action_1 = tf.sigmoid(tf.add(tf.matmul(layer_action_1_layer_1, weight_out_action_1), bias_out_action_1))
+        predicted_y_action_2 = tf.sigmoid(tf.add(tf.matmul(layer_action_2_layer_1, weight_out_action_2), bias_out_action_2))
+        predicted_y_loc = tf.sigmoid(tf.add(tf.matmul(layer_6, weight_out_loc), bias_out_loc))
+        predicted_y_phone = tf.sigmoid(tf.add(tf.matmul(layer_6, weight_out_phone),bias_out_phone))
 
         # loss function for changing weights
-        loss = weighting_action*(tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=predicted_y_action, labels=y_action))) \
+        loss = weighting_action_1*(tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=predicted_y_action_1, labels=y_action_1))) \
+                + weighting_action_2*(tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=predicted_y_action_2, labels=y_action_2))) \
                 + weighting_loc*(tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=predicted_y_loc, labels=y_loc))) \
                 + weighting_phone*(tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=predicted_y_phone, labels=y_phone))) \
                 + regulariser_rate*(tf.reduce_sum(tf.square(bias_1)) + tf.reduce_sum(tf.square(bias_2)) + tf.reduce_sum(tf.square(bias_3))
@@ -95,8 +116,11 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                                                                                 weight_3,
                                                                                 weight_4,
                                                                                 weight_5,
-                                                                                weight_action_1,
-                                                                                weight_out_action, 
+                                                                                weight_6,
+                                                                                weight_action_1_layer_1,
+                                                                                weight_action_2_layer_1,
+                                                                                weight_out_action_1,
+                                                                                weight_out_action_2, 
                                                                                 weight_out_loc, 
                                                                                 weight_out_phone, 
                                                                                 bias_1, 
@@ -104,48 +128,62 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                                                                                 bias_3,
                                                                                 bias_4,
                                                                                 bias_5,
-                                                                                bias_action_1,
-                                                                                bias_out_action, 
+                                                                                bias_6,
+                                                                                bias_action_1_layer_1,
+                                                                                bias_action_2_layer_1,
+                                                                                bias_out_action_1, 
+                                                                                bias_out_action_2,
                                                                                 bias_out_loc, 
                                                                                 bias_out_phone])
 
         # Accuracy metric
-        correct_pred_action = tf.equal(tf.argmax(y_action, 1), tf.argmax(predicted_y_action,1))
+        correct_pred_action_1 = tf.equal(tf.argmax(y_action_1, 1), tf.argmax(predicted_y_action_1,1))
+        correct_pred_action_2 = tf.equal(tf.argmax(y_action_2, 1), tf.argmax(predicted_y_action_2,1))
         correct_pred_loc = tf.equal(tf.argmax(y_loc, 1), tf.argmax(predicted_y_loc,1))
         correct_pred_phone = tf.equal(tf.argmax(y_phone, 1), tf.argmax(predicted_y_phone, 1))
-        accuracy_action = tf.reduce_mean(tf.cast(correct_pred_action, tf.float32))
+        accuracy_action_1 = tf.reduce_mean(tf.cast(correct_pred_action_1, tf.float32))
+        accuracy_action_2 = tf.reduce_mean(tf.cast(correct_pred_action_2, tf.float32))
         accuracy_loc = tf.reduce_mean(tf.cast(correct_pred_loc, tf.float32))
         accuracy_phone = tf.reduce_mean(tf.cast(correct_pred_phone, tf.float32))
 
-        accuracy_overall = (accuracy_action + accuracy_loc + accuracy_phone)/3
+        accuracy_overall = (accuracy_action_1 + accuracy_action_2 + accuracy_loc + accuracy_phone)/4
 
         ####
         # Training
-        training_accuracy_action = []
+        training_accuracy_action_1 = []
+        training_accuracy_action_2 = []
         training_accuracy_loc = []
         training_accuracy_phone = []
         training_accuracy_overall = []
         training_loss = []
         testing_accuracy_overall = []
-        testing_accuracy_action = []
+        testing_accuracy_action_1 = []
+        testing_accuracy_action_2 = []
         testing_accuracy_loc = []
         testing_accuracy_phone = []
         saver = tf.compat.v1.train.Saver(max_to_keep=10)
 
-        (data_in, action_data, loc_data, phone_data) = get.get_formatted_data(training_dir, training_files)
+        (data_in, action_data_1, action_data_2, loc_data, phone_data) = get.get_formatted_data(training_dir, training_files)
         # action_data[0] etc gives labels for the set
-        action_out = action_data[1]
+
+        action_out_1 = action_data_1[1]
+        action_out_2 = action_data_2[1]
         loc_out = loc_data[1]
         phone_out = phone_data[1]
+
+        ### TRY SHUFFLE DATA BEFORE TRAINING SPLIT
+        data_in, action_out_1, action_out_2, loc_out, phone_out = shuffle(np.array(data_in), np.array(action_out_1), np.array(action_out_2), np.array(loc_out), np.array(phone_out))     
 
         training_num = int(len(data_in)*train_percent)
 
         input_train = data_in[:training_num]
-        output_train_action = action_out[:training_num]
+        output_train_action_1 = action_out_1[:training_num]
+        output_train_action_2 = action_out_2[:training_num]
         output_train_loc = loc_out[:training_num]
         output_train_phone = phone_out[:training_num]
         input_test = data_in[training_num:]
-        output_test_action = action_out[training_num:]
+        output_test_action_1 = action_out_1[training_num:]
+        output_test_action_2 = action_out_2[training_num:]
         output_test_loc = loc_out[training_num:]
         output_test_phone = phone_out[training_num:]
 
@@ -157,14 +195,17 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                 np.random.shuffle(arr)
                 for index in range(0, input_train.shape[0], batch_size):
                         sess.run(optimizer, {   x: input_train[arr[index:index+batch_size]], 
-                                                y_action: output_train_action[arr[index:index+batch_size]],
+                                                y_action_1: output_train_action_1[arr[index:index+batch_size]],
+                                                y_action_2: output_train_action_2[arr[index:index+batch_size]],
                                                 y_loc: output_train_loc[arr[index:index+batch_size]],
                                                 y_phone: output_train_phone[arr[index:index+batch_size]]})   
 
                 saver.save(sess, (checkpointdir), global_step=1000)
 
-                training_accuracy_action.append(sess.run(accuracy_action, feed_dict={x:input_train, 
-                                                                                     y_action:output_train_action}))
+                training_accuracy_action_1.append(sess.run(accuracy_action_1, feed_dict={x:input_train, 
+                                                                                     y_action_1:output_train_action_1}))
+                training_accuracy_action_2.append(sess.run(accuracy_action_2, feed_dict={x:input_train,
+                                                                                        y_action_2:output_train_action_2}))
                 training_accuracy_loc.append(sess.run(accuracy_loc, feed_dict={x:input_train, 
                                                                                y_loc:output_train_loc}))
                 training_accuracy_phone.append(sess.run(accuracy_phone, feed_dict={x:input_train, 
@@ -172,29 +213,33 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                 training_accuracy_overall.append(sess.run(accuracy_overall, feed_dict={x:input_train,
                                                                                        y_phone:output_train_phone,
                                                                                        y_loc:output_train_loc,
-                                                                                       y_action:output_train_action}))
+                                                                                       y_action_1:output_train_action_1,
+                                                                                       y_action_2:output_train_action_2}))
 
                 training_loss.append(sess.run(loss, feed_dict={x: input_train,
-                                                               y_action: output_train_action,
+                                                               y_action_1: output_train_action_1,
+                                                               y_action_2: output_train_action_2,
                                                                y_loc: output_train_loc,
                                                                y_phone: output_train_phone}))
 
-                testing_accuracy_action.append(accuracy_score(output_test_action.argmax(1),
-                                                    sess.run(predicted_y_action, {x: input_test}).argmax(1)))
+                testing_accuracy_action_1.append(accuracy_score(output_test_action_1.argmax(1),
+                                                    sess.run(predicted_y_action_1, {x: input_test}).argmax(1)))
+                testing_accuracy_action_2.append(accuracy_score(output_test_action_2.argmax(1),
+                                                    sess.run(predicted_y_action_2, {x: input_test}).argmax(1)))
                 testing_accuracy_loc.append(accuracy_score(output_test_loc.argmax(1),
                                                     sess.run(predicted_y_loc, {x: input_test}).argmax(1)))
                 testing_accuracy_phone.append(accuracy_score(output_test_phone.argmax(1),
                                                     sess.run(predicted_y_phone, {x: input_test}).argmax(1)))
-                testing_accuracy_overall.append((testing_accuracy_action[epoch]+testing_accuracy_loc[epoch]+testing_accuracy_phone[epoch])/3)
-
-        
+                testing_accuracy_overall.append((testing_accuracy_action_1[epoch]+testing_accuracy_action_2[epoch]+testing_accuracy_loc[epoch]+testing_accuracy_phone[epoch])/4)
                                         
                 print("Epoch:{0}, Train loss: {1:.2f} Train acc: {2:.3f} Test acc: {3:.3f}".format(epoch,
                                                                                                    training_loss[epoch],
                                                                                                    training_accuracy_overall[epoch],
                                                                                                    testing_accuracy_overall[epoch]))
-                print("          for action           Train acc: {0:.3f} Test acc: {1:.3f}".format( training_accuracy_action[epoch],
-                                                                                                    testing_accuracy_action[epoch]))
+                print("          for action 1         Train acc: {0:.3f} Test acc: {1:.3f}".format( training_accuracy_action_1[epoch],
+                                                                                                    testing_accuracy_action_1[epoch]))
+                print("          for action 2         Train acc: {0:.3f} Test acc: {1:.3f}".format( training_accuracy_action_2[epoch],
+                                                                                                    testing_accuracy_action_2[epoch]))
                 print("          for location         Train acc: {0:.3f} Test acc: {1:.3f}".format(training_accuracy_loc[epoch],
                                                                                                    testing_accuracy_loc[epoch]))
                 print("          for phone            Train acc: {0:.3f} Test acc: {1:.3f}".format(training_accuracy_phone[epoch],
@@ -204,8 +249,10 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                                                                                                    training_loss[epoch],
                                                                                                    training_accuracy_overall[epoch],
                                                                                                    testing_accuracy_overall[epoch]))
-                f.write("          for action           Train acc: {0:.3f} Test acc: {1:.3f}\n".format( training_accuracy_action[epoch],
-                                                                                                    testing_accuracy_action[epoch]))
+                f.write("          for action 1         Train acc: {0:.3f} Test acc: {1:.3f}\n".format( training_accuracy_action_1[epoch],
+                                                                                                    testing_accuracy_action_1[epoch]))
+                f.write("          for action 2         Train acc: {0:.3f} Test acc: {1:.3f}\n".format( training_accuracy_action_2[epoch],
+                                                                                                    testing_accuracy_action_2[epoch]))
                 f.write("          for location         Train acc: {0:.3f} Test acc: {1:.3f}\n".format(training_accuracy_loc[epoch],
                                                                                                    testing_accuracy_loc[epoch]))
                 f.write("          for phone            Train acc: {0:.3f} Test acc: {1:.3f}\n".format(training_accuracy_phone[epoch],
@@ -223,12 +270,20 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         plt.savefig('overall.png')
 
         plt.figure()
-        plt.plot(iterations, training_accuracy_action, label='action_train')
-        plt.plot(iterations, testing_accuracy_action, label='action_test')
+        plt.plot(iterations, training_accuracy_action_1, label='action_train_1')
+        plt.plot(iterations, testing_accuracy_action_1, label='action_test_1')
         plt.ylabel('Accuracy')
         plt.xlabel('iterations')
         plt.legend()
-        plt.savefig('action.png')
+        plt.savefig('action_1.png')
+
+        plt.figure()
+        plt.plot(iterations, training_accuracy_action_2, label='action_train_2')
+        plt.plot(iterations, testing_accuracy_action_2, label='action_test_2')
+        plt.ylabel('Accuracy')
+        plt.xlabel('iterations')
+        plt.legend()
+        plt.savefig('action_2.png')
 
         plt.figure()
         plt.plot(iterations, training_accuracy_loc, label='loc_train')
@@ -251,8 +306,10 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         print("Final training loss:                     {0:.2f}".format(training_loss[-1]))
         print("Final overall training accuracy:         {0:.3f}".format(training_accuracy_overall[-1]))
         print("Final overall test accuracy:             {0:.3f}".format(testing_accuracy_overall[-1]))
-        print("Action training accuracy:                {0:.3f}".format(training_accuracy_action[-1]))
-        print("Action testing accuracy:                 {0:.3f}".format(testing_accuracy_action[-1]))
+        print("Action 1 training accuracy:              {0:.3f}".format(training_accuracy_action_1[-1]))
+        print("Action 1 testing accuracy:               {0:.3f}".format(testing_accuracy_action_1[-1]))
+        print("Action 2 training accuracy:              {0:.3f}".format(training_accuracy_action_2[-1]))
+        print("Action 2 testing accuracy:               {0:.3f}".format(testing_accuracy_action_2[-1]))
         print("Location training accuracy:              {0:.3f}".format(training_accuracy_loc[-1]))
         print("Location testing accuracy:               {0:.3f}".format(testing_accuracy_loc[-1]))
         print("Phone training accuracy:                 {0:.3f}".format(training_accuracy_phone[-1]))
@@ -263,8 +320,10 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         f.write("Final training loss:                     {0:.2f}\n".format(training_loss[-1]))
         f.write("Final overall training accuracy:         {0:.3f}\n".format(training_accuracy_overall[-1]))
         f.write("Final overall test accuracy:             {0:.3f}\n".format(testing_accuracy_overall[-1]))
-        f.write("Action training accuracy:                {0:.3f}\n".format(training_accuracy_action[-1]))
-        f.write("Action testing accuracy:                 {0:.3f}\n".format(testing_accuracy_action[-1]))
+        f.write("Action 1 training accuracy:              {0:.3f}\n".format(training_accuracy_action_1[-1]))
+        f.write("Action 1 testing accuracy:               {0:.3f}\n".format(testing_accuracy_action_1[-1]))
+        f.write("Action 2 training accuracy:              {0:.3f}\n".format(training_accuracy_action_2[-1]))
+        f.write("Action 2 testing accuracy:               {0:.3f}\n".format(testing_accuracy_action_2[-1]))
         f.write("Location training accuracy:              {0:.3f}\n".format(training_accuracy_loc[-1]))
         f.write("Location testing accuracy:               {0:.3f}\n".format(testing_accuracy_loc[-1]))
         f.write("Phone training accuracy:                 {0:.3f}\n".format(training_accuracy_phone[-1]))
@@ -281,7 +340,8 @@ if __name__ == '__main__':
         AP.add_argument("--initial_learning", type=float, default=0.001, help="Define the initial learning rate for the optimizer")
         AP.add_argument("--epochs", type=int, default=20, help="Number of epochs to train")
         AP.add_argument("--batchsize", type=int, default=200, help="Batch size of training step")
-        AP.add_argument("--action_weighting", type=float, default=1, help="Weighting of action in loss function")
+        AP.add_argument("--action_weighting_1", type=float, default=1, help="Weighting of action 1 in loss function")
+        AP.add_argument("--action_weighting_2", type=float, default=1, help="Weighting of action 2 in loss function")
         AP.add_argument("--loc_weighting", type=float, default=1, help="Weighting of location in loss function")
         AP.add_argument("--phone_weighting", type=float, default=1, help="Weighting of phone placement in loss function")
         AP.add_argument("--hidden_1", type=int, default=225, help="Number of features extracted by first hidden layer")
@@ -289,10 +349,13 @@ if __name__ == '__main__':
         AP.add_argument("--hidden_3", type=int, default=225, help="Number of features extracted by third hidden layer")
         AP.add_argument("--hidden_4", type=int, default=225, help="Number of features extracted by fourth hidden layer")
         AP.add_argument("--hidden_5", type=int, default=225, help="Number of features extracted by fifth hidden layer")
-        AP.add_argument("--action_1", type=int, default=100, help="Number of features extracted by first action specific layer")
+        AP.add_argument("--hidden_6", type=int, default=225, help="Number of features extracted by sixth hidden layer")
+        AP.add_argument("--action_1_layer_1", type=int, default=20, help="Number of features extracted by action 1 layer 1")
+        AP.add_argument("--action_2_layer_1", type=int, default=20, help="Number of features extracted by action 2 layer 1")
         AP.add_argument("--input", type=int, default=225, help="Number of inputs into network")
         AP.add_argument("--add_input", type=int, default=51, help="Number of additional inputs fed into the network")
-        AP.add_argument("--actions",type=int, default=34, help="Number of action labels in output")
+        AP.add_argument("--actions_1",type=int, default=14, help="Number of action labels in output")
+        AP.add_argument("--actions_2",type=int, default=20, help="Number of action labels in output")
         AP.add_argument("--locations",type=int, default=13, help="Number of location labels in output")
         AP.add_argument("--phone_placement",type=int, default=4, help="Number of phone placement labels in output")
         AP.add_argument("--regulariser_rate",type=float, default=0.1, help="Regulariser rate for loss function")
@@ -306,7 +369,8 @@ if __name__ == '__main__':
                 initial_learning_rate=parsed.initial_learning, 
                 epochs=parsed.epochs,
                 batch_size=parsed.batchsize, 
-                weighting_action=parsed.action_weighting, 
+                weighting_action_1=parsed.action_weighting_1,
+                weighting_action_2=parsed.action_weighting_2, 
                 weighting_loc=parsed.loc_weighting, 
                 weighting_phone=parsed.phone_weighting,
                 hidden_1=parsed.hidden_1, 
@@ -314,10 +378,13 @@ if __name__ == '__main__':
                 hidden_3=parsed.hidden_3,
                 hidden_4=parsed.hidden_4,
                 hidden_5=parsed.hidden_5,
-                action_layer_1=parsed.action_1,
+                hidden_6=parsed.hidden_6,
+                action_1_layer_1=parsed.action_1_layer_1,
+                action_2_layer_1=parsed.action_2_layer_1,
                 n_input=parsed.input, 
                 n_labels=parsed.add_input, 
-                n_output_action=parsed.actions, 
+                n_output_action_1=parsed.actions_1,
+                n_output_action_2=parsed.actions_2, 
                 n_output_loc=parsed.locations, 
                 n_output_phone=parsed.phone_placement, 
                 regulariser_rate=parsed.regulariser_rate)

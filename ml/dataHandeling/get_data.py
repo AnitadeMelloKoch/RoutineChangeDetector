@@ -32,12 +32,12 @@ def get_formatted_data(dir, num_files):
     (all_X, all_Y, all_M, labels) = get_all_data(dir, num_files)
 
     all_X = format_data.standardize_features(all_X)
-    (action_data) = parse_data.seperate_output_actions(labels, all_Y)
+    (action_data_1) = parse_data.seperate_output_actions_1(labels, all_Y)
+    (action_data_2) = parse_data.seperate_output_actions_2(labels, all_Y)
     (loc_data) = parse_data.seperate_output_loc(labels, all_Y)
     (phone_data) = parse_data.seperate_output_phone(labels, all_Y)
     input_all = np.concatenate([all_X, all_M], axis=1)
 
-    return (input_all, action_data, loc_data, phone_data)
+    return (input_all, action_data_1, action_data_2, loc_data, phone_data)
 
 
-    

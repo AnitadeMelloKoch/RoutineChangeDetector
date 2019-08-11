@@ -18,30 +18,39 @@ epochs=500
 batch=200
 
 # Number of feature discovered by each hidden layer
-hidden_1=276
-hidden_2=225
-hidden_3=225
-hidden_4=200
-hidden_5=150
+hidden_1=255
+hidden_2=215
+hidden_3=180
+hidden_4=150
+hidden_5=110
+hidden_6=90
 
-action_1=100
+action_1_layer_1=70
+action_2_layer_1=70
 
-
-action_weight=0.80
-loc_weight=0.255
+action_weight_1=0.47
+action_weight_2=0.24
+loc_weight=0.26
 phone_weight=0.08
 # =================================================================================================================
 
 # Directories
 
 datadir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data"
-rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/500epochs2"
+rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/extraActionLayer"
 datascriptdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/dataHandeling"
 mlpdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/mlp"
 
 # =================================================================================================================
 
 # Run training
+
+if [ -d $rundir ]; then
+  read -p "Directory already exists. Do you wish to continue? [y,n]" conti
+  if [$conti=="n"]; then
+    exit
+  fi
+fi
 
 mkdir -p $rundir
 
@@ -62,7 +71,8 @@ python3 MLP.py  --training_directory $datadir \
                 --initial_learning $learningInit \
                 --epochs $epochs \
                 --batchsize $batch \
-                --action_weighting $action_weight \
+                --action_weighting_1 $action_weight_1 \
+                --action_weighting_2 $action_weight_2 \
                 --loc_weighting $loc_weight \
                 --phone_weighting $phone_weight \
                 --hidden_1 $hidden_1 \
@@ -70,4 +80,6 @@ python3 MLP.py  --training_directory $datadir \
                 --hidden_3 $hidden_3 \
                 --hidden_4 $hidden_4 \
                 --hidden_5 $hidden_5 \
-                --action_1 $action_1 
+                --hidden_6 $hidden_6 \
+                --action_1_layer_1 $action_1_layer_1 \
+                --action_2_layer_1 $action_2_layer_1

@@ -52,19 +52,31 @@ def parse_body_of_csv(csvString, numFeatures):
 
 #read user data from a specific uuid
 
-def seperate_output_actions(labels, allOut):
-    actionLabels = labels[:9]
-    actionData = allOut[:,:9]
+def seperate_output_actions_1(labels, allOut):
+    actionLabels = labels[:6]
+    actionData = allOut[:,:6]
     actionLabels = actionLabels + labels[14:16]
     actionData = np.concatenate([actionData, allOut[:,14:16]], axis=1)
-    actionLabels = actionLabels + labels[19:30]
-    actionData = np.concatenate([actionData, allOut[:,19:30]], axis=1)
-    actionLabels = actionLabels + labels[33:40]
-    actionData = np.concatenate([actionData, allOut[:,33:40]], axis=1)
+    actionLabels = actionLabels + labels[19:20]
+    actionData = np.concatenate([actionData, allOut[:,19:20]], axis=1)
+    actionLabels = actionLabels + labels[21:23]
+    actionData = np.concatenate([actionData, allOut[:,21:23]], axis=1)
     actionLabels = actionLabels + labels[41:43]
     actionData = np.concatenate([actionData, allOut[:,41:43]], axis=1)
-    actionLabels.append(labels[44])
-    actionData = np.concatenate([actionData, allOut[:,[44]]], axis=1)
+    actionLabels = actionLabels + labels[44:45]
+    actionData = np.concatenate([actionData, allOut[:,44:45]], axis=1)
+
+    return(actionLabels, actionData)
+
+def seperate_output_actions_2(labels, allOut):
+    actionLabels = labels[6:9]
+    actionData = allOut[:,6:9]
+    actionLabels = actionLabels + labels[20:21]
+    actionData = np.concatenate([actionData, allOut[:,20:21]], axis=1)
+    actionLabels = actionLabels + labels[23:30]
+    actionData = np.concatenate([actionData, allOut[:,23:30]], axis=1)
+    actionLabels = actionLabels + labels[33:40]
+    actionData = np.concatenate([actionData, allOut[:,33:40]], axis=1)
     actionLabels = actionLabels + labels[49:]
     actionData = np.concatenate([actionData, allOut[:,49:51]], axis=1)
 

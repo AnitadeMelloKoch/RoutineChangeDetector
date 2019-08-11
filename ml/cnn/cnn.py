@@ -3,7 +3,7 @@ import numpy as np
 
 import get_data as get
 
-timesteps = 10
+timesteps = 100
 
 # Placeholder variables
 x = tf.compat.v1.placeholder(tf.float32, shape=[None, 51*timesteps], name='X')
@@ -38,7 +38,7 @@ def new_pool_layer(input, name):
 def new_relu_layer(input, name):
 
     with tf.compat.v1.variable_scope(name) as scope:
-        layer = tf.nn.relu(input)
+        layer = tf.nn.sigmoid(input)
 
         return layer
 
@@ -68,22 +68,28 @@ layer_relu2 = new_relu_layer(layer_pool2, name="relu2")
 num_features = layer_relu2.get_shape()[1:4].num_elements()
 layer_flat = tf.reshape(layer_relu2, [-1, num_features])
 
+print(num_features)
+
 # first fully connected layer
-layer_fc1 = new_fc_layer(layer_flat, num_inputs=num_features, num_outputs=256, name="fc1")
+layer_fc1 = new_fc_layer(layer_flat, num_inputs=num_features, num_outputs=1560, name="fc1")
 
-layer_relu3 = new_relu_layer(layer_fc1, name="relu3")
+layer_fc2 = new_fc_layer(layer_fc1, num_inputs=1560, num_outputs=860, name="fc2")
 
-layer_fc2 = new_fc_layer(input=layer_relu3, num_inputs=256, num_outputs=51, name="fc2")
+layer_fc3 = new_fc_layer(layer_fc2, num_inputs=860, num_outputs=365, name="fc3")
+
+out = new_fc_layer(input=layer_fc3, num_inputs=365, num_outputs=51, name="out")
 
 with tf.compat.v1.variable_scope("Softmax"):
-    y_pred = tf.nn.softmax(layer_fc2)
+    y_pred = tf.nn.softmax(out)
     #y_pred_cls = tf.argmax(y_pred, axis=1)
 
-cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=layer_fc2, labels=y_true))
+cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=out, labels=y_true))
 
 
 with tf.name_scope("optimizer"):
-    optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=0.001).minimize(cost)
+    initial_learning_rate = 0.001
+    learning_rate = tf.compat.v1.train.exponential_decay(initial_learning_rate, 0, 5, 0.85, staircase=True)
+    optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate).minimize(cost)
 
 with tf.name_scope("accuracy"):
     correct_prediction = tf.equal(tf.argmax(y_pred, axis=1), tf.argmax(y_true, axis=1))
@@ -92,50 +98,44 @@ with tf.name_scope("accuracy"):
 epochs = 100
 batch_size = 100
 
-(_, all_y, _, _) = get.get_all_data("/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data", 5)
+(_, all_y, _, _) = get.get_all_data("/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data", 1)
 
 training_num = int(len(all_y)*0.7)
-input_train = all_y[:training_num]
-input_test = all_y[training_num:]
-output_train = all_y[timesteps:training_num]
-output_test = all_y[training_num+timesteps:]
-
+data_x = []
 test_data_x = []
 train_data_x = []
+output_test = []
+output_train = []
 
-for one_input in range(0, len(input_test) - timesteps):
+
+for one_input in range(0, len(all_y) - timesteps):
+    print("Converting {} of {}".format(one_input, len(all_y)-timesteps))
     one_point = []
     for one_row in range(0, timesteps):
         if one_row == 0:
-            one_point = input_test[one_input+one_row]
+            one_point = all_y[one_input+one_row]
         else:
-            one_point = np.concatenate([one_point, input_test[one_input+one_row]])
+            one_point = np.concatenate([one_point, all_y[one_input+one_row]])
         np.reshape(one_point, [1, -1])
     if (one_input == 0):
-        test_data_x = one_point
+        data_x = one_point
     else:
-        test_data_x = np.concatenate([np.reshape(test_data_x, [-1, 51*timesteps]), np.reshape(one_point, [1, -1])])
+        data_x = np.concatenate([np.reshape(data_x, [-1, 51*timesteps]), np.reshape(one_point, [1, -1])])
 
-for one_input in range(0, len(input_train) - timesteps):
-    one_point = []
-    for one_row in range(0, timesteps):
-        if one_row == 0:
-            one_point = input_train[one_input+one_row]
-        else:
-            one_point = np.concatenate([one_point, input_train[one_input+one_row]])
-        np.reshape(one_point, [1, -1])
-    if (one_input == 0):
-        train_data_x = one_point
-    else:
-        train_data_x = np.concatenate([np.reshape(train_data_x, [-1, 51*timesteps]), np.reshape(one_point, [1, -1])])
+
+train_data_x = data_x[:training_num - timesteps]
+test_data_x = data_x[training_num:]
+output_train = all_y[timesteps:training_num]
+output_test = all_y[training_num+timesteps:]
 
 with tf.compat.v1.Session() as sess:
     sess.run(tf.compat.v1.global_variables_initializer())
     print("starting training")
     for epoch in range(epochs):
-        train_accuracy = 0
+        arr = np.arange(train_data_x.shape[0])
+        np.random.shuffle(arr)
         for batch in range(0, int(len(train_data_x))):
-            feed_dict_train = {x: np.reshape(train_data_x[batch], [1, -1]), y_true: np.reshape(output_train[batch], [1, -1])}
+            feed_dict_train = {x: np.reshape(train_data_x[arr[batch]], [1, -1]), y_true: np.reshape(output_train[arr[batch]], [1, -1])}
             sess.run(optimizer, feed_dict=feed_dict_train)
         train_accuracy = sess.run(accuracy, feed_dict={x: train_data_x, y_true: output_train})
         vali_accuracy = sess.run(accuracy, feed_dict={x: test_data_x, y_true: output_test})
