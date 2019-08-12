@@ -22,7 +22,7 @@ export class AccelerometerService {
     // this.recordAcceleration()
   }
 
-   public recordAcceleration = () => {
+   public recordAcceleration(): Promise<any[]> {
     return new Promise( (resolve, reject) => {
       this._accelerationList = []
       window.addEventListener('devicemotion', this._accelerationListener)

@@ -22,7 +22,7 @@ export class MagnetometerService {
     // this.recordMagnetometer().then(ret => console.log(ret)) 
    }
 
-  public recordMagnetometer = () => {
+  public recordMagnetometer(): Promise<any[]> {
     return new Promise( (resolve, reject) => {
       this._magnetList = []
       window.addEventListener('deviceorientation', this._magnetListener)

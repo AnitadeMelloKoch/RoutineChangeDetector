@@ -19,7 +19,7 @@ export class AudioSnippetService {
     // this.recordAudio().then(ret => console.log(ret)).catch(err => console.log(err))})    
   }
 
-  public recordAudio() {
+  public recordAudio(): Promise<ArrayBuffer> {
     return new Promise( (resolve, reject) => {
       if(this._startRecord()){
         setTimeout(() => {
@@ -55,12 +55,12 @@ export class AudioSnippetService {
     return true
   }
 
-  private _stopRecord(){
+  private _stopRecord(): Promise<ArrayBuffer>{
     return new Promise ((resolve,reject)=> {
       if(!this._recording){
         reject(Error("AUDIO_ALREADY_STOPPED"))
       }
-      let audioData
+      let audioData: ArrayBuffer
       this._audio.stopRecord()
       this._file.checkFile(this._filePath, this._fileName)
         .then((exists) => {
@@ -77,7 +77,7 @@ export class AudioSnippetService {
     })
   }
 
-  private _handleAudioFile(audioData: any, reject: (reason?: any) => void, resolve: (value?: unknown) => void) {
+  private _handleAudioFile(audioData: ArrayBuffer, reject: (reason?: any) => void, resolve: (value?: ArrayBuffer) => void) {
     this.getAudioData()
       .then(data => {
         audioData = data;
@@ -114,7 +114,7 @@ export class AudioSnippetService {
   }
 
   // readAsArrayBuffer. Resolves ArrayBuffer
-  private getAudioData() {
+  private getAudioData(): Promise<ArrayBuffer> {
     return new Promise ((resolve, reject) => {
       this._file.readAsArrayBuffer(this._filePath, this._fileName)
       .then( data => {

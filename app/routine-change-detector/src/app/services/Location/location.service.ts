@@ -11,7 +11,7 @@ import { filter } from 'rxjs/operators';
 export class LocationService {
   
   private _geodataList = []
-  private readonly _geolocationOptions = { maximumAge: 0, timeout: 500, enableHighAccuracy: true }
+  private readonly _geolocationOptions = { maximumAge: 0, timeout: 9000, enableHighAccuracy: true }
 
   constructor(private _geolocation: Geolocation, private _platform: Platform) {
     // this.recordLocation().then(res => console.log(res))
@@ -29,7 +29,7 @@ export class LocationService {
     return p.coords !== undefined
   }
 
-  public recordLocation = () => {
+  public recordLocation(): Promise<any[]> {
     return new Promise ( (resolve, reject) => {
       this._geodataList = []
       let geoWatchID = this._geolocation.watchPosition(this._geolocationOptions)

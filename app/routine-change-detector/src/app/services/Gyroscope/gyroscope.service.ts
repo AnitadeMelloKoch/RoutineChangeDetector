@@ -22,7 +22,7 @@ export class GyroscopeService {
     // this.recordGyroscope().then(out => console.log(out))
    }
 
-  public recordGyroscope = () => {
+  public recordGyroscope(): Promise<any[]> {
     return new Promise( (resolve, reject) => {
       this._gyroscopeList = []
       window.addEventListener('devicemotion', this._gyroscopeListener)
