@@ -23,7 +23,8 @@ import { GyroscopeService } from 'src/app/services/Gyroscope/gyroscope.service'
 import { MagnetometerService } from 'src/app/services/Magnetometer/magnetometer.service'
 import { LocationService } from 'src/app/services/Location/location.service'
 import { AudioSnippetService } from 'src/app/services/AudioSnippet/audio-snippet.service'
-import { RecorderManagerService } from 'src/app/services/RecorderManager/recorder-manager.service';
+import { RecorderManagerService } from 'src/app/services/RecorderManager/recorder-manager.service'
+import { PhoneStateService } from 'src/app/services/PhoneState/phone-state.service'
 
 @NgModule({
   declarations: [AppComponent],
@@ -48,7 +49,8 @@ import { RecorderManagerService } from 'src/app/services/RecorderManager/recorde
     MagnetometerService,
     LocationService,
     AudioSnippetService,
-    RecorderManagerService
+    RecorderManagerService,
+    PhoneStateService
   ],
   bootstrap: [AppComponent]
 })

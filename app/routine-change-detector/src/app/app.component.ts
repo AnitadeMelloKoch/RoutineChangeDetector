@@ -6,8 +6,6 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { BackgroundMode } from '@ionic-native/background-mode/ngx'
 
-
-import { AppStateService } from 'src/app/services/AppState/app-state.service'
 import { RecorderManagerService } from 'src/app/services/RecorderManager/recorder-manager.service'
 
 
@@ -26,7 +24,6 @@ export class AppComponent {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private backgroundMode: BackgroundMode,
-    private appStateService: AppStateService,
     private recorderManagerService: RecorderManagerService
   ) {
     this.initializeApp();

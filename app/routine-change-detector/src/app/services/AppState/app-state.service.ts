@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx'
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,19 +11,26 @@ export class AppStateService {
   private appState: AppState
   constructor( private platform: Platform, private backgroundMode: BackgroundMode) {
     this.appState = AppState.ACTIVE
+  }
 
-    this.platform.ready().then(() => {
-      // this.backgroundMode.on('enable').subscribe(obsEvent => {console.log('enabled')})
-      // this.backgroundMode.on('disable').subscribe(obsEvent => {console.log('disabled')})
-      this.backgroundMode.on('activate').subscribe(obsEvent => {
-        this.appState = AppState.BACKGROUND
-        this.backgroundMode.disableWebViewOptimizations()
-      })
-      this.backgroundMode.on('deactivate').subscribe(obsEvent => {
-        this.appState = AppState.ACTIVE
-      })
-      this.backgroundMode.on('failure').subscribe(obsEvent => {
-        this.appState = AppState.MISSING
+  public onChange(): Observable<string>{
+    return new Observable( observer => {
+      this.platform.ready().then(() => {
+        observer.next(this.getStateString())
+
+        this.backgroundMode.on('activate').subscribe(obsEvent => {
+          this.appState = AppState.BACKGROUND
+          this.backgroundMode.disableWebViewOptimizations()
+          observer.next(this.getStateString())
+        })
+        this.backgroundMode.on('deactivate').subscribe(obsEvent => {
+          this.appState = AppState.ACTIVE
+          observer.next(this.getStateString())
+        })
+        this.backgroundMode.on('failure').subscribe(obsEvent => {
+          this.appState = AppState.MISSING
+          observer.next(this.getStateString())
+        })
       })
     })
   }
