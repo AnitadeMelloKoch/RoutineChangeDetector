@@ -9,12 +9,15 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
+import  { HttpClientModule } from '@angular/common/http'
+
 
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Media } from '@ionic-native/media/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx'
 import { Network } from "@ionic-native/network/ngx"
+import { HTTP } from '@ionic-native/http/ngx'
 
 
 import { AppStateService } from 'src/app/services/AppState/app-state.service'
@@ -25,6 +28,7 @@ import { LocationService } from 'src/app/services/Location/location.service'
 import { AudioSnippetService } from 'src/app/services/AudioSnippet/audio-snippet.service'
 import { RecorderManagerService } from 'src/app/services/RecorderManager/recorder-manager.service'
 import { PhoneStateService } from 'src/app/services/PhoneState/phone-state.service'
+import { HttpService } from 'src/app/services/Http/http.service'
 
 @NgModule({
   declarations: [AppComponent],
@@ -41,6 +45,7 @@ import { PhoneStateService } from 'src/app/services/PhoneState/phone-state.servi
     File,
     BackgroundMode,
     Network,
+    HTTP,
     ////////////////////////////////////////////////////////////////
     // Services
     AppStateService,
@@ -50,7 +55,8 @@ import { PhoneStateService } from 'src/app/services/PhoneState/phone-state.servi
     LocationService,
     AudioSnippetService,
     RecorderManagerService,
-    PhoneStateService
+    PhoneStateService,
+    HttpService
   ],
   bootstrap: [AppComponent]
 })

@@ -11,6 +11,7 @@ import { PhoneStateService } from '../PhoneState/phone-state.service';
 
 import { fromEvent } from 'rxjs';
 import { Network } from '@ionic-native/network/ngx'
+import { HttpService } from '../Http/http.service';
 
 
 
@@ -52,10 +53,12 @@ export class RecorderManagerService {
     private _audioSnippet: AudioSnippetService,
     private _appState: AppStateService,
     private _network: Network,
-    private _phoneState: PhoneStateService
+    private _phoneState: PhoneStateService,
+    private _http: HttpService 
   ) { 
     this._platform.ready().then(() => {
       this._initService()
+
 
       
       this._recordShortData()
