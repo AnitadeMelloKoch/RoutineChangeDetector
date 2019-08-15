@@ -22,6 +22,7 @@
     "@angular/router": "^7.2.2",
     "@ionic-native/background-mode": "^5.10.0",
     "@ionic-native/core": "^5.0.0",
+    "@ionic-native/device": "^5.12.0",
     "@ionic-native/file": "^5.10.0",
     "@ionic-native/http": "^5.12.0",
     "@ionic-native/media": "^5.10.0",

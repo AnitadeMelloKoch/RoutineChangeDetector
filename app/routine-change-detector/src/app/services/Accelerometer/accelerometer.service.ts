@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AppComponent } from 'src/app/app.component';
+import { SensorList } from 'src/app/classes/sensor-list'
 
 @Injectable({
   providedIn: 'root'
@@ -7,24 +8,23 @@ import { AppComponent } from 'src/app/app.component';
 export class AccelerometerService {
 
   private static _G = 9.80665;
-  private _accelerationList = []
+  private _accelerationList: SensorList
 
-  private _accelerationListener = (event: any) => {
-    let acc = this._magnitude(event.accelerationIncludingGravity.x, event.accelerationIncludingGravity.y, event.accelerationIncludingGravity.z)/AccelerometerService._G
-    this._accelerationList.push(acc)
-  }
-
-  private _magnitude = (x: number, y: number, z: number) => {
-    return Math.sqrt(Math.pow(x,2)+Math.pow(y,2)+Math.pow(z,2))
+  private _accelerationListener = (event: DeviceMotionEvent) => {
+    this._accelerationList.push(
+      event.accelerationIncludingGravity.x / AccelerometerService._G, 
+      event.accelerationIncludingGravity.y / AccelerometerService._G, 
+      event.accelerationIncludingGravity.z / AccelerometerService._G, 
+      event.timeStamp)
   }
 
   constructor() {
-    // this.recordAcceleration()
+    this._accelerationList = new SensorList
   }
 
-   public recordAcceleration(): Promise<any[]> {
+   public recordAcceleration(): Promise<SensorList> {
     return new Promise( (resolve, reject) => {
-      this._accelerationList = []
+      this._accelerationList = new SensorList
       window.addEventListener('devicemotion', this._accelerationListener)
       setTimeout(() => {
         window.removeEventListener('devicemotion', this._accelerationListener)

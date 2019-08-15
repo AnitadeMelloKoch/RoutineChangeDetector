@@ -18,6 +18,7 @@ import { File } from '@ionic-native/file/ngx';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx'
 import { Network } from "@ionic-native/network/ngx"
 import { HTTP } from '@ionic-native/http/ngx'
+import { Device } from '@ionic-native/device/ngx'
 
 
 import { AppStateService } from 'src/app/services/AppState/app-state.service'
@@ -46,6 +47,7 @@ import { HttpService } from 'src/app/services/Http/http.service'
     BackgroundMode,
     Network,
     HTTP,
+    Device,
     ////////////////////////////////////////////////////////////////
     // Services
     AppStateService,

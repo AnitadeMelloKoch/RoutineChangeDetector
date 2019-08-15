@@ -4,6 +4,8 @@ import { Platform } from '@ionic/angular';
 import { AccelerometerService } from '../Accelerometer/accelerometer.service'
 import { GyroscopeService } from '../Gyroscope/gyroscope.service'
 import { MagnetometerService } from '../Magnetometer/magnetometer.service';
+import { SensorList } from 'src/app/classes/sensor-list'
+
 import { LocationService } from '../Location/location.service';
 import { AudioSnippetService } from '../AudioSnippet/audio-snippet.service';
 import { AppStateService } from '../AppState/app-state.service';
@@ -12,6 +14,8 @@ import { PhoneStateService } from '../PhoneState/phone-state.service';
 import { fromEvent } from 'rxjs';
 import { Network } from '@ionic-native/network/ngx'
 import { HttpService } from '../Http/http.service';
+
+import { Device } from '@ionic-native/device/ngx'
 
 
 
@@ -36,6 +40,7 @@ export class RecorderManagerService {
   private _networkType: string
   private _phoneStateType: string
   private _ringerModeType: string
+  private _uuid: string
 
   private _datetime: IDateTime
 
@@ -54,11 +59,13 @@ export class RecorderManagerService {
     private _appState: AppStateService,
     private _network: Network,
     private _phoneState: PhoneStateService,
-    private _http: HttpService 
+    private _device: Device,
+    // private _http: HttpService 
   ) { 
     this._platform.ready().then(() => {
       this._initService()
-
+      this._uuid = this._device.uuid
+      console.log(this._uuid)
 
       
       this._recordShortData()
@@ -94,9 +101,9 @@ export class RecorderManagerService {
     return new Promise(resolve => {
 
       let recorded = {
-        acceleration: [],
-        gyroscope: [],
-        magnetometer: [],
+        acceleration: new SensorList,
+        gyroscope: new SensorList,
+        magnetometer: new SensorList,
         location: [],
         audio: new ArrayBuffer(0),
         flags: [false, false, false, false, false]

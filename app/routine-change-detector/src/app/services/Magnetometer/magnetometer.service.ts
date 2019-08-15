@@ -1,30 +1,25 @@
 import { Injectable } from '@angular/core';
 import { AppComponent } from 'src/app/app.component';
+import { SensorList } from 'src/app/classes/sensor-list'
 
 @Injectable({
   providedIn: 'root'
 })
 export class MagnetometerService {
 
-  private _magnetList = []
+  private _magnetList: SensorList
 
-  private _magnetListener = (event: any) => {
-    let mag = this._magnitude(event.alpha, event.beta, event.gamma)
-    // console.log(mag)
-    this._magnetList.push(mag)
-  }
-
-  private _magnitude = (x: number, y: number, z: number) => {
-    return Math.sqrt(Math.pow(x,2)+Math.pow(y,2)+Math.pow(z,2))
+  private _magnetListener = (event: DeviceOrientationEvent) => {
+    this._magnetList.push(event.alpha, event.beta, event.gamma, event.timeStamp)
   }
 
   constructor() {
-    // this.recordMagnetometer().then(ret => console.log(ret)) 
+    this._magnetList = new SensorList
    }
 
-  public recordMagnetometer(): Promise<any[]> {
+  public recordMagnetometer(): Promise<SensorList> {
     return new Promise( (resolve, reject) => {
-      this._magnetList = []
+      this._magnetList = new SensorList
       window.addEventListener('deviceorientation', this._magnetListener)
       setTimeout(() => {
         window.removeEventListener('deviceorientation', this._magnetListener)

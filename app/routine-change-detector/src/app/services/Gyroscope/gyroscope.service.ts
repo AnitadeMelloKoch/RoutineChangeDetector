@@ -1,30 +1,27 @@
 import { Injectable } from '@angular/core';
 import { AppComponent } from 'src/app/app.component';
+import { SensorList } from 'src/app/classes/sensor-list'
 
 @Injectable({
   providedIn: 'root'
 })
 export class GyroscopeService {
 
-  private _gyroscopeList = []
+  private _gyroscopeList: SensorList
 
-  private _gyroscopeListener = (event: any) => {
-    let gyr = this._magnitude(event.rotationRate.alpha, event.rotationRate.beta, event.rotationRate.gamma)*(Math.PI/180)
-    // console.log(gyr)
-    this._gyroscopeList.push(gyr)
+  private _gyroscopeListener = (event: DeviceMotionEvent) => {
+    this._gyroscopeList.push(event.rotationRate.alpha*(Math.PI/180), event.rotationRate.beta*(Math.PI/180), event.rotationRate.gamma*(Math.PI/180), event.timeStamp)
   }
 
-  private _magnitude = (x: number, y: number, z: number) => {
-    return Math.sqrt(Math.pow(x,2)+Math.pow(y,2)+Math.pow(z,2))
-  }
+  
 
   constructor() {
-    // this.recordGyroscope().then(out => console.log(out))
+    this._gyroscopeList = new SensorList
    }
 
-  public recordGyroscope(): Promise<any[]> {
+  public recordGyroscope(): Promise<SensorList> {
     return new Promise( (resolve, reject) => {
-      this._gyroscopeList = []
+      this._gyroscopeList = new SensorList
       window.addEventListener('devicemotion', this._gyroscopeListener)
       setTimeout(() => {
         window.removeEventListener('devicemotion', this._gyroscopeListener)
