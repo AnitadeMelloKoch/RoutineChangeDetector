@@ -1,16 +1,69 @@
 import tensorflow as tf
 import numpy as np
+import pandas as pd
 
 import get_data as get
+
+labels = ["day",
+"hour",
+"minute",
+"lyingDown", 
+"sitting", 
+"walking", 
+"running", 
+"bicycling",
+"sleeping", 
+"labWork",
+"inClass",
+"inMeeting",
+"drivingDriver",
+"drivingPass",
+"exercise",
+"cooking", 
+"shopping", 
+"strolling", 
+"drinkingAlcohol", 
+"shower",
+"cleaning",
+"doingLaundry",
+"washingDishes", 
+"watchingTv", 
+"surfInternet",
+"singing",
+"talking",
+"computerWork",
+"eating",
+"toilet",
+"grooming",
+"dressing",
+"stairsUp",
+"stairsDown",
+"standing",
+"withCoworker", 
+"withFriends",
+"mainWorkplace",
+"indoors",
+"outdoors",
+"inCar",
+"onBus",
+"home",
+"restaurant",
+"atParty",
+"atBar",
+'beach',
+'atGym',
+"elevator",
+"atSchool",
+"anomalie"]
 
 timesteps = 100
 
 # Placeholder variables
-x = tf.compat.v1.placeholder(tf.float32, shape=[None, 51*timesteps], name='X')
+x = tf.compat.v1.placeholder(tf.float32, shape=[None, 50*timesteps], name='X')
 # Reshape into [num_images, img_height, img_width, num_channels]
-x_image = tf.reshape(x, [-1, timesteps, 51, 1])
+x_image = tf.reshape(x, [-1, timesteps, 50, 1])
 
-y_true = tf.compat.v1.placeholder(tf.float32, shape=[None, 51], name='y_true')
+y_true = tf.compat.v1.placeholder(tf.float32, shape=[None, 50], name='y_true')
 #y_true_cls = tf.argmax(y_true, axis=1)
 
 # function for new convolutional layer
@@ -77,7 +130,7 @@ layer_fc2 = new_fc_layer(layer_fc1, num_inputs=1560, num_outputs=860, name="fc2"
 
 layer_fc3 = new_fc_layer(layer_fc2, num_inputs=860, num_outputs=365, name="fc3")
 
-out = new_fc_layer(input=layer_fc3, num_inputs=365, num_outputs=51, name="out")
+out = new_fc_layer(input=layer_fc3, num_inputs=365, num_outputs=50, name="out")
 
 with tf.compat.v1.variable_scope("Softmax"):
     y_pred = tf.nn.softmax(out)
@@ -98,9 +151,13 @@ with tf.name_scope("accuracy"):
 epochs = 100
 batch_size = 100
 
-(_, all_y, _, _) = get.get_all_data("/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data", 1)
+data = pd.read_csv("./text.csv", names=labels)
+nor_obs = data.loc[data.anomalie == 0]
+ano_obs = data.loc[data.anomalie == 1]
 
-training_num = int(len(all_y)*0.7)
+data_x_in = nor_obs.drop('anomalie',1).values
+
+training_num = int(len(data_x_in)*0.7)
 data_x = []
 test_data_x = []
 train_data_x = []
@@ -108,25 +165,25 @@ output_test = []
 output_train = []
 
 
-for one_input in range(0, len(all_y) - timesteps):
-    print("Converting {} of {}".format(one_input, len(all_y)-timesteps))
+for one_input in range(0, len(data_x_in) - timesteps):
+    print("Converting {0} of {1}".format(one_input, len(data_x_in)-timesteps))
     one_point = []
     for one_row in range(0, timesteps):
         if one_row == 0:
-            one_point = all_y[one_input+one_row]
+            one_point = data_x_in[one_input+one_row]
         else:
-            one_point = np.concatenate([one_point, all_y[one_input+one_row]])
+            one_point = np.concatenate([one_point, data_x_in[one_input+one_row]])
         np.reshape(one_point, [1, -1])
     if (one_input == 0):
         data_x = one_point
     else:
-        data_x = np.concatenate([np.reshape(data_x, [-1, 51*timesteps]), np.reshape(one_point, [1, -1])])
+        data_x = np.concatenate([np.reshape(data_x, [-1, 50*timesteps]), np.reshape(one_point, [1, -1])])
 
 
 train_data_x = data_x[:training_num - timesteps]
 test_data_x = data_x[training_num:]
-output_train = all_y[timesteps:training_num]
-output_test = all_y[training_num+timesteps:]
+output_train = data_x[timesteps:training_num]
+output_test = data_x[training_num+timesteps:]
 
 with tf.compat.v1.Session() as sess:
     sess.run(tf.compat.v1.global_variables_initializer())

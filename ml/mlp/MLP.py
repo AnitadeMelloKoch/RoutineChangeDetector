@@ -7,7 +7,7 @@ from sklearn.utils import shuffle
 import argparse
 import matplotlib.pyplot as plt
 
-def main(training_dir, checkpointdir, training_files, train_percent, initial_learning_rate, epochs, batch_size, weighting_action_1, weighting_action_2, weighting_loc, weighting_phone, hidden_1, hidden_2, hidden_3, hidden_4, hidden_5, hidden_6, action_1_layer_1, action_2_layer_1, n_input, n_labels, n_output_action_1, n_output_action_2, n_output_loc, n_output_phone, regulariser_rate):
+def main(training_dir, checkpointdir, training_files, train_percent, initial_learning_rate, epochs, batch_size, weighting_action_1, weighting_action_2, weighting_loc, weighting_phone, hidden_1, hidden_2, hidden_3, hidden_4, hidden_5, hidden_6, hidden_7, hidden_8, action_1_layer_1, action_2_layer_1, action_2_layer_2, n_input, n_labels, n_output_action_1, n_output_action_2, n_output_loc, n_output_phone, regulariser_rate):
 
         f = open("output.log", "w+")
 
@@ -26,46 +26,58 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
 
         # initialize weights for layer 2
         weight_2 = tf.Variable(tf.random.normal([hidden_1, hidden_2]), name="weight_2")
-        bias_2 = tf.Variable(tf.random.normal([hidden_2]))
+        bias_2 = tf.Variable(tf.random.normal([hidden_2]), name="weight_2_bias")
 
         #initialize weights for layer 3
-        weight_3 = tf.Variable(tf.random.normal([hidden_2, hidden_3]))
-        bias_3 = tf.Variable(tf.random.normal([hidden_3]))
+        weight_3 = tf.Variable(tf.random.normal([hidden_2, hidden_3]), name="weight_3")
+        bias_3 = tf.Variable(tf.random.normal([hidden_3]), name="weight_3_bias")
 
         #initialize weights for layer 4
-        weight_4 = tf.Variable(tf.random.normal([hidden_3, hidden_4]))
-        bias_4 = tf.Variable(tf.random.normal([hidden_4]))
+        weight_4 = tf.Variable(tf.random.normal([hidden_3, hidden_4]), name="weight_4")
+        bias_4 = tf.Variable(tf.random.normal([hidden_4]), name="weight_4_bias")
 
         #initialize weights for layer 5
-        weight_5 = tf.Variable(tf.random.normal([hidden_4, hidden_5]))
-        bias_5 = tf.Variable(tf.random.normal([hidden_5]))
+        weight_5 = tf.Variable(tf.random.normal([hidden_4, hidden_5]), name="weight_5")
+        bias_5 = tf.Variable(tf.random.normal([hidden_5]), name="weight_5_bias")
 
         #initialize weights for layer 6
-        weight_6 = tf.Variable(tf.random.normal([hidden_5, hidden_6]))
-        bias_6 = tf.Variable(tf.random.normal([hidden_6]))
+        weight_6 = tf.Variable(tf.random.normal([hidden_5, hidden_6]), name="weight_6")
+        bias_6 = tf.Variable(tf.random.normal([hidden_6]), name="weight_6_bias")
+
+        #initialize weights for layer 7
+        weight_7 = tf.Variable(tf.random.normal([hidden_6, hidden_7]), name="weight_7")
+        bias_7 = tf.Variable(tf.random.normal([hidden_7]), name="weight_7_bias")
+
+        #initialize weights for layer 8
+        weight_8 = tf.Variable(tf.random.normal([hidden_7, hidden_8]), name="weight_8")
+        bias_8 = tf.Variable(tf.random.normal([hidden_8]), name="weight_8_bias")
 
         #initialize weights for action 1 layer 1
-        weight_action_1_layer_1 = tf.Variable(tf.random.normal([hidden_6, action_1_layer_1]))
-        bias_action_1_layer_1 = tf.Variable(tf.random.normal([action_1_layer_1]))
+        weight_action_1_layer_1 = tf.Variable(tf.random.normal([hidden_8, action_1_layer_1]), name='weight_action_1_layer_1')
+        bias_action_1_layer_1 = tf.Variable(tf.random.normal([action_1_layer_1]), name="weight_action_1_layer_1_bias")
 
         #initialize weights for action 1 layer 1
-        weight_action_2_layer_1 = tf.Variable(tf.random.normal([hidden_6, action_2_layer_1]))
-        bias_action_2_layer_1 = tf.Variable(tf.random.normal([action_2_layer_1]))
+        weight_action_2_layer_1 = tf.Variable(tf.random.normal([hidden_8, action_2_layer_1]), name="weight_action_2_layer_1")
+        bias_action_2_layer_1 = tf.Variable(tf.random.normal([action_2_layer_1]), name="weight_action_2_layer_1_bias")
+
+        #initialize weights for action 1 layer 1
+        weight_action_2_layer_2 = tf.Variable(tf.random.normal([action_2_layer_1, action_2_layer_2]), name="weight_action_2_layer_2")
+        bias_action_2_layer_2 = tf.Variable(tf.random.normal([action_2_layer_2]), name="weight_action_2_layer_2_bias")
 
         #initialize output weights for actions
-        weight_out_action_1 = tf.Variable(tf.random.normal([action_1_layer_1, n_output_action_1]))
-        bias_out_action_1 = tf.Variable(tf.random.normal([n_output_action_1]))
+        weight_out_action_1 = tf.Variable(tf.random.normal([action_1_layer_1, n_output_action_1]), name="weight_out_action_1")
+        bias_out_action_1 = tf.Variable(tf.random.normal([n_output_action_1]), name="weight_out_action_1_bias")
 
-        weight_out_action_2 = tf.Variable(tf.random.normal([action_2_layer_1, n_output_action_2]))
-        bias_out_action_2 = tf.Variable(tf.random.normal([n_output_action_2]))
+        weight_out_action_2 = tf.Variable(tf.random.normal([action_2_layer_2, n_output_action_2]), name="weight_out_action_2")
+        bias_out_action_2 = tf.Variable(tf.random.normal([n_output_action_2]), name="weight_out_action_2_bias")
 
         #initialize output weights for location
-        weight_out_loc = tf.Variable(tf.random.normal([hidden_6, n_output_loc]))
-        bias_out_loc = tf.Variable(tf.random.normal([n_output_loc]))
+        weight_out_loc = tf.Variable(tf.random.normal([hidden_8, n_output_loc]), name="weight_out_loc")
+        bias_out_loc = tf.Variable(tf.random.normal([n_output_loc]), name="weight_out_loc_bias")
 
         #initialize output weights for phone
-        weight_out_phone = tf.Variable(tf.random.normal([hidden_6, n_output_phone]))
-        bias_out_phone = tf.Variable(tf.random.normal([n_output_phone]))
+        weight_out_phone = tf.Variable(tf.random.normal([hidden_8, n_output_phone]), name="weight_out_phone")
+        bias_out_phone = tf.Variable(tf.random.normal([n_output_phone]), name="weight_out_phone_bias")
 
         # layer 1
         layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(x, weight_1), bias_1))
@@ -86,17 +98,26 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         # layer 6
         layer_6 = tf.nn.sigmoid(tf.add(tf.matmul(layer_5, weight_6), bias_6))
 
+        # layer 7
+        layer_7 = tf.nn.sigmoid(tf.add(tf.matmul(layer_6, weight_7), bias_7))
+
+        # layer 8
+        layer_8 = tf.nn.sigmoid(tf.add(tf.matmul(layer_7, weight_8), bias_8))
+
         # action 1 layer 1
-        layer_action_1_layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(layer_6, weight_action_1_layer_1), bias_action_1_layer_1))
+        layer_action_1_layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(layer_8, weight_action_1_layer_1), bias_action_1_layer_1))
 
         # action 2 layer 1
-        layer_action_2_layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(layer_6, weight_action_2_layer_1), bias_action_2_layer_1))
+        layer_action_2_layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(layer_8, weight_action_2_layer_1), bias_action_2_layer_1))
+
+        # action 2 layer 2
+        layer_action_2_layer_2 = tf.nn.sigmoid(tf.add(tf.matmul(layer_action_2_layer_1, weight_action_2_layer_2), bias_action_2_layer_2))
 
         # output layer
-        predicted_y_action_1 = tf.sigmoid(tf.add(tf.matmul(layer_action_1_layer_1, weight_out_action_1), bias_out_action_1))
-        predicted_y_action_2 = tf.sigmoid(tf.add(tf.matmul(layer_action_2_layer_1, weight_out_action_2), bias_out_action_2))
-        predicted_y_loc = tf.sigmoid(tf.add(tf.matmul(layer_6, weight_out_loc), bias_out_loc))
-        predicted_y_phone = tf.sigmoid(tf.add(tf.matmul(layer_6, weight_out_phone),bias_out_phone))
+        predicted_y_action_1 = tf.sigmoid(tf.add(tf.matmul(layer_action_1_layer_1, weight_out_action_1), bias_out_action_1), name="predict_action_1")
+        predicted_y_action_2 = tf.sigmoid(tf.add(tf.matmul(layer_action_2_layer_2, weight_out_action_2), bias_out_action_2), name="predict_action_2")
+        predicted_y_loc = tf.sigmoid(tf.add(tf.matmul(layer_8, weight_out_loc), bias_out_loc), name="predict_loc")
+        predicted_y_phone = tf.sigmoid(tf.add(tf.matmul(layer_8, weight_out_phone),bias_out_phone), name="predict_phone")
 
         # loss function for changing weights
         loss = weighting_action_1*(tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=predicted_y_action_1, labels=y_action_1))) \
@@ -117,8 +138,11 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                                                                                 weight_4,
                                                                                 weight_5,
                                                                                 weight_6,
+                                                                                weight_7,
+                                                                                weight_8,
                                                                                 weight_action_1_layer_1,
                                                                                 weight_action_2_layer_1,
+                                                                                weight_action_2_layer_2,
                                                                                 weight_out_action_1,
                                                                                 weight_out_action_2, 
                                                                                 weight_out_loc, 
@@ -129,8 +153,11 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                                                                                 bias_4,
                                                                                 bias_5,
                                                                                 bias_6,
+                                                                                bias_7,
+                                                                                bias_8,
                                                                                 bias_action_1_layer_1,
                                                                                 bias_action_2_layer_1,
+                                                                                bias_action_2_layer_2,
                                                                                 bias_out_action_1, 
                                                                                 bias_out_action_2,
                                                                                 bias_out_loc, 
@@ -350,8 +377,11 @@ if __name__ == '__main__':
         AP.add_argument("--hidden_4", type=int, default=225, help="Number of features extracted by fourth hidden layer")
         AP.add_argument("--hidden_5", type=int, default=225, help="Number of features extracted by fifth hidden layer")
         AP.add_argument("--hidden_6", type=int, default=225, help="Number of features extracted by sixth hidden layer")
+        AP.add_argument("--hidden_7", type=int, default=225, help="Number of features extracted by seventh hidden layer")
+        AP.add_argument("--hidden_8", type=int, default=225, help="Number of features extracted by eighth hidden layer")
         AP.add_argument("--action_1_layer_1", type=int, default=20, help="Number of features extracted by action 1 layer 1")
         AP.add_argument("--action_2_layer_1", type=int, default=20, help="Number of features extracted by action 2 layer 1")
+        AP.add_argument("--action_2_layer_2", type=int, default=20, help="Number of features extracted by action 2 layer 2")
         AP.add_argument("--input", type=int, default=225, help="Number of inputs into network")
         AP.add_argument("--add_input", type=int, default=51, help="Number of additional inputs fed into the network")
         AP.add_argument("--actions_1",type=int, default=14, help="Number of action labels in output")
@@ -379,8 +409,11 @@ if __name__ == '__main__':
                 hidden_4=parsed.hidden_4,
                 hidden_5=parsed.hidden_5,
                 hidden_6=parsed.hidden_6,
+                hidden_7=parsed.hidden_7,
+                hidden_8=parsed.hidden_8,
                 action_1_layer_1=parsed.action_1_layer_1,
                 action_2_layer_1=parsed.action_2_layer_1,
+                action_2_layer_2=parsed.action_2_layer_2,
                 n_input=parsed.input, 
                 n_labels=parsed.add_input, 
                 n_output_action_1=parsed.actions_1,

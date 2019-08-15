@@ -3,18 +3,69 @@ from tensorflow.contrib import rnn
 import numpy as np
 from sklearn.metrics import roc_auc_score, accuracy_score
 import random
+import pandas as pd
 
-import get_data as get
+labels = ["day",
+"hour",
+"minute",
+"lyingDown", 
+"sitting", 
+"walking", 
+"running", 
+"bicycling",
+"sleeping", 
+"labWork",
+"inClass",
+"inMeeting",
+"drivingDriver",
+"drivingPass",
+"exercise",
+"cooking", 
+"shopping", 
+"strolling", 
+"drinkingAlcohol", 
+"shower",
+"cleaning",
+"doingLaundry",
+"washingDishes", 
+"watchingTv", 
+"surfInternet",
+"singing",
+"talking",
+"computerWork",
+"eating",
+"toilet",
+"grooming",
+"dressing",
+"stairsUp",
+"stairsDown",
+"standing",
+"withCoworker", 
+"withFriends",
+"mainWorkplace",
+"indoors",
+"outdoors",
+"inCar",
+"onBus",
+"home",
+"restaurant",
+"atParty",
+"atBar",
+'beach',
+'atGym',
+"elevator",
+"atSchool",
+"anomalie"]
 
 # try using two LSTM layers with fully connected layer and output
 
 sess = tf.compat.v1.InteractiveSession()
 
 # Parameters
-n_input = 51
-n_lstm = 51
-n_hidden_1 = 51
-n_output = 51
+n_input = 50
+n_lstm = 50
+n_hidden_1 = 50
+n_output = 50
 timesteps = 70
 learning_rate = 0.001
 iterations = 100000
@@ -76,20 +127,21 @@ loss_total = 0
 
 sess.run(tf.compat.v1.global_variables_initializer())
 
-(all_x, all_y, all_m, times) = get.get_all_data("/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data", 2)
+data = pd.read_csv("./text.csv", names=labels)
+nor_obs = data.loc[data.anomalie == 0]
+ano_obs = data.loc[data.anomalie == 1]
 
-training_num = int(len(all_y)*0.7)
-input_train = all_y[:training_num]
-input_test = all_y[training_num:]
-output_train = all_y[timesteps:training_num]
-output_test = all_y[training_num+timesteps:]
+training_num = int(len(nor_obs)*0.7)
+input_train = nor_obs.loc[:training_num, :].drop('anomalie', 1).values
+input_test = nor_obs.loc[training_num:, :].drop('anomalie', 1).values
+output_train = nor_obs.loc[timesteps:training_num, :].drop('anomalie', 1).values
+output_test = nor_obs.loc[training_num+timesteps:, :].drop('anomalie', 1).values
 
-print(np.reshape(input_train, [-1])[0:51*8].shape)
-print(input_train[0].shape)
-print(input_train.shape)
 test_data_x = []
 
+
 for one_input in range(0, len(input_test) - timesteps):
+        print("converting {0} of {1}".format(one_input, len(input_test) - timesteps))
         one_point = np.reshape(input_test[one_input: one_input+timesteps], [1, timesteps, n_output])
         if (one_input == 0):
                 test_data_x = one_point
