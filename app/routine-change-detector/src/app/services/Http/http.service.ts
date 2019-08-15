@@ -17,11 +17,12 @@ export class HttpService {
 
   public sendData(body):Promise<any>{
     return new Promise( (resolve, reject ) => {
-      let url = 'https://routinechangedetector.azurewebsites.net/rdc-api/data/'
+      let url = 'https://routinechangedetector.azurewebsites.net/rcd-api/data/'
       
       let headers = {
         'content-type': 'application/json'
       }
+      console.log(body)
       this._http.post(url, body, headers)
         .then(returnedData => {
           console.log('Recieved request')

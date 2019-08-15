@@ -22,11 +22,87 @@ import { Device } from '@ionic-native/device/ngx'
 // declare var PhoneCallTrap: any;
 declare var RingerMode: any;
 
-interface IDateTime {
-  timestamp?: number
-  day?: number
-  hour?: number
-  minute?: number
+export class DayTime {
+  timestamp: number
+  day: number
+  hour: number
+  minute: number
+
+  constructor(ts: number, d: number, h: number, m: number){
+    this.timestamp = ts
+    this.day = d
+    this.hour = h
+    this.minute = m
+  }
+}
+
+class LongData{
+  acceleration: SensorList //new SensorList,
+  gyroscope: SensorList //new SensorList,
+  magnetometer: SensorList//new SensorList,
+  location: any[] //[],
+  audio: ArrayBuffer //new ArrayBuffer(0),
+  flags: boolean[] //[false, false, false, false, false]
+  constructor(){
+    this.acceleration = new SensorList
+    this.gyroscope = new SensorList
+    this.magnetometer = new SensorList
+    this.location = []
+    this.audio = new ArrayBuffer(0)
+    this.flags = [false, false, false, false, false]
+  }
+}
+
+export class RecordedData{
+  acceleration: SensorList
+  audio: ArrayBuffer
+  gyroscope: SensorList
+  location: any[]
+  magnetometer: SensorList
+  battteryLevel: number
+  batteryIsPlugged: boolean
+  appState: string
+  network: string
+  phoneState: string
+  ringerMode: string
+  uuid: string
+  timestamp: number
+  day: number
+  hour: number
+  minute: number
+  constructor(_acceleration: SensorList,
+              _audio: ArrayBuffer,
+              _gyroscope: SensorList,
+              _location: any[],
+              _magnetometer: SensorList,
+              _battteryLevel: number,
+              _batteryIsPlugged: boolean,
+              _appState: string,
+              _network: string,
+              _phoneState: string,
+              _ringerMode: string,
+              _uuid: string,
+              _timestamp: number,
+              _day: number,
+              _hour: number,
+              _minute: number){
+    this.acceleration = _acceleration
+    this.audio = _audio
+    this.gyroscope = _gyroscope
+    this.location = _location
+    this.magnetometer = _magnetometer
+    this.battteryLevel = _battteryLevel
+    this.batteryIsPlugged = _batteryIsPlugged
+    this.appState = _appState
+    this.network = _network
+    this.phoneState = _phoneState
+    this.ringerMode = _ringerMode
+    this.uuid = _uuid
+    this.timestamp = _timestamp
+    this.day = _day
+    this.hour = _hour
+    this.minute = _minute
+  }
 }
 
 @Injectable({
@@ -42,7 +118,7 @@ export class RecorderManagerService {
   private _ringerModeType: string
   private _uuid: string
 
-  private _datetime: IDateTime
+  private _datetime: DayTime
 
   private _networkObservable: any
   private _batteryObservable: any
@@ -64,17 +140,42 @@ export class RecorderManagerService {
   ) { 
     this._platform.ready().then(() => {
       this._initService()
-      this._uuid = this._device.uuid
-      console.log(this._uuid)
-
       
-      this._recordShortData()
-      this._recordLongData().then((data) => {
+      this.recordData().then( data => {
         console.log(data)
       })
-      
-      
-            
+     
+    })
+  }
+
+  public recordData(): Promise<RecordedData>{
+    return new Promise( (resolve, reject) => {
+      let data = new LongData()
+      this._recordShortData()
+      this._recordLongData()
+        .then((_data) => {
+          data = _data
+        })
+        .finally( () => {
+          resolve(new RecordedData(
+            data.acceleration, 
+            data.audio,
+            data.gyroscope,
+            data.location,
+            data.magnetometer,
+            this._batteryLevel,
+            this._batteryIsPlugged,
+            this._appStateType,
+            this._networkType,
+            this._phoneStateType,
+            this._ringerModeType,
+            this._uuid,
+            this._datetime.timestamp,
+            this._datetime.day,
+            this._datetime.hour,
+            this._datetime.minute
+            ))
+        })
     })
   }
 
@@ -83,31 +184,23 @@ export class RecorderManagerService {
       this._ringerModeType = type
     })
     let date = new Date()
-    this._datetime.timestamp = date.getTime()
-    this._datetime.day = date.getDay()
-    this._datetime.hour = date.getHours()
-    this._datetime.minute = date.getMinutes()
-
-    console.log(this._datetime)
+    this._datetime = new DayTime(date.getTime(), date.getDay(), date.getHours(), date.getMinutes())
+    // this._datetime.timestamp = date.getTime()
+    // this._datetime.day = date.getDay()
+    // this._datetime.hour = date.getHours()
+    // this._datetime.minute = date.getMinutes()
   }
 
-  private _onLongFinally( recorded:any, flags: boolean[], resolve: (value?: any) => void){
+  private _onLongFinally( recorded:LongData, flags: boolean[], resolve: (value?: any) => void){
     if(flags.every(f => { return f })){
       resolve(recorded)
     }
   }
 
-  private _recordLongData() {
+  private _recordLongData() :Promise<LongData> {
     return new Promise(resolve => {
 
-      let recorded = {
-        acceleration: new SensorList,
-        gyroscope: new SensorList,
-        magnetometer: new SensorList,
-        location: [],
-        audio: new ArrayBuffer(0),
-        flags: [false, false, false, false, false]
-      }
+      let recorded = new LongData()
 
       this._accelerometer.recordAcceleration().then((data) => {
         recorded.acceleration = data 
@@ -142,12 +235,12 @@ export class RecorderManagerService {
     })    
   }
 
+  // ! To increase performance, subscribe and unsubscribe every record session
   private _initService() {
-    console.log("Recorder Service Started")
+    this._uuid = this._device.uuid
     this._networkType = this._network.type
-    this._datetime = {}
-    this._subscribeObervables()  // To increase performance, subscribe and 
-                            // unsubscribe every record session
+    // this._datetime = {}
+    this._subscribeObervables()
   }
 
   private _subscribeObervables() {

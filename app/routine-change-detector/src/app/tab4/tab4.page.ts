@@ -9,6 +9,7 @@ import { Platform } from '@ionic/angular';
 import { Network } from '@ionic-native/network/ngx'
 
 import { HttpService } from '../services/Http/http.service';
+import { RecorderManagerService } from '../services/RecorderManager/recorder-manager.service';
 
 declare var PhoneCallTrap: any;
 declare var RingerMode: any;
@@ -27,7 +28,7 @@ export class Tab4Page {
 
   private result: string
 
-  constructor( private navCtrl: NavController, /*private file: File, private platform: Platform, private network: Network*/ private _http: HttpService) {
+  constructor( private navCtrl: NavController, /*private file: File, private platform: Platform, private network: Network*/ private _http: HttpService, private _recman: RecorderManagerService) {
 
     // let _battery = fromEvent(window, 'batterystatus').subscribe(status => {
     //   console.log(status)
@@ -72,10 +73,15 @@ export class Tab4Page {
   }
 
   public send(){
-    let body = {
-      body : 'thing'
-    }
-    this._http.sendData(body)
+
+    this._recman.recordData().then( recdata => {
+    // let body = {
+    //   body : 'thing'
+    // }
+
+    console.log(JSON.stringify(recdata))
+    
+    this._http.sendData(recdata)//body)
       .then(res => {
         this.result = res
         console.log(this.result)
@@ -84,6 +90,9 @@ export class Tab4Page {
         this.result = err
         console.log(this.result)
       })
+    })
+
+    
   }
 
   ngOnInit() {
