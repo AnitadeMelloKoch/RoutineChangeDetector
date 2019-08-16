@@ -30,6 +30,7 @@ hidden_8=70
 action_1_layer_1=50
 action_2_layer_1=50
 action_2_layer_2=30
+action_2_layer_3=20
 
 action_weight_1=0.47
 action_weight_2=0.24
@@ -40,7 +41,7 @@ phone_weight=0.08
 # Directories
 
 datadir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data"
-rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/8hidden800epoch"
+rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/3action2"
 datascriptdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/dataHandeling"
 mlpdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/mlp"
 
@@ -87,4 +88,5 @@ python3 MLP.py  --training_directory $datadir \
                 --hidden_7 $hidden_7 \
                 --action_1_layer_1 $action_1_layer_1 \
                 --action_2_layer_1 $action_2_layer_1 \
-                --action_2_layer_2 $action_2_layer_2
+                --action_2_layer_2 $action_2_layer_2 \
+                --action_2_layer_3 $action_2_layer_3
