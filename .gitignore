@@ -736,3 +736,8 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.gitignore.io/api/git,node,latex,python,ionic3,android,androidstudio,visualstudiocode
+azure_web/
+
+app/cordova-plugin-ringermode/
+
+app/ExtraSensory\.per_uuid_features_labels/
