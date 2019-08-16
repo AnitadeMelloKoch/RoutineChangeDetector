@@ -61,8 +61,8 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         bias_action_2_layer_2 = tf.Variable(tf.random.normal([action_2_layer_2]), name="weight_action_2_layer_2_bias")
 
         #initialize weights for action 2 layer 3
-        weight_action_2_layer_3 = tf.Variable(tf.random.normal([action_2_layer_2, action_2_layer_3]), name="weight_action_2_layer_2")
-        bias_action_2_layer_3 = tf.Variable(tf.random.normal([action_2_layer_3]), name="weight_action_2_layer_2_bias")
+        weight_action_2_layer_3 = tf.Variable(tf.random.normal([action_2_layer_2, action_2_layer_3]), name="weight_action_2_layer_3")
+        bias_action_2_layer_3 = tf.Variable(tf.random.normal([action_2_layer_3]), name="weight_action_2_layer_3_bias")
 
         #initialize output weights for actions
         weight_out_action_1 = tf.Variable(tf.random.normal([action_1_layer_1, n_output_action_1]), name="weight_out_action_1")

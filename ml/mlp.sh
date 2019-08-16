@@ -25,7 +25,6 @@ hidden_4=170
 hidden_5=150
 hidden_6=130
 hidden_7=90
-hidden_8=70
 
 action_1_layer_1=50
 action_2_layer_1=50
