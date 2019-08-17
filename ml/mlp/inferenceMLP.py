@@ -32,8 +32,6 @@ def predict(data, meta_dir, checkpoint_dir, validate):
         bias_action_1_layer_1 = graph.get_tensor_by_name("weight_action_1_layer_1_bias:0")
         weight_action_2_layer_1 = graph.get_tensor_by_name("weight_action_2_layer_1:0")
         bias_action_2_layer_1 = graph.get_tensor_by_name("weight_action_2_layer_1_bias:0")
-        weight_action_2_layer_2 = graph.get_tensor_by_name("weight_action_2_layer_2:0")
-        bias_action_2_layer_2 = graph.get_tensor_by_name("weight_action_2_layer_2_bias:0")
         weight_out_action_1 = graph.get_tensor_by_name("weight_out_action_1:0")
         bias_out_action_1 = graph.get_tensor_by_name("weight_out_action_1_bias:0")
         weight_out_action_2 = graph.get_tensor_by_name("weight_out_action_2:0")
@@ -52,11 +50,10 @@ def predict(data, meta_dir, checkpoint_dir, validate):
         layer_6 = tf.nn.sigmoid(tf.add(tf.matmul(layer_5, weight_6), bias_6))
         layer_action_1_layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(layer_6, weight_action_1_layer_1), bias_action_1_layer_1))
         layer_action_2_layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(layer_6, weight_action_2_layer_1), bias_action_2_layer_1))
-        layer_action_2_layer_2 = tf.nn.sigmoid(tf.add(tf.matmul(layer_action_2_layer_1, weight_action_2_layer_2), bias_action_2_layer_2))
 
         # initialize predictions
         predicted_action_1 = tf.sigmoid(tf.add(tf.matmul(layer_action_1_layer_1, weight_out_action_1), bias_out_action_1))
-        predicted_action_2 = tf.sigmoid(tf.add(tf.matmul(layer_action_2_layer_2, weight_out_action_2), bias_out_action_2))
+        predicted_action_2 = tf.sigmoid(tf.add(tf.matmul(layer_action_2_layer_1, weight_out_action_2), bias_out_action_2))
         predicted_loc = tf.sigmoid(tf.add(tf.matmul(layer_6, weight_out_loc), bias_out_loc))
         predicted_phone = tf.sigmoid(tf.add(tf.matmul(layer_6, weight_out_phone), bias_out_phone))
 
