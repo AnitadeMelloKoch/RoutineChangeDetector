@@ -75,13 +75,10 @@ export class Tab4Page {
   public send(){
 
     this._recman.recordData().then( recdata => {
-    // let body = {
-    //   body : 'thing'
-    // }
 
     console.log(JSON.stringify(recdata))
     
-    this._http.sendData(recdata)//body)
+    this._http.sendData(recdata)
       .then(res => {
         this.result = res
         console.log(this.result)

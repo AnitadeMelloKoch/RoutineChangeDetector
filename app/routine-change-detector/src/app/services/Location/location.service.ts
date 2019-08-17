@@ -39,6 +39,10 @@ export class LocationService {
                         .subscribe( this._geolocationSuccess )
       setTimeout(() => {
         geoWatchID.unsubscribe()
+        this._geolocation.getCurrentPosition()
+          .then( resp => {
+            this._geodataList.push(resp)
+          })
         resolve(this._geodataList)
       }, AppComponent.recordTime)
     })

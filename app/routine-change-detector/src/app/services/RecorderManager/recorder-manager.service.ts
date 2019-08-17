@@ -59,7 +59,7 @@ export class RecordedData{
   gyroscope: SensorList
   location: any[]
   magnetometer: SensorList
-  battteryLevel: number
+  batteryLevel: number
   batteryIsPlugged: boolean
   appState: string
   network: string
@@ -75,7 +75,7 @@ export class RecordedData{
               _gyroscope: SensorList,
               _location: any[],
               _magnetometer: SensorList,
-              _battteryLevel: number,
+              _batteryLevel: number,
               _batteryIsPlugged: boolean,
               _appState: string,
               _network: string,
@@ -91,7 +91,7 @@ export class RecordedData{
     this.gyroscope = _gyroscope
     this.location = _location
     this.magnetometer = _magnetometer
-    this.battteryLevel = _battteryLevel
+    this.batteryLevel = _batteryLevel
     this.batteryIsPlugged = _batteryIsPlugged
     this.appState = _appState
     this.network = _network
