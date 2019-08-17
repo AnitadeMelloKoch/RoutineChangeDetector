@@ -12,7 +12,7 @@ trainSplit=0.7
 learningInit=0.001
 
 # Number of epochs to train for
-epochs=800
+epochs=3000
 
 # batch size for each training step
 batch=200
@@ -20,16 +20,13 @@ batch=200
 # Number of feature discovered by each hidden layer
 hidden_1=255
 hidden_2=215
-hidden_3=190
-hidden_4=170
-hidden_5=150
-hidden_6=130
-hidden_7=90
+hidden_3=180
+hidden_4=150
+hidden_5=110
+hidden_6=90
 
-action_1_layer_1=50
-action_2_layer_1=50
-action_2_layer_2=30
-action_2_layer_3=20
+action_1_layer_1=70
+action_2_layer_1=70
 
 action_weight_1=0.47
 action_weight_2=0.24
@@ -40,7 +37,7 @@ phone_weight=0.08
 # Directories
 
 datadir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data"
-rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/3action2"
+rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/3000epochs"
 datascriptdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/dataHandeling"
 mlpdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/mlp"
 
@@ -50,7 +47,7 @@ mlpdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/mlp"
 
 if [ -d $rundir ]; then
   read -p "Directory already exists. Do you wish to continue? [y,n]" conti
-  if [$conti == "n"]; then
+  if [$conti=="n"]; then
     exit
   fi
 fi
@@ -84,8 +81,5 @@ python3 MLP.py  --training_directory $datadir \
                 --hidden_4 $hidden_4 \
                 --hidden_5 $hidden_5 \
                 --hidden_6 $hidden_6 \
-                --hidden_7 $hidden_7 \
                 --action_1_layer_1 $action_1_layer_1 \
-                --action_2_layer_1 $action_2_layer_1 \
-                --action_2_layer_2 $action_2_layer_2 \
-                --action_2_layer_3 $action_2_layer_3
+                --action_2_layer_1 $action_2_layer_1

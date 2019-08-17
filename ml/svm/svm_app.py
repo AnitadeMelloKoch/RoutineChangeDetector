@@ -12,21 +12,24 @@ labels = ["day",
 "running", 
 "bicycling",
 "sleeping", 
-"labWork",
-"inClass",
-"inMeeting",
 "drivingDriver",
 "drivingPass",
 "exercise",
-"cooking", 
 "shopping", 
 "strolling", 
-"drinkingAlcohol", 
+"stairsUp",
+"stairsDown",
+"standing",
+"labWork",
+"inClass",
+"inMeeting",
+"cooking",
+"drinkingAlcohol",
 "shower",
 "cleaning",
-"doingLaundry",
-"washingDishes", 
-"watchingTv", 
+"laundry",
+"washingDishes",
+"watchTV",
 "surfInternet",
 "singing",
 "talking",
@@ -35,9 +38,6 @@ labels = ["day",
 "toilet",
 "grooming",
 "dressing",
-"stairsUp",
-"stairsDown",
-"standing",
 "withCoworker", 
 "withFriends",
 "mainWorkplace",
@@ -55,17 +55,8 @@ labels = ["day",
 "atSchool",
 "anomalie"]
 
-def main(training_dir, num_detect):
-    cc =  pd.read_csv(training_dir, names=labels)
+def main(nor_data_train, data_to_analyze):
 
-    trainSetIndex = len(cc) - num_detect 
-
-    training_set = cc.loc[0:trainSetIndex, :]
-
-    nor_obs = training_set.loc[training_set.anomalie ==0]   
-    ano_obs = training_set.loc[training_set.anomalie==1]    
-
-    prediction_data = cc.loc[trainSetIndex:,:]
 
     # Setting the hyperparameters for Once Class SVM
 
@@ -73,23 +64,26 @@ def main(training_dir, num_detect):
 
     print("Start training")
 
-    oneclass.fit(training_set)
+    oneclass.fit(nor_data_train)
 
-    fraud_pred = oneclass.predict(prediction_data)
+    fraud_pred = oneclass.predict(data_to_analyze)
 
-    unique, counts = np.unique(fraud_pred, return_counts=True)
-    print (np.asarray((unique, counts)).T)
-    print(fraud_pred)
+    # unique, counts = np.unique(fraud_pred, return_counts=True)
+    # print (np.asarray((unique, counts)).T)
+    # print(fraud_pred)
     fraud_pred[fraud_pred == 1] = 0
     fraud_pred[fraud_pred == -1] = 1
     print(fraud_pred)
 
+    return fraud_pred
+
 if __name__ == '__main__':
     AP = argparse.ArgumentParser()
-    AP.add_argument("--training_file", type=str, help="Location of training file")
+    AP.add_argument("--train_data", type=list, help="List containing non-anomolous data")
+    AP.add_argument("--data_to_analyze", type=list, help="List containing data to analyze")
     AP.add_argument("--points_to_analyze", type=int, default=96, help="Number of points for SVM to do anomaly detection on")
 
     parsed = AP.parse_args()
 
-    main(   training_dir=parsed.training_file,
-            num_detect=parsed.points_to_analyze)
+    main(   nor_data_train=parsed.train_data,
+            data_to_analyze=parsed.data_to_analyze)
