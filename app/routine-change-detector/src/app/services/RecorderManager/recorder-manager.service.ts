@@ -6,7 +6,7 @@ import { GyroscopeService } from '../Gyroscope/gyroscope.service'
 import { MagnetometerService } from '../Magnetometer/magnetometer.service';
 import { SensorList } from 'src/app/classes/sensor-list'
 
-import { LocationService } from '../Location/location.service';
+import { LocationService, GeoData } from '../Location/location.service';
 import { AudioSnippetService } from '../AudioSnippet/audio-snippet.service';
 import { AppStateService } from '../AppState/app-state.service';
 import { PhoneStateService } from '../PhoneState/phone-state.service';
@@ -40,7 +40,7 @@ class LongData{
   acceleration: SensorList //new SensorList,
   gyroscope: SensorList //new SensorList,
   magnetometer: SensorList//new SensorList,
-  location: any[] //[],
+  location: GeoData[] //[],
   audio: ArrayBuffer //new ArrayBuffer(0),
   flags: boolean[] //[false, false, false, false, false]
   constructor(){
@@ -57,7 +57,7 @@ export class RecordedData{
   acceleration: SensorList
   audio: ArrayBuffer
   gyroscope: SensorList
-  location: any[]
+  location: GeoData[]
   magnetometer: SensorList
   batteryLevel: number
   batteryIsPlugged: boolean
@@ -73,7 +73,7 @@ export class RecordedData{
   constructor(_acceleration: SensorList,
               _audio: ArrayBuffer,
               _gyroscope: SensorList,
-              _location: any[],
+              _location: GeoData[],
               _magnetometer: SensorList,
               _batteryLevel: number,
               _batteryIsPlugged: boolean,
@@ -185,10 +185,6 @@ export class RecorderManagerService {
     })
     let date = new Date()
     this._datetime = new DayTime(date.getTime(), date.getDay(), date.getHours(), date.getMinutes())
-    // this._datetime.timestamp = date.getTime()
-    // this._datetime.day = date.getDay()
-    // this._datetime.hour = date.getHours()
-    // this._datetime.minute = date.getMinutes()
   }
 
   private _onLongFinally( recorded:LongData, flags: boolean[], resolve: (value?: any) => void){

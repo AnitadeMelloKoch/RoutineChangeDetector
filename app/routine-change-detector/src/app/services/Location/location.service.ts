@@ -12,14 +12,22 @@ export class LocationService {
   
   private _geodataList = []
   private readonly _geolocationOptions = { maximumAge: 0, timeout: 9000, enableHighAccuracy: true }
+  private _recording: boolean
 
   constructor(private _geolocation: Geolocation, private _platform: Platform) {
-    // this.recordLocation().then(res => console.log(res))
+    this._recording = false
+    let geoWatchID = this._geolocation.watchPosition(this._geolocationOptions)
+                        .pipe(
+                          filter( this._geolocationFilter )
+                          )
+                        .subscribe( this._geolocationSuccess )
   }
 
   private _geolocationSuccess = (geoloc) => { 
-    // console.log(geoloc)
-    this._geodataList.push(geoloc)
+    if(this._recording){
+      console.log(JSON.stringify(new GeoData(geoloc)))
+      this._geodataList.push(new GeoData(geoloc))
+    }
    }
   private _geolocationFilter = (p) => {
     // if(!(p.coords !== undefined)){
@@ -29,19 +37,21 @@ export class LocationService {
     return p.coords !== undefined
   }
 
-  public recordLocation(): Promise<any[]> {
+  public recordLocation(): Promise<GeoData[]> {
     return new Promise ( (resolve, reject) => {
       this._geodataList = []
-      let geoWatchID = this._geolocation.watchPosition(this._geolocationOptions)
-                        .pipe(
-                          filter( this._geolocationFilter )
-                          )
-                        .subscribe( this._geolocationSuccess )
+      this._recording = true
+      // let geoWatchID = this._geolocation.watchPosition(this._geolocationOptions)
+      //                   .pipe(
+      //                     filter( this._geolocationFilter )
+      //                     )
+      //                   .subscribe( this._geolocationSuccess )
       setTimeout(() => {
-        geoWatchID.unsubscribe()
+        // geoWatchID.unsubscribe()
+        this._recording = false
         this._geolocation.getCurrentPosition()
           .then( resp => {
-            this._geodataList.push(resp)
+            this._geodataList.push(new GeoData(resp))
           })
         resolve(this._geodataList)
       }, AppComponent.recordTime)
@@ -51,59 +61,34 @@ export class LocationService {
 }
 
 export class GeoData {
-  private _latitude: number
-  private _longitude: number
-  private _accuracy: number
-  private _altitude: number
-  private _altitudeAccuracy: number
-  private _heading: number
-  private _speed: number
-  private _timestamp: number
+  latitude: number
+  longitude: number
+  accuracy: number
+  altitude: number
+  altitudeAccuracy: number
+  heading: number
+  speed: number
+  timestamp: number
 
-  constructor(){
-    this._latitude = 0
-    this._longitude = 0
-    this._accuracy = 0
-    this._altitude = 0
-    this._altitudeAccuracy = 0
-    this._heading = 0
-    this._speed = 0
-    this._timestamp = 0
-  }
-
-  setGeoData(latitude: number, longitude: number, accuracy: number, altitude: number, altitudeAccuracy: number, heading: number, speed: number, timestamp: number){
-      this.setLatitude(latitude)
-      this.setLongitude(longitude)
-      this.setAccuracy(accuracy)
-      this.setAltitude(altitude)
-      this.setAltitudeAccuracy(altitudeAccuracy)
-      this.setHeading(heading)
-      this.setSpeed(speed)
-      this.setTimestamp(timestamp)
+  constructor(location?: Position){
+    this.latitude = location.coords.latitude || 0
+    this.longitude = location.coords.longitude || 0
+    this.accuracy = location.coords.accuracy || 0
+    this.altitude = location.coords.altitude || 0
+    this.altitudeAccuracy = location.coords.altitudeAccuracy || 0
+    this.heading = location.coords.heading || 0
+    this.speed = location.coords.speed || 0
+    this.timestamp = location.timestamp || 0
   }
 
-  setLatitude(latitude: number):void {
-    if(latitude <= 90 && latitude >= -90) { this._latitude = latitude }
-  }
-  setLongitude(longitude: number):void {
-    if(longitude <= 180 && longitude >= -180) { this._longitude = longitude }
-  }
-  setAccuracy(accuracy: number):void {
-    this._accuracy = accuracy
-  }
-  setAltitude(altitude: number):void {
-    this._altitude = altitude
-  }
-  setAltitudeAccuracy(altitudeAccuracy: number):void {
-    this._altitudeAccuracy = altitudeAccuracy
-  }
-  setHeading(heading: number):void {
-    this._heading = heading
-  }
-  setSpeed(speed: number):void {
-    this._speed = speed
-  }
-  setTimestamp(timestamp: number):void {
-    this._timestamp = timestamp
+  setGeoData(location: Position){
+    this.latitude = location.coords.latitude
+    this.longitude = location.coords.longitude
+    this.accuracy = location.coords.accuracy
+    this.altitude = location.coords.altitude
+    this.altitudeAccuracy = location.coords.altitudeAccuracy
+    this.heading = location.coords.heading
+    this.speed = location.coords.speed
+    this.timestamp = location.timestamp
   }
 }
