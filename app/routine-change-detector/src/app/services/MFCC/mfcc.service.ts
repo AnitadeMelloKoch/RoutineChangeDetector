@@ -12,52 +12,25 @@ export class MFCCService {
   private _mfccList: MFCCList
   private _recording: boolean
   private readonly _mfccBuffer = 1024
-  private _prevBuffer: number[]
+  private _audioSamples: number[]
 
   constructor() {
     this._mfccList = new MFCCList
     this._recording = false
-    this._prevBuffer = new Array(this._mfccBuffer).fill(0)
+    
+    this._audioSamples = []
   }
   private _audioInputEvent = (event) => {
     let audData: number[]
     audData = Array.from(event.data)
-    let normFactor = 0
-    audData.forEach(element => {
-      if (Math.abs(element) > normFactor){
-        normFactor = Math.abs(element)
-      }
-    });
-    let normData: number[]
-    normData = []
-    audData.forEach(element => {
-      normData.push(element/normFactor)
-    });
-    Meyda.bufferSize = this._mfccBuffer
-    Meyda.melBands = 40
-    Meyda.sampleRate = 22050
-    let mfccRes = Meyda.extract('mfcc', normData, this._prevBuffer)
-    this._mfccList.mfcc0.push(mfccRes[0])
-    this._mfccList.mfcc1.push(mfccRes[1])
-    this._mfccList.mfcc2.push(mfccRes[2])
-    this._mfccList.mfcc3.push(mfccRes[3])
-    this._mfccList.mfcc4.push(mfccRes[4])
-    this._mfccList.mfcc5.push(mfccRes[5])
-    this._mfccList.mfcc6.push(mfccRes[6])
-    this._mfccList.mfcc7.push(mfccRes[7])
-    this._mfccList.mfcc8.push(mfccRes[8])
-    this._mfccList.mfcc9.push(mfccRes[9])
-    this._mfccList.mfcc10.push(mfccRes[10])
-    this._mfccList.mfcc11.push(mfccRes[11])
-    this._mfccList.mfcc12.push(mfccRes[12])
-
-    this._prevBuffer = normData
+    audData.push(audData[audData.length - 1])
+    this._audioSamples = this._audioSamples.concat(audData)
   }
   private _audioErrorEvent = (error) => {
     console.log(error)
-    this._stopRecord()
   }
   private _startRecord(){
+    this._audioSamples = []
     this._recording = true
     let _captureCfg = {
       sampleRate: audioinput.SAMPLERATE.CD_HALF_22050Hz ,//16000,
@@ -65,7 +38,7 @@ export class MFCCService {
       channels: audioinput.CHANNELS.MONO, // 1
       format: audioinput.FORMAT.PCM_16BIT, 
       audioSourceType: audioinput.AUDIOSOURCE_TYPE.DEFAULT,
-      normalize: false
+      normalizationFactor: 32767.0/3.0 
     }
     audioinput.start(_captureCfg)
     window.addEventListener('audioinput', this._audioInputEvent, false)
@@ -73,9 +46,50 @@ export class MFCCService {
   }
   private _stopRecord(){
     this._recording = false
-    audioinput.stop()
     window.removeEventListener('audioinput', this._audioInputEvent, false)
     window.removeEventListener('audioinputerror', this._audioErrorEvent, false)
+    audioinput.stop()
+
+    // ! NORMALIZING
+    let normFactor = 0
+    this._audioSamples.forEach(element => {
+      if (Math.abs(element) > normFactor){
+        normFactor = Math.abs(element)
+      }
+    });
+    let normData: number[]
+    normData = []
+    this._audioSamples.forEach(element => {
+      normData.push(element/normFactor)
+    });
+    this._mfccList.normalizationMult = 1.0/normFactor
+    this._audioSamples = null
+
+    // ! Extract MFCCs
+    Meyda.bufferSize = this._mfccBuffer
+    Meyda.melBands = 40
+    Meyda.sampleRate = 22050
+    let start_idx = 0
+    let prevBuffer = new Array(this._mfccBuffer).fill(0)
+    while(start_idx < normData.length){
+      let thisBuffer = normData.slice(start_idx, start_idx + this._mfccBuffer)
+      let mfccRes = Meyda.extract('mfcc', thisBuffer, prevBuffer)
+      this._mfccList.mfcc0.push(mfccRes[0])
+      this._mfccList.mfcc1.push(mfccRes[1])
+      this._mfccList.mfcc2.push(mfccRes[2])
+      this._mfccList.mfcc3.push(mfccRes[3])
+      this._mfccList.mfcc4.push(mfccRes[4])
+      this._mfccList.mfcc5.push(mfccRes[5])
+      this._mfccList.mfcc6.push(mfccRes[6])
+      this._mfccList.mfcc7.push(mfccRes[7])
+      this._mfccList.mfcc8.push(mfccRes[8])
+      this._mfccList.mfcc9.push(mfccRes[9])
+      this._mfccList.mfcc10.push(mfccRes[10])
+      this._mfccList.mfcc11.push(mfccRes[11])
+      this._mfccList.mfcc12.push(mfccRes[12])
+      prevBuffer = thisBuffer
+      start_idx = start_idx + this._mfccBuffer
+    }
   }
 
   public recordAudio(): Promise<MFCCList>{
@@ -145,6 +159,7 @@ export class MFCCList{
   mfcc10: number[]
   mfcc11: number[]
   mfcc12: number[]
+  normalizationMult: number
 
   constructor(){
     this.mfcc0 = []
@@ -160,5 +175,6 @@ export class MFCCList{
     this.mfcc10 = []
     this.mfcc11 = []
     this.mfcc12 = []
+    this.normalizationMult = 0
   }
 }

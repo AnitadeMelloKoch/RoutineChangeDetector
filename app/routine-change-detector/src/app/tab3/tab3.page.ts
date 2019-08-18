@@ -36,10 +36,11 @@ export class Tab3Page {
   private _prevBuffer = new Array(this._mfccBuffer).fill(0);
 
   private _audioInputEvent = (event) => {
-    console.log( "Audio data received: " + event.data.length + " samples" )
-    console.log(event)
+    // console.log( "Audio data received: " + event.data.length + " samples" )
+    // console.log(event)
     let audData: number[]
     audData = Array.from(event.data)
+    audData.push(audData[audData.length - 1])
 
     let normFactor = 0
     audData.forEach(element => {
@@ -53,7 +54,7 @@ export class Tab3Page {
       normData.push(element/normFactor)
     });
 
-    console.log({'audData':audData, 'normData': normData, 'normFactor': normFactor})
+    // console.log({'audData':audData, 'normData': normData, 'normFactor': normFactor})
 
     Meyda.bufferSize = this._mfccBuffer
     Meyda.melBands = 40
@@ -72,7 +73,7 @@ export class Tab3Page {
     channels: audioinput.CHANNELS.MONO, // 1
     format: audioinput.FORMAT.PCM_16BIT, 
     audioSourceType: audioinput.AUDIOSOURCE_TYPE.DEFAULT,
-    normalize: false
+    normalizationFactor: 32767.0/3.0 
   }
 
   public startRecord(){
