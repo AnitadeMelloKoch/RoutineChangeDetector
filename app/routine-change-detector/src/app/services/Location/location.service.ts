@@ -25,7 +25,7 @@ export class LocationService {
 
   private _geolocationSuccess = (geoloc) => { 
     if(this._recording){
-      console.log(JSON.stringify(new GeoData(geoloc)))
+      // console.log(JSON.stringify(new GeoData(geoloc)))
       this._geodataList.push(new GeoData(geoloc))
     }
    }

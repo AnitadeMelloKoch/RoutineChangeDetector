@@ -26,10 +26,11 @@ import { AccelerometerService } from 'src/app/services/Accelerometer/acceleromet
 import { GyroscopeService } from 'src/app/services/Gyroscope/gyroscope.service'
 import { MagnetometerService } from 'src/app/services/Magnetometer/magnetometer.service'
 import { LocationService } from 'src/app/services/Location/location.service'
-import { AudioSnippetService } from 'src/app/services/AudioSnippet/audio-snippet.service'
 import { RecorderManagerService } from 'src/app/services/RecorderManager/recorder-manager.service'
 import { PhoneStateService } from 'src/app/services/PhoneState/phone-state.service'
 import { HttpService } from 'src/app/services/Http/http.service'
+import { MFCCService } from 'src/app/services/MFCC/mfcc.service'
+
 
 @NgModule({
   declarations: [AppComponent],
@@ -55,10 +56,10 @@ import { HttpService } from 'src/app/services/Http/http.service'
     GyroscopeService,
     MagnetometerService,
     LocationService,
-    AudioSnippetService,
     RecorderManagerService,
     PhoneStateService,
-    HttpService
+    HttpService,
+    MFCCService
   ],
   bootstrap: [AppComponent]
 })

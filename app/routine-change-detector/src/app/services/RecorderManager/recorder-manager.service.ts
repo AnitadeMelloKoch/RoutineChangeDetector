@@ -7,7 +7,6 @@ import { MagnetometerService } from '../Magnetometer/magnetometer.service';
 import { SensorList } from 'src/app/classes/sensor-list'
 
 import { LocationService, GeoData } from '../Location/location.service';
-import { AudioSnippetService } from '../AudioSnippet/audio-snippet.service';
 import { AppStateService } from '../AppState/app-state.service';
 import { PhoneStateService } from '../PhoneState/phone-state.service';
 
@@ -16,6 +15,7 @@ import { Network } from '@ionic-native/network/ngx'
 import { HttpService } from '../Http/http.service';
 
 import { Device } from '@ionic-native/device/ngx'
+import { MFCCService, MFCCList } from '../MFCC/mfcc.service';
 
 
 
@@ -40,25 +40,25 @@ class LongData{
   acceleration: SensorList //new SensorList,
   gyroscope: SensorList //new SensorList,
   magnetometer: SensorList//new SensorList,
+  mfcc: MFCCList
   location: GeoData[] //[],
-  audio: ArrayBuffer //new ArrayBuffer(0),
   flags: boolean[] //[false, false, false, false, false]
   constructor(){
     this.acceleration = new SensorList
     this.gyroscope = new SensorList
     this.magnetometer = new SensorList
+    this.mfcc = new MFCCList
     this.location = []
-    this.audio = new ArrayBuffer(0)
     this.flags = [false, false, false, false, false]
   }
 }
 
 export class RecordedData{
   acceleration: SensorList
-  audio: ArrayBuffer
   gyroscope: SensorList
   location: GeoData[]
   magnetometer: SensorList
+  mfcc: MFCCList
   batteryLevel: number
   batteryIsPlugged: boolean
   appState: string
@@ -71,10 +71,10 @@ export class RecordedData{
   hour: number
   minute: number
   constructor(_acceleration: SensorList,
-              _audio: ArrayBuffer,
               _gyroscope: SensorList,
               _location: GeoData[],
               _magnetometer: SensorList,
+              _mfcc: MFCCList,
               _batteryLevel: number,
               _batteryIsPlugged: boolean,
               _appState: string,
@@ -87,10 +87,10 @@ export class RecordedData{
               _hour: number,
               _minute: number){
     this.acceleration = _acceleration
-    this.audio = _audio
     this.gyroscope = _gyroscope
     this.location = _location
     this.magnetometer = _magnetometer
+    this.mfcc = _mfcc
     this.batteryLevel = _batteryLevel
     this.batteryIsPlugged = _batteryIsPlugged
     this.appState = _appState
@@ -130,8 +130,8 @@ export class RecorderManagerService {
     private _accelerometer: AccelerometerService,
     private _gyroscope: GyroscopeService,
     private _magnetometer: MagnetometerService,
+    private _mfcc: MFCCService,
     private _location: LocationService,
-    private _audioSnippet: AudioSnippetService,
     private _appState: AppStateService,
     private _network: Network,
     private _phoneState: PhoneStateService,
@@ -158,11 +158,11 @@ export class RecorderManagerService {
         })
         .finally( () => {
           resolve(new RecordedData(
-            data.acceleration, 
-            data.audio,
+            data.acceleration,
             data.gyroscope,
             data.location,
             data.magnetometer,
+            data.mfcc,
             this._batteryLevel,
             this._batteryIsPlugged,
             this._appStateType,
@@ -222,8 +222,8 @@ export class RecorderManagerService {
       }).finally( () => {
         this._onLongFinally(recorded, recorded.flags, resolve)
       })
-      this._audioSnippet.recordAudio().then((data) => { 
-        recorded.audio = data
+      this._mfcc.recordAudio().then((data) => { 
+        recorded.mfcc = data
         recorded.flags[4] = true
       }).finally( () => {
         this._onLongFinally(recorded, recorded.flags, resolve)
