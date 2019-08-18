@@ -15,7 +15,7 @@ export class MFCCService {
   private _audioSamples: number[]
 
   constructor() {
-    this._mfccList = new MFCCList
+    this._mfccList = new MFCCList()
     this._recording = false
     
     this._audioSamples = []
@@ -94,12 +94,15 @@ export class MFCCService {
 
   public recordAudio(): Promise<MFCCList>{
     return new Promise((resolve, reject) => {
-      this._mfccList = new MFCCList
+      this._mfccList = new MFCCList()
       this._checkMicPermissions()
         .then(() => {
           this._startRecord()
           setTimeout(()=> {
             this._stopRecord()
+            console.log("Stopped Recorded")
+            console.log(this._mfccList)
+            resolve(this._mfccList)
           }, AppComponent.recordTime)
         })
         .catch(() => {
@@ -116,10 +119,8 @@ export class MFCCService {
           this._mfccList.mfcc10.push(0)
           this._mfccList.mfcc11.push(0)
           this._mfccList.mfcc12.push(0)
-        })
-        .finally(() => {
           resolve(this._mfccList)
-        })  
+        }) 
     })
   }
 

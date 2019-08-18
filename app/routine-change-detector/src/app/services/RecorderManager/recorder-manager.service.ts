@@ -91,6 +91,8 @@ export class RecordedData{
     this.location = _location
     this.magnetometer = _magnetometer
     this.mfcc = _mfcc
+    console.log("RecordedData Object")
+    console.log(this.mfcc)
     this.batteryLevel = _batteryLevel
     this.batteryIsPlugged = _batteryIsPlugged
     this.appState = _appState
@@ -141,9 +143,9 @@ export class RecorderManagerService {
     this._platform.ready().then(() => {
       this._initService()
       
-      this.recordData().then( data => {
-        console.log(data)
-      })
+      // this.recordData().then( data => {
+      //   console.log(data)
+      // })
      
     })
   }
@@ -187,7 +189,7 @@ export class RecorderManagerService {
     this._datetime = new DayTime(date.getTime(), date.getDay(), date.getHours(), date.getMinutes())
   }
 
-  private _onLongFinally( recorded:LongData, flags: boolean[], resolve: (value?: any) => void){
+  private _onLongFinally( recorded: LongData, flags: boolean[], resolve: (value?: any) => void){
     if(flags.every(f => { return f })){
       resolve(recorded)
     }
@@ -223,6 +225,9 @@ export class RecorderManagerService {
         this._onLongFinally(recorded, recorded.flags, resolve)
       })
       this._mfcc.recordAudio().then((data) => { 
+        console.log("in recorded manager")
+        console.log(data)
+        console.log(recorded.mfcc)
         recorded.mfcc = data
         recorded.flags[4] = true
       }).finally( () => {
