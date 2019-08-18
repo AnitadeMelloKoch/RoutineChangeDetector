@@ -12,7 +12,7 @@ trainSplit=0.7
 learningInit=0.001
 
 # Number of epochs to train for
-epochs=3000
+epochs=800
 
 # batch size for each training step
 batch=200
@@ -37,7 +37,7 @@ phone_weight=0.08
 # Directories
 
 datadir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data"
-rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/3000epochs"
+rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/watchless"
 datascriptdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/dataHandeling"
 mlpdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/mlp"
 
