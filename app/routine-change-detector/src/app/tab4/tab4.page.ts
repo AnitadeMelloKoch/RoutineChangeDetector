@@ -75,8 +75,6 @@ export class Tab4Page {
   public send(){
 
     this._recman.recordData().then( recdata => {
-
-    console.log(JSON.stringify(recdata))
     
     this._http.sendData(recdata)
       .then(res => {

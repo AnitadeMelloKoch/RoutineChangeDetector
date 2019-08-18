@@ -177,4 +177,22 @@ export class MFCCList{
     this.mfcc12 = []
     this.normalizationMult = 0
   }
+  public toJSON() {
+    return {
+      mfcc0 : this.mfcc0,
+      mfcc1 : this.mfcc1,
+      mfcc2 : this.mfcc2,
+      mfcc3 : this.mfcc3,
+      mfcc4 : this.mfcc4,
+      mfcc5 : this.mfcc5,
+      mfcc6 : this.mfcc6,
+      mfcc7 : this.mfcc7,
+      mfcc8 : this.mfcc8,
+      mfcc9 : this.mfcc9,
+      mfcc10 : this.mfcc10,
+      mfcc11 : this.mfcc11,
+      mfcc12 : this.mfcc12,
+      normalizationMult: this.normalizationMult
+    }
+  }
 }
