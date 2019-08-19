@@ -12,14 +12,14 @@ trainSplit=0.7
 learningInit=0.001
 
 # Number of epochs to train for
-epochs=500
+epochs=3000
 
 # batch size for each training step
 batch=200
 
 # Number of feature discovered by each hidden layer
-hidden_1=255
-hidden_2=215
+hidden_1=205
+hidden_2=200
 hidden_3=180
 hidden_4=150
 hidden_5=110
@@ -37,7 +37,7 @@ phone_weight=0.08
 # Directories
 
 datadir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data"
-rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/lessin"
+rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/3000epoch"
 datascriptdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/dataHandeling"
 mlpdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/mlp"
 

@@ -18,8 +18,8 @@ epochs=800
 batch=200
 
 # Number of feature discovered by each hidden layer
-hidden_1=255
-hidden_2=215
+hidden_1=210
+hidden_2=205
 hidden_3=190
 hidden_4=170
 hidden_5=150
@@ -39,35 +39,35 @@ phone_weight=0.08
 
 # Directories
 
-datadir="D:\nicho\Documents\RoutineChangeDetector\app\ExtraSensory.per_uuid_features_labels\ExtraSensory"
-rundir="D:\nicho\Documents\RoutineChangeDetector\ml\models\8hidden800epoch"
-datascriptdir="D:\nicho\Documents\RoutineChangeDetector\ml\dataHandeling"
-mlpdir="D:\nicho\Documents\RoutineChangeDetector\ml\mlp"
+datadir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data"
+rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/8hidden800epoch"
+datascriptdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/dataHandeling"
+mlpdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/mlp"
 
 # =================================================================================================================
 
 # Run training
 
-if [ -d $rundir ]; then
-  read -p "Directory already exists. Do you wish to continue? [y,n]" conti
-  if [$conti == "n"]; then
-    exit
-  fi
-fi
+# if [ -d $rundir ]; then
+#   read -p "Directory already exists. Do you wish to continue? [y,n]" conti
+#   if [$conti == "n"]; then
+#     exit
+#   fi
+# fi
 
-mkdir -p $rundir
+# mkdir -p $rundir
 
-cp $mlpdir/MLP.py $rundir
+# cp $mlpdir/MLP.py $rundir
 cp $datascriptdir/format_data.py $rundir
 cp $datascriptdir/get_data.py $rundir
 cp $datascriptdir/parse_data.py $rundir
-cp mlp.sh $rundir
+# cp mlp.sh $rundir
 
-cd $rundir
+# cd $rundir
 
 
 
-python MLP.py  --training_directory $datadir \
+python3 MLP.py  --training_directory $datadir \
                 --checkpoint_directory $rundir/chkpnt/model \
                 --file_number $fileNum \
                 --train_percent $trainSplit \

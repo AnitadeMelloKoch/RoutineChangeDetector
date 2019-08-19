@@ -14,14 +14,14 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         sess = tf.compat.v1.InteractiveSession()
         
         # graph inputs
-        x =  tf.compat.v1.placeholder("float", [None, n_input+n_labels], name="x")
+        x =  tf.compat.v1.placeholder("float", [None, n_input], name="x")
         y_action_1 =  tf.compat.v1.placeholder("float", [None, n_output_action_1], name="y_action_1")
         y_action_2 = tf.compat.v1.placeholder("float", [None, n_output_action_2], name="y_action_2")
         y_loc =  tf.compat.v1.placeholder("float", [None, n_output_loc], name="y_location")
         y_phone =  tf.compat.v1.placeholder("float", [None, n_output_phone], name="y_phone")
 
         # initialize weights for layer 1
-        weight_1 = tf.Variable(tf.random.normal([n_input+n_labels, hidden_1]), name="weight_1")
+        weight_1 = tf.Variable(tf.random.normal([n_input, hidden_1]), name="weight_1")
         bias_1 = tf.Variable(tf.random.normal([hidden_1]), name="weight_1_bias")
 
         # initialize weights for layer 2
