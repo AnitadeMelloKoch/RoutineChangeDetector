@@ -40,6 +40,7 @@
     let length = 0;
     const list = document.getElementById('list');
     const infiniteScroll = document.getElementById('infinite-scroll');
+    users = [{name: "Greg", created: "2019/03/02"},{name: "Greg", created: "2019/03/02"},{name: "Greg", created: "2019/03/02"}]
     infiniteScroll.addEventListener('ionInfinite', async function () {
       if (length < users.length) {
         console.log('Loading data...');
