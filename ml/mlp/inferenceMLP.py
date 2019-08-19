@@ -7,7 +7,7 @@ import get_data as get
 
 def predict(data, meta_dir, checkpoint_dir, validate):
     
-    x =  tf.compat.v1.placeholder("float", [None, 225+51], name="x")
+    x =  tf.compat.v1.placeholder("float", [None, 225], name="x")
 
     with tf.Session() as sess:
         # initialize saver and load graph
