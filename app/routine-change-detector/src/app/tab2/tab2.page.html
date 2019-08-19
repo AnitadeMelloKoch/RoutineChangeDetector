@@ -1,84 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Sensors
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Infinite Scroll</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core@4.7.4/css/ionic.bundle.css" />
-  <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core@4.7.4/dist/ionic/ionic.esm.js"></script>
-  <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core@4.7.4/dist/ionic/ionic.js"></script>
-  <style>
-    :root {
-      --ion-safe-area-top: 20px;
-      --ion-safe-area-bottom: 22px;
-    }
-  </style>
-</head>
+<ion-content>
+  <ion-card>
+    <ion-item>
+      <ion-label>Accelerometer</ion-label>
+      <ion-label id="lbl:acc">{{acceleration}}</ion-label>
+    </ion-item>
+  </ion-card>
+  <ion-card>
+    <ion-item>
+      <ion-label>Gyroscope</ion-label>
+      <ion-label id="lbl:gyro">{{gyroscope}}</ion-label>
+    </ion-item>
+  </ion-card>
+  <ion-card>
+    <ion-item>
+      <ion-label>Magnetometer</ion-label>
+      <ion-label id="lbl:magn">{{magnetometer}}</ion-label>
+    </ion-item>
+  </ion-card>
 
-<body>
-  <ion-app>
-    <ion-header translucent>
-      <ion-toolbar>
-        <ion-title>Accounts</ion-title>
-      </ion-toolbar>
-    </ion-header>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Location</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>Latitude</ion-label>
+        <ion-label name="lbl:loc:lat">{{geoData.latitude}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Longitude</ion-label>
+        <ion-label id="lbl:loc:lng">{{geoData.longitude}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Accuracy</ion-label>
+        <ion-label id="lbl:loc:acc">{{geoData.accuracy}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Altitude</ion-label>
+        <ion-label id="lbl:loc:alt">{{geoData.altitude}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Altitude Accuracy</ion-label>
+        <ion-label id="lbl:loc:alt:acc">{{geoData.altitudeAccuracy}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Heading</ion-label>
+        <ion-label id="lbl:loc:hdn">{{geoData.heading}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Speed</ion-label>
+        <ion-label id="lbl:loc:spd">{{geoData.speed}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Timestamp</ion-label>
+        <ion-label id="lbl:loc:tme">{{geoData.timestamp}}</ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
 
-    <ion-content fullscreen>
-      <ion-list id="list"></ion-list>
-
-      <ion-infinite-scroll threshold="100px" id="infinite-scroll">
-        <ion-infinite-scroll-content loading-spinner="bubbles" loading-text="Loading more data...">
-        </ion-infinite-scroll-content>
-      </ion-infinite-scroll>
-    </ion-content>
-  </ion-app>
-
-  <script type="text/javascript" src="data.js"></script>
-
-  <script>
-    let length = 0;
-    const list = document.getElementById('list');
-    const infiniteScroll = document.getElementById('infinite-scroll');
-    infiniteScroll.addEventListener('ionInfinite', async function () {
-      if (length < users.length) {
-        console.log('Loading data...');
-        await wait(500);
-        infiniteScroll.complete();
-        appendItems(10);
-        console.log('Done');
-      } else {
-        console.log('No More Data');
-        infiniteScroll.disabled = true;
-      }
-    });
-    function appendItems(number) {
-      console.log('length is', length);
-      const originalLength = length;
-      for (var i = 0; i < number; i++) {
-        const el = document.createElement('ion-item');
-        el.innerHTML = `
-          <ion-avatar slot="start">
-            <img src="https://www.gravatar.com/avatar/${i + originalLength}?d=monsterid&f=y">
-          </ion-avatar>
-          <ion-label>
-            <h2>${users[i + originalLength].name}</h2>
-            <p>Created ${users[i + originalLength].created}</p>
-          </ion-label>
-        `;
-        list.appendChild(el);
-        length++;
-      }
-    }
-    function wait(time) {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          resolve();
-        }, time);
-      });
-    }
-    appendItems(20);
-  </script>
-</body>
-
-</html>
+</ion-content>
