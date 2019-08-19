@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AppComponent } from 'src/app/app.component';
+import { RECORD_TIME } from 'src/app/constants/app-constants'
 import { SensorList } from 'src/app/classes/sensor-list'
 
 @Injectable({
@@ -29,7 +29,7 @@ export class AccelerometerService {
       setTimeout(() => {
         window.removeEventListener('devicemotion', this._accelerationListener)
         resolve(this._accelerationList)
-      }, AppComponent.recordTime)
+      }, RECORD_TIME)
     })
    }
 }

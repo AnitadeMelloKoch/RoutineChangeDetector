@@ -75,16 +75,17 @@ export class Tab4Page {
   public send(){
 
     this._recman.recordData().then( recdata => {
-    
-    this._http.sendData(recdata)
-      .then(res => {
-        this.result = res
-        console.log(this.result)
-      })
-      .catch( err => {
-        this.result = err
-        console.log(this.result)
-      })
+      console.log(recdata)
+      console.log(JSON.stringify(recdata))
+    // this._http.sendData(recdata)
+    //   .then(res => {
+    //     this.result = res
+    //     console.log(this.result)
+    //   })
+    //   .catch( err => {
+    //     this.result = err
+    //     console.log(this.result)
+    //   })
     })
 
     

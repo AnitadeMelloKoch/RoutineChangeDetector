@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AppComponent } from 'src/app/app.component';
+import { RECORD_TIME } from 'src/app/constants/app-constants'
 
 import Meyda from 'meyda/dist/web/meyda'
 declare var audioinput: any
@@ -100,10 +100,8 @@ export class MFCCService {
           this._startRecord()
           setTimeout(()=> {
             this._stopRecord()
-            console.log("Stopped Recorded")
-            console.log(this._mfccList)
             resolve(this._mfccList)
-          }, AppComponent.recordTime)
+          }, RECORD_TIME)
         })
         .catch(() => {
           this._mfccList.mfcc0.push(0)

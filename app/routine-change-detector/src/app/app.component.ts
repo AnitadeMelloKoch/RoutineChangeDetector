@@ -15,10 +15,6 @@ import { RecorderManagerService } from 'src/app/services/RecorderManager/recorde
 })
 export class AppComponent {
 
-  public static readonly recordTime = 20*1000
-  public static readonly recordInterval = 15*60*1000
-  public static readonly recordDelay = AppComponent.recordInterval - AppComponent.recordTime
-
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -38,7 +34,6 @@ export class AppComponent {
         this.backgroundMode.overrideBackButton()
         //this.backgroundMode.excludeFromTaskList()
       }
-      console.log(AppComponent.recordTime)
     });
   }
 }

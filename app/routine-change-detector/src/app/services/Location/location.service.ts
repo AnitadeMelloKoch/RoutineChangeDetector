@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Platform } from '@ionic/angular';
-import { AppComponent } from 'src/app/app.component';
 import { filter } from 'rxjs/operators';
+import { RECORD_TIME } from 'src/app/constants/app-constants'
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +25,6 @@ export class LocationService {
 
   private _geolocationSuccess = (geoloc) => { 
     if(this._recording){
-      // console.log(JSON.stringify(new GeoData(geoloc)))
       this._geodataList.push(new GeoData(geoloc))
     }
    }
@@ -41,23 +40,25 @@ export class LocationService {
     return new Promise ( (resolve, reject) => {
       this._geodataList = []
       this._recording = true
-      // let geoWatchID = this._geolocation.watchPosition(this._geolocationOptions)
-      //                   .pipe(
-      //                     filter( this._geolocationFilter )
-      //                     )
-      //                   .subscribe( this._geolocationSuccess )
       setTimeout(() => {
-        // geoWatchID.unsubscribe()
         this._recording = false
-        this._geolocation.getCurrentPosition()
-          .then( resp => {
-            this._geodataList.push(new GeoData(resp))
-          })
-        resolve(this._geodataList)
-      }, AppComponent.recordTime)
+        if(this._geodataList.length < 2) {
+          this._geolocation.getCurrentPosition()
+            .then( resp => {
+              this._geodataList.push(new GeoData(resp))
+              this._geolocation.getCurrentPosition()
+                .then( resp => { 
+                  this._geodataList.push(new GeoData(resp)) 
+                  resolve(this._geodataList)
+              })
+            })
+        } else {
+          resolve(this._geodataList)
+        }
+      }, RECORD_TIME)
     })
   }
-
+  
 }
 
 export class GeoData {

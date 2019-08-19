@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AppComponent } from 'src/app/app.component';
+import { RECORD_TIME } from 'src/app/constants/app-constants'
 import { SensorList } from 'src/app/classes/sensor-list'
 
 @Injectable({
@@ -23,8 +23,12 @@ export class MagnetometerService {
       window.addEventListener('deviceorientation', this._magnetListener)
       setTimeout(() => {
         window.removeEventListener('deviceorientation', this._magnetListener)
+        if(this._magnetList.timestamp.length < 2){
+          window.addEventListener('deviceorientation', this._magnetListener)
+          window.removeEventListener('deviceorientation', this._magnetListener)
+        }
         resolve(this._magnetList)
-      }, AppComponent.recordTime)
+      }, RECORD_TIME)
     })
   }
 }

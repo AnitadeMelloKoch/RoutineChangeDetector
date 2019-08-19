@@ -16,6 +16,8 @@ import { HttpService } from '../Http/http.service';
 
 import { Device } from '@ionic-native/device/ngx'
 import { MFCCService, MFCCList } from '../MFCC/mfcc.service';
+// import { Storage } from '@ionic/storage'
+import { StorageService } from '../Storage/storage.service'
 
 
 
@@ -91,8 +93,6 @@ export class RecordedData{
     this.location = _location
     this.magnetometer = _magnetometer
     this.mfcc = _mfcc
-    console.log("RecordedData Object")
-    console.log(this.mfcc)
     this.batteryLevel = _batteryLevel
     this.batteryIsPlugged = _batteryIsPlugged
     this.appState = _appState
@@ -138,15 +138,32 @@ export class RecorderManagerService {
     private _network: Network,
     private _phoneState: PhoneStateService,
     private _device: Device,
-    // private _http: HttpService 
+    // private _http: HttpService,
+    // private _storage: Storage,
+    private _storage: StorageService 
   ) { 
     this._platform.ready().then(() => {
       this._initService()
+      console.log("Starting Record")
+      console.log(this._storage.getRecordData())
+      this.recordData().then((recdata1) => {
+        console.log("Done Data1")
+        this._storage.addRecordData(recdata1).then(() => {
+          console.log(this._storage.getRecordData())
+          this.recordData().then((recdata2) => {
+            console.log("Done Data2")
+            this._storage.addRecordData(recdata2).then(() => {
+              console.log(this._storage.getRecordData())
+              console.log(JSON.stringify(this._storage.getRecordData()))
+              this._storage.clearRecordData().then( () => {
+                console.log("Cleared Store")
+                console.log(this._storage.getRecordData())
+              })
+            })
+          })
+        }) 
+      })
       
-      // this.recordData().then( data => {
-      //   console.log(data)
-      // })
-     
     })
   }
 
@@ -203,34 +220,31 @@ export class RecorderManagerService {
       this._accelerometer.recordAcceleration().then((data) => {
         recorded.acceleration = data 
         recorded.flags[0] = true
-      }).finally( () => {
+        console.log("Got Acceleration")
         this._onLongFinally(recorded, recorded.flags, resolve)
       })
       this._gyroscope.recordGyroscope().then((data) => { 
         recorded.gyroscope = data
         recorded.flags[1] = true
-      }).finally( () => {
+        console.log("Got Gyroscope")
         this._onLongFinally(recorded, recorded.flags, resolve)
       })
       this._magnetometer.recordMagnetometer().then((data) => { 
         recorded.magnetometer = data
         recorded.flags[2] = true
-      }).finally( () => {
+        console.log("Got Magnetometer")
         this._onLongFinally(recorded, recorded.flags, resolve)
       })
       this._location.recordLocation().then((data) => { 
         recorded.location = data
         recorded.flags[3] = true
-      }).finally( () => {
+        console.log("Got Location")
         this._onLongFinally(recorded, recorded.flags, resolve)
       })
       this._mfcc.recordAudio().then((data) => { 
-        console.log("in recorded manager")
-        console.log(data)
-        console.log(recorded.mfcc)
         recorded.mfcc = data
         recorded.flags[4] = true
-      }).finally( () => {
+        console.log("Got MFCC")
         this._onLongFinally(recorded, recorded.flags, resolve)
       })
     })    

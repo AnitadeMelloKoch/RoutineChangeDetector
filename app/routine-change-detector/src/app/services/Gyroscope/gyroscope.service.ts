@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AppComponent } from 'src/app/app.component';
+import { RECORD_TIME } from 'src/app/constants/app-constants'
 import { SensorList } from 'src/app/classes/sensor-list'
 
 @Injectable({
@@ -26,7 +26,7 @@ export class GyroscopeService {
       setTimeout(() => {
         window.removeEventListener('devicemotion', this._gyroscopeListener)
         resolve(this._gyroscopeList)
-      }, AppComponent.recordTime)
+      }, RECORD_TIME)
     })
   }
 }

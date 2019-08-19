@@ -22,8 +22,6 @@ export class HttpService {
       let headers = {
         'content-type': 'application/json'
       }
-      console.log(body)
-      console.log(JSON.stringify(body))
       this._http.post(url, body, headers)
         .then(returnedData => {
           console.log('Recieved request')

@@ -19,6 +19,7 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx'
 import { Network } from "@ionic-native/network/ngx"
 import { HTTP } from '@ionic-native/http/ngx'
 import { Device } from '@ionic-native/device/ngx'
+import { IonicStorageModule } from '@ionic/storage'
 
 
 import { AppStateService } from 'src/app/services/AppState/app-state.service'
@@ -30,12 +31,13 @@ import { RecorderManagerService } from 'src/app/services/RecorderManager/recorde
 import { PhoneStateService } from 'src/app/services/PhoneState/phone-state.service'
 import { HttpService } from 'src/app/services/Http/http.service'
 import { MFCCService } from 'src/app/services/MFCC/mfcc.service'
+import { StorageService } from 'src/app/services/Storage/storage.service'
 
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, IonicStorageModule.forRoot()],
   providers: [
     StatusBar,
     SplashScreen,
@@ -59,7 +61,8 @@ import { MFCCService } from 'src/app/services/MFCC/mfcc.service'
     RecorderManagerService,
     PhoneStateService,
     HttpService,
-    MFCCService
+    MFCCService,
+    StorageService
   ],
   bootstrap: [AppComponent]
 })
