@@ -21,6 +21,4 @@ def standardize_features(X):
     nan_data = np.isnan(X_standard)
     X_standard[nan_data] = 0
 
-    # print(X_standard)
-
     return X_standard
