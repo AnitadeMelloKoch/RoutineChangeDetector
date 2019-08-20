@@ -138,37 +138,29 @@ export class RecorderManagerService {
     private _network: Network,
     private _phoneState: PhoneStateService,
     private _device: Device,
-    // private _http: HttpService,
-    // private _storage: Storage,
     private _storage: StorageService 
+    // private _http: HttpService,
   ) { 
     this._platform.ready().then(() => {
       this._initService()
-      console.log("Starting Record")
-      console.log(this._storage.getRecordData())
-      this.recordData().then((recdata1) => {
-        console.log("Done Data1")
-        this._storage.addRecordData(recdata1).then(() => {
-          console.log(this._storage.getRecordData())
-          this.recordData().then((recdata2) => {
-            console.log("Done Data2")
-            this._storage.addRecordData(recdata2).then(() => {
-              console.log(this._storage.getRecordData())
-              console.log(JSON.stringify(this._storage.getRecordData()))
-              this._storage.clearRecordData().then( () => {
-                console.log("Cleared Store")
-                console.log(this._storage.getRecordData())
-              })
-            })
-          })
-        }) 
-      })
-      
     })
   }
 
-  public recordData(): Promise<RecordedData>{
+
+  public recordData() {
+    return new Promise(resolve => {
+      this._recordAllData().then(recdata => {
+        this._storage.addRecordData(recdata).then(() => {
+          console.log(recdata)
+          resolve()
+        })
+      })
+    })
+  }
+
+  private _recordAllData(): Promise<RecordedData>{
     return new Promise( (resolve, reject) => {
+      console.log("Recording")
       let data = new LongData()
       this._recordShortData()
       this._recordLongData()

@@ -17,5 +17,8 @@
     </ion-card-content>
   </ion-card>
 
-  <button ion-button (click)="send()">send</button>
+  <ion-button primary (click)="record()" *ngIf="!recording">Record</ion-button>
+  <ion-button primary *ngIf="recording">Recording</ion-button>
+  <ion-button (click)="log()" >Log</ion-button>
+  <ion-button (click)="clear()" >Clear</ion-button>
 </ion-content>
