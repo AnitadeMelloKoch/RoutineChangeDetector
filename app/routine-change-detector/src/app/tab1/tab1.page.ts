@@ -7,7 +7,7 @@ import { IonInfiniteScroll } from '@ionic/angular';
   styleUrls: ['tab1.page.scss']
 })
 export class Tab1Page {
-
+  
   items = [];
   numTimesLeft = 5;
 

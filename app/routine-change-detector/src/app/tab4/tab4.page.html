@@ -5,20 +5,9 @@
 </ion-header>
 
 <ion-content>
-
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>
-        Battery Status
-      </ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <ion-label>{{bs}}</ion-label>
-    </ion-card-content>
-  </ion-card>
-
   <ion-button primary (click)="record()" *ngIf="!recording">Record</ion-button>
   <ion-button primary *ngIf="recording">Recording</ion-button>
   <ion-button (click)="log()" >Log</ion-button>
   <ion-button (click)="clear()" >Clear</ion-button>
+  <ion-button (click)="doPrediction()">Do Prediction</ion-button> 
 </ion-content>

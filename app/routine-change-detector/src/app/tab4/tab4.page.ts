@@ -37,18 +37,25 @@ export class Tab4Page {
 
   public record(){
     this.recording = true
-    this._recman.recordData().then( recdata => {
+    this._recman.recordSingleData().then( recdata => {
       this.recording = false
     })    
   }
 
   public log(){
     console.log(this._storage.getRecordData())
-    console.log(JSON.stringify(this._storage.getRecordData()))
   }
   public clear(){
     console.log("cleared")
     console.log(this._storage.clearRecordData())
+  }
+
+  public doPrediction(){
+    let data = this._storage.getRecordData()
+    this.log()
+    this._http.sendData({recordData: data}).then(result => {
+      console.log(result)
+    })
   }
 
   ngOnInit() {

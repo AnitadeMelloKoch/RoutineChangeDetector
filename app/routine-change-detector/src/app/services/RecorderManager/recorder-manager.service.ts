@@ -10,14 +10,14 @@ import { LocationService, GeoData } from '../Location/location.service';
 import { AppStateService } from '../AppState/app-state.service';
 import { PhoneStateService } from '../PhoneState/phone-state.service';
 
-import { fromEvent } from 'rxjs';
+import { fromEvent, Observable, Subscriber } from 'rxjs';
 import { Network } from '@ionic-native/network/ngx'
 import { HttpService } from '../Http/http.service';
 
 import { Device } from '@ionic-native/device/ngx'
 import { MFCCService, MFCCList } from '../MFCC/mfcc.service';
-// import { Storage } from '@ionic/storage'
 import { StorageService } from '../Storage/storage.service'
+import { RECORD_INTERVAL } from 'src/app/constants/app-constants';
 
 
 
@@ -126,6 +126,7 @@ export class RecorderManagerService {
   private _batteryObservable: any
   private _appStateObservable: any
   private _phoneStateObservable: any
+  private _recordServiceObservable: Observable<RecordedData>;
 
   constructor(
     private _platform: Platform,
@@ -138,20 +139,41 @@ export class RecorderManagerService {
     private _network: Network,
     private _phoneState: PhoneStateService,
     private _device: Device,
-    private _storage: StorageService 
-    // private _http: HttpService,
+    private _storage: StorageService,
+    private _http: HttpService,
   ) { 
     this._platform.ready().then(() => {
       this._initService()
+
+      this._recordServiceObservable = new Observable((observer:Subscriber<RecordedData>) => {
+        console.log("Created Observer")
+        let timerID = setInterval(() => {
+          console.log("Starting Record")
+          this._recordAllData().then(recdata => {
+            this._storage.addRecordData(recdata).then(() => {
+              console.log("Recorded")
+              observer.next(recdata)
+            })
+          })
+        }, RECORD_INTERVAL)
+        console.log("setInterval")
+      })
+      let ovs = this.dataObservable().subscribe((retcata) => {
+        console.log(retcata)
+      })
+
     })
   }
 
+  public dataObservable(): Observable<RecordedData> {
+    return this._recordServiceObservable
+  }
 
-  public recordData() {
+  public recordSingleData(): Promise<void> {
     return new Promise(resolve => {
       this._recordAllData().then(recdata => {
         this._storage.addRecordData(recdata).then(() => {
-          console.log(recdata)
+          // console.log(recdata)
           resolve()
         })
       })
@@ -212,31 +234,31 @@ export class RecorderManagerService {
       this._accelerometer.recordAcceleration().then((data) => {
         recorded.acceleration = data 
         recorded.flags[0] = true
-        console.log("Got Acceleration")
+        // console.log("Got Acceleration")
         this._onLongFinally(recorded, recorded.flags, resolve)
       })
       this._gyroscope.recordGyroscope().then((data) => { 
         recorded.gyroscope = data
         recorded.flags[1] = true
-        console.log("Got Gyroscope")
+        // console.log("Got Gyroscope")
         this._onLongFinally(recorded, recorded.flags, resolve)
       })
       this._magnetometer.recordMagnetometer().then((data) => { 
         recorded.magnetometer = data
         recorded.flags[2] = true
-        console.log("Got Magnetometer")
+        // console.log("Got Magnetometer")
         this._onLongFinally(recorded, recorded.flags, resolve)
       })
       this._location.recordLocation().then((data) => { 
         recorded.location = data
         recorded.flags[3] = true
-        console.log("Got Location")
+        // console.log("Got Location")
         this._onLongFinally(recorded, recorded.flags, resolve)
       })
       this._mfcc.recordAudio().then((data) => { 
         recorded.mfcc = data
         recorded.flags[4] = true
-        console.log("Got MFCC")
+        // console.log("Got MFCC")
         this._onLongFinally(recorded, recorded.flags, resolve)
       })
     })    

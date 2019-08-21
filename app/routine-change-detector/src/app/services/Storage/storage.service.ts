@@ -17,17 +17,30 @@ export class StorageService {
     this._recordDataKey = 'data_key'
     this._actionHistoryKey = 'action_key'
     this._storage.ready().then(() => {
-      this._checkIfKeyExistsElseMake(this._recordDataKey).then( () => { this._setVarRecordData() })
-      this._checkIfKeyExistsElseMake(this._actionHistoryKey).then( () => { this._setVarActionHistory() })
-      this._dbReady = true
+      this._checkIfKeyExistsElseMake(this._recordDataKey).then( () => { 
+        this._setVarRecordData().then(() => {
+          this._checkLists()
+        })
+      })
+      this._checkIfKeyExistsElseMake(this._actionHistoryKey).then( () => { 
+        this._setVarActionHistory().then(() => {
+          this._checkLists()
+        })
+      })
     })  
+  }
+  
+  private _checkLists() {
+    if (this._recordData !== undefined && this._actionHistory !== undefined){
+      this._dbReady = true
+    }
   }
 
   /* resolves true if the key exists, resolves false if it was created */ 
   private _checkIfKeyExistsElseMake(key: string): Promise<boolean> {
     return new Promise( resolve => {
       this._storage.get(key).then(val => {
-        if(val == null){
+        if(val === undefined){
           this._storage.set(key, [])
             .then(() => {
               resolve(false)
@@ -51,7 +64,7 @@ export class StorageService {
   private _setVarActionHistory(): Promise<void>{
     return new Promise(resolve => {
       this._storage.get(this._actionHistoryKey).then(val => {
-        this._actionHistoryKey = val
+        this._actionHistory = val
         resolve()
       })
     })
@@ -117,6 +130,8 @@ export class StorageService {
   public getActionHistory(): any[]{
     return this._actionHistory
   }
-
+  public isReady(): boolean {
+    return this._dbReady
+  }
 
 }

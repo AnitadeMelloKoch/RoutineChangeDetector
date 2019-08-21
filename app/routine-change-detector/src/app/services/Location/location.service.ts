@@ -48,8 +48,10 @@ export class LocationService {
               this._geodataList.push(new GeoData(resp))
               this._geolocation.getCurrentPosition()
                 .then( resp => { 
-                  this._geodataList.push(new GeoData(resp)) 
-                  resolve(this._geodataList)
+                  setTimeout(() => {
+                    this._geodataList.push(new GeoData(resp)) 
+                    resolve(this._geodataList)
+                  }, 5)
               })
             })
         } else {
