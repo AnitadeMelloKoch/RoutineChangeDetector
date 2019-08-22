@@ -10,14 +10,14 @@ import { LocationService, GeoData } from '../Location/location.service';
 import { AppStateService } from '../AppState/app-state.service';
 import { PhoneStateService } from '../PhoneState/phone-state.service';
 
-import { fromEvent, Observable, Subscriber } from 'rxjs';
+import { fromEvent, Observable, Subscriber, ReplaySubject, Subject } from 'rxjs';
 import { Network } from '@ionic-native/network/ngx'
 import { HttpService } from '../Http/http.service';
 
 import { Device } from '@ionic-native/device/ngx'
 import { MFCCService, MFCCList } from '../MFCC/mfcc.service';
 import { StorageService } from '../Storage/storage.service'
-import { RECORD_INTERVAL } from 'src/app/constants/app-constants';
+import { RECORD_INTERVAL, RECORD_TIME } from 'src/app/constants/app-constants';
 
 
 
@@ -126,7 +126,8 @@ export class RecorderManagerService {
   private _batteryObservable: any
   private _appStateObservable: any
   private _phoneStateObservable: any
-  private _recordServiceObservable: Observable<RecordedData>;
+  private _recordServiceReplaySubject: ReplaySubject<RecordedData>;
+  private _recordServiceSubject: Subject<RecordedData>
 
   constructor(
     private _platform: Platform,
@@ -144,29 +145,34 @@ export class RecorderManagerService {
   ) { 
     this._platform.ready().then(() => {
       this._initService()
+      this._recordServiceSubject = new Subject()
+      this._recordServiceReplaySubject = new ReplaySubject(1, RECORD_TIME)
+      console.log("Created Subject")
 
-      this._recordServiceObservable = new Observable((observer:Subscriber<RecordedData>) => {
-        console.log("Created Observer")
-        let timerID = setInterval(() => {
-          console.log("Starting Record")
-          this._recordAllData().then(recdata => {
-            this._storage.addRecordData(recdata).then(() => {
-              console.log("Recorded")
-              observer.next(recdata)
-            })
+      let timerID = setInterval(() => {
+        console.log("Starting Record")
+        this._recordAllData().then(recdata => {
+          this._storage.addRecordData(recdata).then(() => {
+            console.log("Recorded")
+            this._recordServiceSubject.next(recdata)
+            this._recordServiceReplaySubject.next(recdata)
           })
-        }, RECORD_INTERVAL)
-        console.log("setInterval")
-      })
-      let ovs = this.dataObservable().subscribe((retcata) => {
+        })
+      }, RECORD_INTERVAL)
+      console.log("setInterval")
+      
+      let ovs = this.dataReplaySubject().subscribe((retcata) => {
         console.log(retcata)
       })
 
     })
   }
 
-  public dataObservable(): Observable<RecordedData> {
-    return this._recordServiceObservable
+  public dataReplaySubject(): ReplaySubject<RecordedData> {
+    return this._recordServiceReplaySubject
+  }
+  public dataSubject(): Subject<RecordedData>{
+    return this._recordServiceSubject
   }
 
   public recordSingleData(): Promise<void> {

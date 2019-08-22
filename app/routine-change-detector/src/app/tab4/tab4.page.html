@@ -7,7 +7,10 @@
 <ion-content>
   <ion-button primary (click)="record()" *ngIf="!recording">Record</ion-button>
   <ion-button primary *ngIf="recording">Recording</ion-button>
-  <ion-button (click)="log()" >Log</ion-button>
-  <ion-button (click)="clear()" >Clear</ion-button>
-  <ion-button (click)="doPrediction()">Do Prediction</ion-button> 
+  <ion-button (click)="logData()" >Log Data</ion-button>
+  <ion-button (click)="logActivities()" >Log Activities</ion-button>
+  <ion-button (click)="clearData()" >Clear Data</ion-button>
+  <ion-button (click)="clearActivities()" >Clear Activities</ion-button>
+  <ion-button (click)="doSendData()">Send Data</ion-button> 
+  <ion-button (click)="doClassification()">Do Classification</ion-button> 
 </ion-content>

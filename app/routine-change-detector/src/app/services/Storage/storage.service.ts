@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage'
+import { Action } from 'src/app/classes/action';
+import { RecordedData } from '../RecorderManager/recorder-manager.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +11,8 @@ export class StorageService {
   private _recordDataKey: string
   private _actionHistoryKey: string
   private _dbReady: boolean
-  private _recordData: any[]
-  private _actionHistory: any[]
+  private _recordData: RecordedData[]
+  private _actionHistory: Action[]
 
   constructor(private _storage: Storage) {
     this._dbReady = false
@@ -40,7 +42,7 @@ export class StorageService {
   private _checkIfKeyExistsElseMake(key: string): Promise<boolean> {
     return new Promise( resolve => {
       this._storage.get(key).then(val => {
-        if(val === undefined){
+        if(val == undefined){
           this._storage.set(key, [])
             .then(() => {
               resolve(false)
@@ -70,7 +72,7 @@ export class StorageService {
     })
   }
 
-  public addRecordData(record: any): Promise<void> {
+  public addRecordData(record: RecordedData): Promise<void> {
     return new Promise((resolve, reject) => {
       if(!this._dbReady){
         reject(Error("Keystore DB not ready."))
@@ -82,12 +84,15 @@ export class StorageService {
     })
   }
 
-  public addActionHistory(action: any): Promise<void>{
+  public addActionHistory(action: Action): Promise<void>{
     return new Promise((resolve, reject) => {
       if(!this._dbReady){
         reject(Error("Keystore DB not ready."))
       }
       this._actionHistory.push(action)
+      if(this._actionHistory.length > 96){
+        this._actionHistory.shift()
+      }
       this._storage.set(this._actionHistoryKey, this._actionHistory).then(() => {
         resolve()
       })
@@ -102,6 +107,7 @@ export class StorageService {
       this._storage.remove(this._recordDataKey).then( () => {
         this._checkIfKeyExistsElseMake(this._recordDataKey).then( () => { 
           this._setVarRecordData().then(() => {
+            console.log("Cleared and recreated key")
             resolve()
           })
         })

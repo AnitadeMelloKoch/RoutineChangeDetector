@@ -42,21 +42,7 @@ export class LocationService {
       this._recording = true
       setTimeout(() => {
         this._recording = false
-        if(this._geodataList.length < 2) {
-          this._geolocation.getCurrentPosition()
-            .then( resp => {
-              this._geodataList.push(new GeoData(resp))
-              this._geolocation.getCurrentPosition()
-                .then( resp => { 
-                  setTimeout(() => {
-                    this._geodataList.push(new GeoData(resp)) 
-                    resolve(this._geodataList)
-                  }, 5)
-              })
-            })
-        } else {
-          resolve(this._geodataList)
-        }
+        resolve(this._geodataList)
       }, RECORD_TIME)
     })
   }
