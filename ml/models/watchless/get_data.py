@@ -20,8 +20,10 @@ def get_all_data(dir, num_files):
             (featureNames, labelNames) = parse_data.parse_header_of_csv(csv_str)
             numFeatures = len(featureNames)
             (all_data_X, all_data_Y, all_data_M, timestamps) = parse_data.parse_body_of_csv(csv_str, numFeatures)
+            all_data_X = format_data.standardize_features(all_data_X)
         else:
             (X,Y,M,timestamps) = parse_data.parse_body_of_csv(csv_str, numFeatures)
+            X = format_data.standardize_features(X)
             all_data_X = np.concatenate([all_data_X, X])
             all_data_M = np.concatenate([all_data_M, M])
             all_data_Y = np.concatenate([all_data_Y, Y])
@@ -31,15 +33,13 @@ def get_all_data(dir, num_files):
 def get_formatted_data(dir, num_files):
     (all_X, all_Y, all_M, labels, features) = get_all_data(dir, num_files)
 
-    all_X = format_data.standardize_features(all_X)
+    # all_X = format_data.standardize_features(all_X)
     (action_data_1) = parse_data.seperate_output_actions_1(labels, all_Y)
     (action_data_2) = parse_data.seperate_output_actions_2(labels, all_Y)
     (loc_data) = parse_data.seperate_output_loc(labels, all_Y)
     (phone_data) = parse_data.seperate_output_phone(labels, all_Y)
-    input_all = np.concatenate([all_X, all_M], axis=1)
-    parse_data.remove_watch_data(features, all_X)
 
-    return (input_all, action_data_1, action_data_2, loc_data, phone_data)
+    return (all_X, action_data_1, action_data_2, loc_data, phone_data)
 
 def get_watchless_data(dir,num_files):
     (all_X, all_Y, all_M, labels, features) = get_all_data(dir, num_files)
@@ -50,7 +50,6 @@ def get_watchless_data(dir,num_files):
     (loc_data) = parse_data.seperate_output_loc(labels, all_Y)
     (phone_data) = parse_data.seperate_output_phone(labels, all_Y)
     (newFeatures, new_X) = parse_data.remove_watch_data(features, all_X)
-    input_all = np.concatenate([new_X, all_M], axis=1)
 
-    return (input_all, action_data_1, action_data_2, loc_data, phone_data)
+    return (new_X, action_data_1, action_data_2, loc_data, phone_data)
     

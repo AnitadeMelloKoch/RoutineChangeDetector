@@ -18,8 +18,8 @@ epochs=800
 batch=200
 
 # Number of feature discovered by each hidden layer
-hidden_1=255
-hidden_2=215
+hidden_1=215
+hidden_2=200
 hidden_3=190
 hidden_4=170
 hidden_5=150
@@ -31,18 +31,18 @@ action_2_layer_1=50
 action_2_layer_2=30
 action_2_layer_3=20
 
-action_weight_1=0.47
-action_weight_2=0.24
-loc_weight=0.26
+action_weight_1=0.27
+action_weight_2=0.39
+loc_weight=0.25
 phone_weight=0.08
 # =================================================================================================================
 
 # Directories
 
-datadir="D:\nicho\Documents\RoutineChangeDetector\app\ExtraSensory.per_uuid_features_labels\ExtraSensory"
-rundir="D:\nicho\Documents\RoutineChangeDetector\ml\models\3action2"
-datascriptdir="D:\nicho\Documents\RoutineChangeDetector\ml\dataHandeling"
-mlpdir="D:\nicho\Documents\RoutineChangeDetector\ml\mlp"
+datadir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data"
+rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/3action2"
+datascriptdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/dataHandeling"
+mlpdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/mlp"
 
 # =================================================================================================================
 
@@ -57,17 +57,17 @@ fi
 
 mkdir -p $rundir
 
-cp $mlpdir/MLP.py $rundir
+# cp $mlpdir/MLP.py $rundir
 cp $datascriptdir/format_data.py $rundir
 cp $datascriptdir/get_data.py $rundir
 cp $datascriptdir/parse_data.py $rundir
-cp mlp.sh $rundir
+# cp mlp.sh $rundir
 
 cd $rundir
 
 
 
-python MLP.py  --training_directory $datadir \
+python3 MLP.py  --training_directory $datadir \
                 --checkpoint_directory $rundir/chkpnt/model \
                 --file_number $fileNum \
                 --train_percent $trainSplit \

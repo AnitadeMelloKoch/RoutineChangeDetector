@@ -2,10 +2,65 @@ import tensorflow as tf
 import numpy as np
 import get_data as get
 import os
-from sklearn.metrics import roc_auc_score, accuracy_score
+from sklearn.metrics import roc_auc_score, accuracy_score, mean_squared_error, confusion_matrix
 from sklearn.utils import shuffle
 import argparse
 import matplotlib.pyplot as plt
+from sklearn.utils.multiclass import unique_labels
+
+def plot_confusion_matrix(y_true, y_pred, classes,
+                          normalize=False,
+                          title=None,
+                          cmap=plt.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    if not title:
+        if normalize:
+            title = 'Normalized confusion matrix'
+        else:
+            title = 'Confusion matrix, without normalization'
+
+    # Compute confusion matrix
+    cm = confusion_matrix(y_true, y_pred)
+    # Only use the labels that appear in the data
+    classes = classes[unique_labels(y_true, y_pred)]
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+
+    print(cm)
+
+    fig, ax = plt.subplots()
+    im = ax.imshow(cm, interpolation='nearest', cmap=cmap)
+    ax.figure.colorbar(im, ax=ax)
+    # We want to show all ticks...
+    ax.set(xticks=np.arange(cm.shape[1]),
+           yticks=np.arange(cm.shape[0]),
+           # ... and label them with the respective list entries
+           xticklabels=classes, yticklabels=classes,
+           title=title,
+           ylabel='True label',
+           xlabel='Predicted label')
+
+    # Rotate the tick labels and set their alignment.
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+             rotation_mode="anchor")
+
+    # Loop over data dimensions and create text annotations.
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm.max() / 2.
+    for i in range(cm.shape[0]):
+        for j in range(cm.shape[1]):
+            ax.text(j, i, format(cm[i, j], fmt),
+                    ha="center", va="center",
+                    color="white" if cm[i, j] > thresh else "black")
+    fig.tight_layout()
+    plt.savefig(title + '.png')
+    return ax
 
 def main(training_dir, checkpointdir, training_files, train_percent, initial_learning_rate, epochs, batch_size, weighting_action_1, weighting_action_2, weighting_loc, weighting_phone, hidden_1, hidden_2, hidden_3, hidden_4, hidden_5, hidden_6, action_1_layer_1, action_2_layer_1, n_input, n_labels, n_output_action_1, n_output_action_2, n_output_loc, n_output_phone, regulariser_rate):
 
@@ -45,7 +100,7 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         bias_6 = tf.Variable(tf.random.normal([hidden_6]), name="weight_6_bias")
 
         #initialize weights for action 1 layer 1
-        weight_action_1_layer_1 = tf.Variable(tf.random.normal([hidden_6, action_1_layer_1]), name='weight_action_1_layer_1')
+        weight_action_1_layer_1 = tf.Variable(tf.random.normal([hidden_6, action_1_layer_1]), name="weight_action_1_layer_1")
         bias_action_1_layer_1 = tf.Variable(tf.random.normal([action_1_layer_1]), name="weight_action_1_layer_1_bias")
 
         #initialize weights for action 2 layer 1
@@ -89,9 +144,9 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         # action 1 layer 1
         layer_action_1_layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(layer_6, weight_action_1_layer_1), bias_action_1_layer_1))
 
-        # action 2 layer 1
+        # action 1 layer 1
         layer_action_2_layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(layer_6, weight_action_2_layer_1), bias_action_2_layer_1))
-
+        
         # output layer
         predicted_y_action_1 = tf.sigmoid(tf.add(tf.matmul(layer_action_1_layer_1, weight_out_action_1), bias_out_action_1), name="predict_action_1")
         predicted_y_action_2 = tf.sigmoid(tf.add(tf.matmul(layer_action_2_layer_1, weight_out_action_2), bias_out_action_2), name="predict_action_2")
@@ -161,6 +216,14 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         testing_accuracy_action_2 = []
         testing_accuracy_loc = []
         testing_accuracy_phone = []
+        rmse_action_1_train = []
+        rmse_action_2_train = []
+        rmse_loc_train = []
+        rmse_phone_train = []
+        rmse_action_1_test = []
+        rmse_action_2_test = []
+        rmse_loc_test = []
+        rmse_phone_test = []
         saver = tf.compat.v1.train.Saver(max_to_keep=10)
 
         (data_in, action_data_1, action_data_2, loc_data, phone_data) = get.get_formatted_data(training_dir, training_files)
@@ -200,7 +263,7 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                                                 y_loc: output_train_loc[arr[index:index+batch_size]],
                                                 y_phone: output_train_phone[arr[index:index+batch_size]]})   
 
-                saver.save(sess, (checkpointdir), global_step=1000)
+                saver.save(sess, (checkpointdir), global_step=2000)
 
                 training_accuracy_action_1.append(sess.run(accuracy_action_1, feed_dict={x:input_train, 
                                                                                      y_action_1:output_train_action_1}))
@@ -215,6 +278,16 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                                                                                        y_loc:output_train_loc,
                                                                                        y_action_1:output_train_action_1,
                                                                                        y_action_2:output_train_action_2}))
+
+                rmse_action_1_train.append(mean_squared_error(output_train_action_1,sess.run(predicted_y_action_1, feed_dict={x:input_train})))
+                rmse_action_2_train.append(mean_squared_error(output_train_action_2,sess.run(predicted_y_action_2, feed_dict={x:input_train})))
+                rmse_loc_train.append(mean_squared_error(output_train_loc,sess.run(predicted_y_loc, feed_dict={x:input_train})))
+                rmse_phone_train.append(mean_squared_error(output_train_phone,sess.run(predicted_y_phone, feed_dict={x:input_train})))
+
+                rmse_action_1_test.append(mean_squared_error(output_test_action_1,sess.run(predicted_y_action_1, feed_dict={x:input_test})))
+                rmse_action_2_test.append(mean_squared_error(output_test_action_2,sess.run(predicted_y_action_2, feed_dict={x:input_test})))
+                rmse_loc_test.append(mean_squared_error(output_test_loc,sess.run(predicted_y_loc, feed_dict={x:input_test})))
+                rmse_phone_test.append(mean_squared_error(output_test_phone,sess.run(predicted_y_phone, feed_dict={x:input_test})))
 
                 training_loss.append(sess.run(loss, feed_dict={x: input_train,
                                                                y_action_1: output_train_action_1,
@@ -236,27 +309,43 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                                                                                                    training_loss[epoch],
                                                                                                    training_accuracy_overall[epoch],
                                                                                                    testing_accuracy_overall[epoch]))
-                print("          for action 1         Train acc: {0:.3f} Test acc: {1:.3f}".format( training_accuracy_action_1[epoch],
-                                                                                                    testing_accuracy_action_1[epoch]))
-                print("          for action 2         Train acc: {0:.3f} Test acc: {1:.3f}".format( training_accuracy_action_2[epoch],
-                                                                                                    testing_accuracy_action_2[epoch]))
-                print("          for location         Train acc: {0:.3f} Test acc: {1:.3f}".format(training_accuracy_loc[epoch],
-                                                                                                   testing_accuracy_loc[epoch]))
-                print("          for phone            Train acc: {0:.3f} Test acc: {1:.3f}".format(training_accuracy_phone[epoch],
-                                                                                                   testing_accuracy_phone[epoch]))
+                print("          for action 1         Train acc: {0:.3f} Test acc: {1:.3f} Train RMSE {4:.3f} Test RMSE {5:.3f}".format( training_accuracy_action_1[epoch],
+                                                                                                    testing_accuracy_action_1[epoch],
+                                                                                                    rmse_action_1_train[epoch],
+                                                                                                    rmse_action_1_test[epoch]))
+                print("          for action 2         Train acc: {0:.3f} Test acc: {1:.3f} Train RMSE {4:.3f} Test RMSE {5:.3f}".format( training_accuracy_action_2[epoch],
+                                                                                                    testing_accuracy_action_2[epoch],
+                                                                                                    rmse_action_2_train[epoch],
+                                                                                                    rmse_action_2_test[epoch]))
+                print("          for location         Train acc: {0:.3f} Test acc: {1:.3f} Train RMSE {4:.3f} Test RMSE {5:.3f}".format(training_accuracy_loc[epoch],
+                                                                                                   testing_accuracy_loc[epoch],
+                                                                                                   rmse_loc_train[epoch],
+                                                                                                   rmse_loc_test[epoch]))
+                print("          for phone            Train acc: {0:.3f} Test acc: {1:.3f} Train RMSE {4:.3f} Test RMSE {5:.3f}".format(training_accuracy_phone[epoch],
+                                                                                                   testing_accuracy_phone[epoch],
+                                                                                                   rmse_phone_train[epoch],
+                                                                                                   rmse_phone_test[epoch]))
                 
                 f.write("Epoch:{0}, Train loss: {1:.2f} Train acc: {2:.3f} Test acc: {3:.3f}\n".format(epoch,
                                                                                                    training_loss[epoch],
                                                                                                    training_accuracy_overall[epoch],
                                                                                                    testing_accuracy_overall[epoch]))
-                f.write("          for action 1         Train acc: {0:.3f} Test acc: {1:.3f}\n".format( training_accuracy_action_1[epoch],
-                                                                                                    testing_accuracy_action_1[epoch]))
-                f.write("          for action 2         Train acc: {0:.3f} Test acc: {1:.3f}\n".format( training_accuracy_action_2[epoch],
-                                                                                                    testing_accuracy_action_2[epoch]))
-                f.write("          for location         Train acc: {0:.3f} Test acc: {1:.3f}\n".format(training_accuracy_loc[epoch],
-                                                                                                   testing_accuracy_loc[epoch]))
-                f.write("          for phone            Train acc: {0:.3f} Test acc: {1:.3f}\n".format(training_accuracy_phone[epoch],
-                                                                                                   testing_accuracy_phone[epoch]))
+                f.write("          for action 1         Train acc: {0:.3f} Test acc: {1:.3f} Train RMSE {4:.3f} Test RMSE {5:.3f}\n".format( training_accuracy_action_1[epoch],
+                                                                                                    testing_accuracy_action_1[epoch],
+                                                                                                    rmse_action_1_train[epoch],
+                                                                                                    rmse_action_1_test[epoch]))
+                f.write("          for action 2         Train acc: {0:.3f} Test acc: {1:.3f} Train RMSE {4:.3f} Test RMSE {5:.3f}\n".format( training_accuracy_action_2[epoch],
+                                                                                                    testing_accuracy_action_2[epoch],
+                                                                                                    rmse_action_2_train[epoch],
+                                                                                                    rmse_action_2_test[epoch]))
+                f.write("          for location         Train acc: {0:.3f} Test acc: {1:.3f} Train RMSE {4:.3f} Test RMSE {5:.3f}\n".format(training_accuracy_loc[epoch],
+                                                                                                   testing_accuracy_loc[epoch],
+                                                                                                   rmse_loc_train[epoch],
+                                                                                                   rmse_loc_test[epoch]))
+                f.write("          for phone            Train acc: {0:.3f} Test acc: {1:.3f} Train RMSE {4:.3f} Test RMSE {5:.3f}\n".format(training_accuracy_phone[epoch],
+                                                                                                   testing_accuracy_phone[epoch],
+                                                                                                   rmse_phone_train[epoch],
+                                                                                                   rmse_phone_test[epoch]))
 
         tf.io.write_graph(tf.compat.v1.get_default_graph(), checkpointdir, 'model.pb', as_text=False)
         
@@ -267,7 +356,7 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         plt.ylabel('Accuracy')
         plt.xlabel('iterations')
         plt.legend()
-        plt.savefig('overall.png')
+        plt.savefig('graph/overall_accuracy.png')
 
         plt.figure()
         plt.plot(iterations, training_accuracy_action_1, label='action_train_1')
@@ -275,7 +364,7 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         plt.ylabel('Accuracy')
         plt.xlabel('iterations')
         plt.legend()
-        plt.savefig('action_1.png')
+        plt.savefig('graph/action_1_accuracy.png')
 
         plt.figure()
         plt.plot(iterations, training_accuracy_action_2, label='action_train_2')
@@ -283,7 +372,7 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         plt.ylabel('Accuracy')
         plt.xlabel('iterations')
         plt.legend()
-        plt.savefig('action_2.png')
+        plt.savefig('graph/action_2_accuracy.png')
 
         plt.figure()
         plt.plot(iterations, training_accuracy_loc, label='loc_train')
@@ -291,7 +380,7 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         plt.ylabel('Accuracy')
         plt.xlabel('iterations')
         plt.legend()
-        plt.savefig('loc.png')
+        plt.savefig('graph/loc_accuracy.png')
 
         plt.figure()
         plt.plot(iterations, training_accuracy_phone, label='phone_train')
@@ -299,7 +388,41 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         plt.ylabel('Accuracy')
         plt.xlabel('iterations')
         plt.legend()
-        plt.savefig('phone.png')
+        plt.savefig('graph/phone_accuracy.png')
+
+        plt.figure()
+        plt.plot(iterations, rmse_action_1_train, label='action_train_1')
+        plt.plot(iterations, rmse_action_1_test, label='action_test_1')
+        plt.ylabel('RMSE')
+        plt.xlabel('iterations')
+        plt.legend()
+        plt.savefig('graph/action_1_rmse.png')
+
+        plt.figure()
+        plt.plot(iterations, rmse_action_2_train, label='action_train_2')
+        plt.plot(iterations, rmse_action_2_test, label='action_test_2')
+        plt.ylabel('RMSE')
+        plt.xlabel('iterations')
+        plt.legend()
+        plt.savefig('graph/action_2_rmse.png')
+
+        plt.figure()
+        plt.plot(iterations, rmse_loc_train, label='loc_train')
+        plt.plot(iterations, rmse_loc_test, label='loc_test')
+        plt.ylabel('RMSE')
+        plt.xlabel('iterations')
+        plt.legend()
+        plt.savefig('graph/loc_rmse.png')
+
+        plt.figure()
+        plt.plot(iterations, rmse_phone_train, label='phone_train')
+        plt.plot(iterations, rmse_phone_test, label='phone_test')
+        plt.ylabel('RMSE')
+        plt.xlabel('iterations')
+        plt.legend()
+        plt.savefig('graph/phone_rmse.png')
+
+        print(plot_confusion_matrix( output_test_action_1, sess.run(predicted_y_action_1, {x: input_test}), action_data_1[0], title="Action 1 Test set"))
 
         print("Training complete")
         print("=============================================================")

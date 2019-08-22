@@ -188,7 +188,7 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         testing_accuracy_action_2 = []
         testing_accuracy_loc = []
         testing_accuracy_phone = []
-        saver = tf.compat.v1.train.Saver(max_to_keep=10)
+        saver = tf.compat.v1.train.Saver()
 
         (data_in, action_data_1, action_data_2, loc_data, phone_data) = get.get_formatted_data(training_dir, training_files)
         # action_data[0] etc gives labels for the set
@@ -227,7 +227,7 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                                                 y_loc: output_train_loc[arr[index:index+batch_size]],
                                                 y_phone: output_train_phone[arr[index:index+batch_size]]})   
 
-                saver.save(sess, (checkpointdir), global_step=1000)
+                saver.save(sess, (checkpointdir), global_step=2000)
 
                 training_accuracy_action_1.append(sess.run(accuracy_action_1, feed_dict={x:input_train, 
                                                                                      y_action_1:output_train_action_1}))

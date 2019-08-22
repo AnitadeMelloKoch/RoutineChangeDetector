@@ -18,21 +18,21 @@ epochs=800
 batch=200
 
 # Number of feature discovered by each hidden layer
-hidden_1=255
-hidden_2=215
-hidden_3=190
-hidden_4=170
-hidden_5=150
-hidden_6=130
-hidden_7=90
+hidden_1=205
+hidden_2=190
+hidden_3=150
+hidden_4=120
+hidden_5=100
+hidden_6=90
+hidden_7=70
 
-action_1_layer_1=70
-action_2_layer_1=70
-action_2_layer_2=40
+action_1_layer_1=60
+action_2_layer_1=60
+action_2_layer_2=30
 
-action_weight_1=0.47
-action_weight_2=0.24
-loc_weight=0.26
+action_weight_1=0.27
+action_weight_2=0.39
+loc_weight=0.25
 phone_weight=0.08
 # =================================================================================================================
 
@@ -54,15 +54,15 @@ if [ -d $rundir ]; then
   fi
 fi
 
-mkdir -p $rundir
+# mkdir -p $rundir
 
-cp $mlpdir/MLP.py $rundir
+# cp $mlpdir/MLP.py $rundir
 cp $datascriptdir/format_data.py $rundir
 cp $datascriptdir/get_data.py $rundir
 cp $datascriptdir/parse_data.py $rundir
-cp mlp.sh $rundir
+# cp mlp.sh $rundir
 
-cd $rundir
+# cd $rundir
 
 
 

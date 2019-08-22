@@ -12,7 +12,7 @@ trainSplit=0.7
 learningInit=0.001
 
 # Number of epochs to train for
-epochs=3000
+epochs=800
 
 # batch size for each training step
 batch=200
@@ -28,16 +28,16 @@ hidden_6=90
 action_1_layer_1=70
 action_2_layer_1=70
 
-action_weight_1=0.47
-action_weight_2=0.24
-loc_weight=0.26
+action_weight_1=0.27
+action_weight_2=0.39
+loc_weight=0.25
 phone_weight=0.08
 # =================================================================================================================
 
 # Directories
 
 datadir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data"
-rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/3000epoch"
+rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/rmse"
 datascriptdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/dataHandeling"
 mlpdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/mlp"
 

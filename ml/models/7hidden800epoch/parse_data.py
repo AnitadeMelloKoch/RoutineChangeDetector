@@ -116,3 +116,10 @@ def read_user_data(filePath):
     (X,Y,M,timestamps) = parse_body_of_csv(csv_str, numFeatures)
 
     return (X, Y, M, timestamps, featureNames, labelNames)
+
+def remove_watch_data(labels, allin):
+    newLabels = labels[:83]
+    newin = allin[:,:83]
+    newLabels = newLabels + labels[138:]
+    newin = np.concatenate([newin, allin[:,138:]], axis=1)
+    return (newLabels, newin)

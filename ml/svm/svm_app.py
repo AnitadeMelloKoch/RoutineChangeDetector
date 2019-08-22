@@ -77,6 +77,10 @@ def main(nor_data_train, data_to_analyze):
 
     return fraud_pred
 
+def getIndexofMax(arr1, arr2):
+    index = np.argmax(arr1)
+    return arr2[index]
+
 if __name__ == '__main__':
     AP = argparse.ArgumentParser()
     AP.add_argument("--train_data", type=list, help="List containing non-anomolous data")

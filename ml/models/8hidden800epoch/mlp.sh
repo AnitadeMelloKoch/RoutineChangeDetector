@@ -31,9 +31,9 @@ action_1_layer_1=50
 action_2_layer_1=50
 action_2_layer_2=30
 
-action_weight_1=0.47
-action_weight_2=0.24
-loc_weight=0.26
+action_weight_1=0.27
+action_weight_2=0.39
+loc_weight=0.25
 phone_weight=0.08
 # =================================================================================================================
 
