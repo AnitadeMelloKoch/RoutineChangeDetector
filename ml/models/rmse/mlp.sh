@@ -3,7 +3,7 @@
 # Parameters to change
 # ===============================================================================================================
 # Number of files to use from the directory. -1 uses all files
-fileNum=-1
+fileNum=2
 
 # Percentage of data to be used for training. Rest is used for validation
 trainSplit=0.7
@@ -12,10 +12,10 @@ trainSplit=0.7
 learningInit=0.001
 
 # Number of epochs to train for
-epochs=3000
+epochs=10
 
 # batch size for each training step
-batch=500
+batch=200
 
 # Number of feature discovered by each hidden layer
 hidden_1=205
@@ -37,7 +37,7 @@ phone_weight=0.08
 # Directories
 
 datadir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data"
-rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/final3000"
+rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/rmse"
 datascriptdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/dataHandeling"
 mlpdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/mlp"
 
