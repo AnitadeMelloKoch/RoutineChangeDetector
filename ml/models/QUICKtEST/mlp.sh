@@ -12,7 +12,7 @@ trainSplit=0.7
 learningInit=0.001
 
 # Number of epochs to train for
-epochs=800
+epochs=50
 
 # batch size for each training step
 batch=200
@@ -28,18 +28,18 @@ hidden_6=90
 action_1_layer_1=70
 action_2_layer_1=70
 
-action_weight_1=0.27
-action_weight_2=0.39
-loc_weight=0.25
+action_weight_1=0.47
+action_weight_2=0.24
+loc_weight=0.26
 phone_weight=0.08
 # =================================================================================================================
 
 # Directories
 
-datadir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data"
-rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/rmse"
-datascriptdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/dataHandeling"
-mlpdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/mlp"
+datadir="D:\nicho\Documents\RoutineChangeDetector\app\ExtraSensory.per_uuid_features_labels\ExtraSensory"
+rundir="D:\nicho\Documents\RoutineChangeDetector\ml\models\QUICKtEST"
+datascriptdir="D:\nicho\Documents\RoutineChangeDetector\ml\dataHandeling"
+mlpdir="D:\nicho\Documents\RoutineChangeDetector\ml\mlp"
 
 # =================================================================================================================
 
