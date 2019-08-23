@@ -83,4 +83,5 @@ python3 MLP.py  --training_directory $datadir \
                 --hidden_4 $hidden_4 \
                 --hidden_5 $hidden_5 \
                 --hidden_6 $hidden_6 \
+                --action_2_layer_1 $action_2_layer_1 \
                 --loc_layer_1 $loc_layer_1
