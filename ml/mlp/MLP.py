@@ -473,7 +473,7 @@ if __name__ == '__main__':
                 hidden_5=parsed.hidden_5,
                 hidden_6=parsed.hidden_6,
                 action_2_layer_1=parsed.action_2_layer_1,
-                loc_layer_1=parsed.loc_layer_1
+                loc_layer_1=parsed.loc_layer_1,
                 n_input=parsed.input, 
                 n_labels=parsed.add_input, 
                 n_output_action_1=parsed.actions_1,
