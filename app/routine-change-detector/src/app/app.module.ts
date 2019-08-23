@@ -20,6 +20,10 @@ import { Network } from "@ionic-native/network/ngx"
 import { HTTP } from '@ionic-native/http/ngx'
 import { Device } from '@ionic-native/device/ngx'
 import { IonicStorageModule } from '@ionic/storage'
+import { Diagnostic } from '@ionic-native/diagnostic/ngx'
+import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx'
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx'
+import { Toast } from '@ionic-native/toast/ngx'
 
 
 import { AppStateService } from 'src/app/services/AppState/app-state.service'
@@ -44,13 +48,17 @@ import { StorageService } from 'src/app/services/Storage/storage.service'
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     ////////////////////////////////////////////////////////////////
     // Ionic-Native Plugins
+    Diagnostic,
     Geolocation,
+    LocationAccuracy,
+    AndroidPermissions,
     Media,
     File,
     BackgroundMode,
     Network,
     HTTP,
     Device,
+    Toast,
     ////////////////////////////////////////////////////////////////
     // Services
     AppStateService,

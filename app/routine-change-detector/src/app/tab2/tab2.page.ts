@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { NavController } from '@ionic/angular'
 
-import { Geolocation } from '@ionic-native/geolocation/ngx';
+// import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { LocationService, GeoData } from 'src/app/services/Location/location.service'
 
 @Component({
   selector: 'app-tab2',
@@ -14,19 +15,10 @@ export class Tab2Page {
   acceleration: number
   gyroscope: number
   magnetometer: number
-  geoData = {
-    latitude: 0,
-    longitude: 0,
-    accuracy: 0,
-    altitude: 0,
-    altitudeAccuracy: 0,
-    heading: 0,
-    speed: 0,
-    timestamp: 0
-  }
+  geoData: GeoData
 
-  constructor(private navCtrl: NavController, private geolocation: Geolocation) {
-
+  constructor(private navCtrl: NavController, private _location: LocationService) {
+    this.geoData = new GeoData()
     // Add Event Listener for Acceleration and Gyroscope
     window.addEventListener("devicemotion", (event) => {
       this.acceleration = Math.sqrt(Math.pow(event.accelerationIncludingGravity.x,2)+Math.pow(event.accelerationIncludingGravity.y,2)+Math.pow(event.accelerationIncludingGravity.z,2))/Tab2Page._G
@@ -39,25 +31,9 @@ export class Tab2Page {
     }, true)
 
     document.addEventListener("deviceready", () => {
-      let geolocationOptions = { maximumAge: 25, timeout: 500, enableHighAccuracy: true };
-      let geoWatchId = navigator.geolocation.watchPosition( 
-        // GEOLOCATION SUCCESS
-        (response) => {
-        console.log(response)
-        this.geoData.latitude = response.coords.latitude
-        this.geoData.longitude = response.coords.longitude
-        this.geoData.accuracy = response.coords.accuracy
-        this.geoData.altitude = response.coords.altitude
-        this.geoData.altitudeAccuracy = response.coords.altitudeAccuracy
-        this.geoData.heading = response.coords.heading
-        this.geoData.speed = response.coords.speed
-        this.geoData.timestamp = response.timestamp
-      }, 
-      //  GEOLOCATION ERROR
-      (error) => {
-        console.log(error)
-      }, 
-      geolocationOptions)
-    }, false)    
+      this._location.getSubject().subscribe((geoloc: GeoData) => {
+        this.geoData = geoloc
+      })
+    }) 
   }
 }
