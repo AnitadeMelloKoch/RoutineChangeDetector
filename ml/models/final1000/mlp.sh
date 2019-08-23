@@ -12,7 +12,7 @@ trainSplit=0.7
 learningInit=0.001
 
 # Number of epochs to train for
-epochs=800
+epochs=1000
 
 # batch size for each training step
 batch=500
@@ -25,8 +25,8 @@ hidden_4=150
 hidden_5=110
 hidden_6=90
 
+action_1_layer_1=70
 action_2_layer_1=70
-loc_layer_1=50
 
 action_weight_1=0.27
 action_weight_2=0.39
@@ -37,7 +37,7 @@ phone_weight=0.08
 # Directories
 
 datadir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data"
-rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/extraLocLayer"
+rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/final1000"
 datascriptdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/dataHandeling"
 mlpdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/mlp"
 
@@ -83,5 +83,5 @@ python3 MLP.py  --training_directory $datadir \
                 --hidden_4 $hidden_4 \
                 --hidden_5 $hidden_5 \
                 --hidden_6 $hidden_6 \
-                --action_2_layer_1 $action_2_layer_1 \
-                --loc_layer_1 $loc_layer_1
+                --action_1_layer_1 $action_1_layer_1 \
+                --action_2_layer_1 $action_2_layer_1
