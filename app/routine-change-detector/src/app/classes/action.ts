@@ -8,7 +8,7 @@ export class Action{
         this.actionList = a_list || []
         this.anomaly = anomaly || undefined
         this.timestamp = timestamp || 0
-        this.datetime = new Date(timestamp * 1000) || new Date(Date.now() * 1000)
+        this.datetime = new Date(timestamp) || new Date(Date.now())
     }
 
     toString(): string{
