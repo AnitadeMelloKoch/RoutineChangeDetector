@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage'
 import { Action } from 'src/app/classes/action';
 import { RecordedData } from '../RecorderManager/recorder-manager.service';
+import { ReplaySubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +14,12 @@ export class StorageService {
   private _dbReady: boolean
   private _recordData: RecordedData[]
   private _actionHistory: Action[]
+  private _replaySubject: ReplaySubject<boolean>
 
   constructor(private _storage: Storage) {
+    this._replaySubject = new ReplaySubject<boolean>(1)
     this._dbReady = false
+    this._replaySubject.next(this._dbReady)
     this._recordDataKey = 'data_key'
     this._actionHistoryKey = 'action_key'
     this._storage.ready().then(() => {
@@ -35,6 +39,7 @@ export class StorageService {
   private _checkLists() {
     if (this._recordData !== undefined && this._actionHistory !== undefined){
       this._dbReady = true
+      this._replaySubject.next(this._dbReady)
     }
   }
 
@@ -138,6 +143,9 @@ export class StorageService {
   }
   public isReady(): boolean {
     return this._dbReady
+  }
+  public getReadySubject(): ReplaySubject<boolean>{
+    return this._replaySubject
   }
 
 }

@@ -104,7 +104,6 @@ export class Tab4Page {
 
   private _addFromArray(arr: Action[]){
     return new Promise(resolve => {
-      console.log(arr)
       if(arr.length > 1){
         let action = arr.shift()
         this._storage.addActionHistory(action).then(() => {
@@ -119,6 +118,46 @@ export class Tab4Page {
         })
       }
     })
+  }
+
+  public doDetection(){
+    let uuid = '788644910f8e9a57'
+    this._http.detectAnomalies(uuid).then(status => {
+      console.log("Anomaly Detection complete")
+      console.log(status)
+      if(status){
+        this.doUpdate()
+      }
+    }).catch(err => console.log(err))
+  }
+
+  public doUpdate(){
+    let uuid = '788644910f8e9a57'
+    let numStoredActivities = this._storage.getActionHistory().length
+    this._http.getActivityRange(uuid, 0, numStoredActivities).then((result) => {
+      console.log(result)
+      let activity_labels = result.activity_labels
+      let timestamps = result.timestamps
+      let anomaly = result.anomaly
+      let length = result.length
+
+      this._storage.clearActionHistory().then(() => {
+        let actionList = []
+        for(let idx = 0; idx < length; idx++){
+          let action = new Action(activity_labels[idx], timestamps[idx], anomaly[idx])
+          actionList.push(action)
+        }
+        actionList.reverse()
+        this._addFromArray(actionList).then(() => {
+        })
+      })
+    }).catch((e) => {
+      console.log(e)
+    })
+  }
+
+  public doGetMore(){
+
   }
 
   ngOnInit() {

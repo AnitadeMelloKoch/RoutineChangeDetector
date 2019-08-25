@@ -1,7 +1,7 @@
 <ion-header>
-    <ion-toolbar>
+    <ion-toolbar color="primary">
       <ion-title>
-        Ionic Infinite Scroll
+        Routine Change Detector
       </ion-title>
     </ion-toolbar>
   </ion-header>
@@ -10,7 +10,15 @@
     <div class="ion-padding">
   
       <ion-list>
-        <ion-item *ngFor="let item of items">{{item}}</ion-item>
+        <ion-item *ngFor="let item of items">
+          <ion-label>
+            <h2>{{item.datetime}}</h2>
+            <h3 *ngIf="item.anomaly===true">Anomaly</h3>
+            <h3 *ngIf="item.anomaly===false">Regular</h3>
+            <h3 *ngIf="item.anomaly==undefined">Un-classified</h3>
+            <p>{{item.actionList}}</p>
+          </ion-label>
+        </ion-item>
       </ion-list>
   
       <ion-infinite-scroll threshold="250px" (ionInfinite)="loadData($event)" [disabled]="numTimesLeft <= 0">

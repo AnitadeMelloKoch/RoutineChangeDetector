@@ -6,7 +6,11 @@ export class Action{
 
     constructor(a_list?: string[], timestamp?: number, anomaly?:boolean){
         this.actionList = a_list || []
-        this.anomaly = anomaly || undefined
+        if(anomaly == undefined){
+            this.anomaly = undefined
+        } else {
+            this.anomaly = anomaly
+        }
         this.timestamp = timestamp || 0
         this.datetime = new Date(timestamp) || new Date(Date.now())
     }
