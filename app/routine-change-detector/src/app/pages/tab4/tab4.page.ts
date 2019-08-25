@@ -8,10 +8,10 @@ import { Platform } from '@ionic/angular';
 
 import { Network } from '@ionic-native/network/ngx'
 
-import { HttpService } from '../services/Http/http.service';
-import { RecorderManagerService } from '../services/RecorderManager/recorder-manager.service';
-import { StorageService } from '../services/Storage/storage.service';
-import { Action } from 'src/app/classes/action'
+import { HttpService } from '../../services/Http/http.service';
+import { RecorderManagerService } from '../../services/RecorderManager/recorder-manager.service';
+import { StorageService } from '../../services/Storage/storage.service';
+import { Activity } from 'src/app/classes/activity'
 
 declare var PhoneCallTrap: any;
 declare var RingerMode: any;
@@ -47,7 +47,7 @@ export class Tab4Page {
     console.log(this._storage.getRecordData())
   }
   public logActivities(){
-    console.log(this._storage.getActionHistory())
+    console.log(this._storage.getActivityHistory())
   }
   public clearData(){
     console.log("cleared data")
@@ -55,7 +55,7 @@ export class Tab4Page {
   }
   public clearActivities(){
     console.log("clearned activities")
-    this._storage.clearActionHistory()
+    this._storage.clearActivityHistory()
   }
 
   public doSendData(){
@@ -88,12 +88,12 @@ export class Tab4Page {
       console.log(response)
       if(response.success){
         console.log("Has returned classifications")
-        let actionArr = []
+        let activityArr = []
         for(let idx = 0; idx < response.activity_labels.length; idx++){
-          let action = new Action(response.activity_labels[idx], response.timestamps[idx])
-          actionArr.push(action)
+          let activity = new Activity(response.activity_labels[idx], response.timestamps[idx])
+          activityArr.push(activity)
         }
-        this._addFromArray(actionArr)
+        this._addFromArray(activityArr)
       } else {
         console.log("No new classifications")
       }
@@ -102,18 +102,18 @@ export class Tab4Page {
     })
   }
 
-  private _addFromArray(arr: Action[]){
+  private _addFromArray(arr: Activity[]){
     return new Promise(resolve => {
       if(arr.length > 1){
-        let action = arr.shift()
-        this._storage.addActionHistory(action).then(() => {
+        let activity = arr.shift()
+        this._storage.addActivityHistory(activity).then(() => {
           this._addFromArray(arr)
           resolve()
         })
       } else {
-        let action = arr[0]
-        this._storage.addActionHistory(action).then(() => {
-          console.log("Has added all actions. Resolving.")
+        let activity = arr[0]
+        this._storage.addActivityHistory(activity).then(() => {
+          console.log("Has added all activities. Resolving.")
           resolve()
         })
       }
@@ -133,7 +133,7 @@ export class Tab4Page {
 
   public doUpdate(){
     let uuid = '788644910f8e9a57'
-    let numStoredActivities = this._storage.getActionHistory().length
+    let numStoredActivities = this._storage.getActivityHistory().length
     this._http.getActivityRange(uuid, 0, numStoredActivities).then((result) => {
       console.log(result)
       let activity_labels = result.activity_labels
@@ -141,14 +141,14 @@ export class Tab4Page {
       let anomaly = result.anomaly
       let length = result.length
 
-      this._storage.clearActionHistory().then(() => {
-        let actionList = []
+      this._storage.clearActivityHistory().then(() => {
+        let activityList = []
         for(let idx = 0; idx < length; idx++){
-          let action = new Action(activity_labels[idx], timestamps[idx], anomaly[idx])
-          actionList.push(action)
+          let activity = new Activity(activity_labels[idx], timestamps[idx], anomaly[idx])
+          activityList.push(activity)
         }
-        actionList.reverse()
-        this._addFromArray(actionList).then(() => {
+        activityList.reverse()
+        this._addFromArray(activityList).then(() => {
         })
       })
     }).catch((e) => {

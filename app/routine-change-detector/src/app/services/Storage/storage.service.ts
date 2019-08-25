@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage'
-import { Action } from 'src/app/classes/action';
+import { Activity } from 'src/app/classes/activity';
 import { RecordedData } from '../RecorderManager/recorder-manager.service';
 import { ReplaySubject } from 'rxjs';
 
@@ -10,10 +10,10 @@ import { ReplaySubject } from 'rxjs';
 export class StorageService {
 
   private _recordDataKey: string
-  private _actionHistoryKey: string
+  private _activityHistoryKey: string
   private _dbReady: boolean
   private _recordData: RecordedData[]
-  private _actionHistory: Action[]
+  private _activityHistory: Activity[]
   private _replaySubject: ReplaySubject<boolean>
 
   constructor(private _storage: Storage) {
@@ -21,15 +21,15 @@ export class StorageService {
     this._dbReady = false
     this._replaySubject.next(this._dbReady)
     this._recordDataKey = 'data_key'
-    this._actionHistoryKey = 'action_key'
+    this._activityHistoryKey = 'action_key'
     this._storage.ready().then(() => {
       this._checkIfKeyExistsElseMake(this._recordDataKey).then( () => { 
         this._setVarRecordData().then(() => {
           this._checkLists()
         })
       })
-      this._checkIfKeyExistsElseMake(this._actionHistoryKey).then( () => { 
-        this._setVarActionHistory().then(() => {
+      this._checkIfKeyExistsElseMake(this._activityHistoryKey).then( () => { 
+        this._setVarActivityHistory().then(() => {
           this._checkLists()
         })
       })
@@ -37,7 +37,7 @@ export class StorageService {
   }
   
   private _checkLists() {
-    if (this._recordData !== undefined && this._actionHistory !== undefined){
+    if (this._recordData !== undefined && this._activityHistory !== undefined){
       this._dbReady = true
       this._replaySubject.next(this._dbReady)
     }
@@ -68,10 +68,10 @@ export class StorageService {
     })
   }
 
-  private _setVarActionHistory(): Promise<void>{
+  private _setVarActivityHistory(): Promise<void>{
     return new Promise(resolve => {
-      this._storage.get(this._actionHistoryKey).then(val => {
-        this._actionHistory = val
+      this._storage.get(this._activityHistoryKey).then(val => {
+        this._activityHistory = val
         resolve()
       })
     })
@@ -89,16 +89,16 @@ export class StorageService {
     })
   }
 
-  public addActionHistory(action: Action): Promise<void>{
+  public addActivityHistory(activity: Activity): Promise<void>{
     return new Promise((resolve, reject) => {
       if(!this._dbReady){
         reject(Error("Keystore DB not ready."))
       }
-      this._actionHistory.push(action)
-      if(this._actionHistory.length > 96){
-        this._actionHistory.shift()
+      this._activityHistory.push(activity)
+      if(this._activityHistory.length > 96){
+        this._activityHistory.shift()
       }
-      this._storage.set(this._actionHistoryKey, this._actionHistory).then(() => {
+      this._storage.set(this._activityHistoryKey, this._activityHistory).then(() => {
         resolve()
       })
     })
@@ -120,14 +120,14 @@ export class StorageService {
     })
   }
 
-  public clearActionHistory(): Promise<void>{
+  public clearActivityHistory(): Promise<void>{
     return new Promise((resolve, reject) => {
       if(!this._dbReady){
         reject(Error("Keystore DB not ready."))
       }
-      this._storage.remove(this._actionHistoryKey).then( () => {
-        this._checkIfKeyExistsElseMake(this._actionHistoryKey).then( () => { 
-          this._setVarActionHistory().then(() => {
+      this._storage.remove(this._activityHistoryKey).then( () => {
+        this._checkIfKeyExistsElseMake(this._activityHistoryKey).then( () => { 
+          this._setVarActivityHistory().then(() => {
             resolve()
           })
         })
@@ -138,8 +138,8 @@ export class StorageService {
   public getRecordData(): any[]{
     return this._recordData
   }
-  public getActionHistory(): any[]{
-    return this._actionHistory
+  public getActivityHistory(): any[]{
+    return this._activityHistory
   }
   public isReady(): boolean {
     return this._dbReady

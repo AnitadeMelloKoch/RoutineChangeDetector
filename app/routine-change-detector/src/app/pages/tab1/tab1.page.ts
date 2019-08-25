@@ -1,9 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
 import { IonInfiniteScroll } from '@ionic/angular';
-import { StorageService } from '../services/Storage/storage.service';
+import { StorageService } from '../../services/Storage/storage.service';
 import { Subscription } from 'rxjs';
-import { HttpService } from '../services/Http/http.service';
-import { Action } from '../classes/action';
+import { HttpService } from '../../services/Http/http.service';
+import { Activity } from '../../classes/activity';
 
 @Component({
   selector: 'app-tab1',
@@ -24,7 +24,7 @@ export class Tab1Page {
     let subject = new Subscription()
     subject = this._storage.getReadySubject().subscribe((isReady) => {
       if (isReady){
-        this.items = this._storage.getActionHistory().slice().reverse()
+        this.items = this._storage.getActivityHistory().slice().reverse()
         subject.unsubscribe()
       }
     })
@@ -47,8 +47,8 @@ export class Tab1Page {
           let anomaly = response.anomaly
           let length = response.length
           for(let idx = 0; idx < length; idx++){
-            let action = new Action(activity_labels[idx], timestamps[idx], anomaly[idx])
-            this.items.push(action)
+            let activity = new Activity(activity_labels[idx], timestamps[idx], anomaly[idx])
+            this.items.push(activity)
           }
           event.target.complete();
         }).catch(err => {
@@ -65,8 +65,8 @@ export class Tab1Page {
           let anomaly = response.anomaly
           let length = response.length
           for(let idx = 0; idx < length; idx++){
-            let action = new Action(activity_labels[idx], timestamps[idx], anomaly[idx])
-            this.items.push(action)
+            let activity = new Activity(activity_labels[idx], timestamps[idx], anomaly[idx])
+            this.items.push(activity)
           }
           event.target.complete();
         }).catch(err => {
@@ -79,5 +79,9 @@ export class Tab1Page {
       console.log(err)
       event.target.complete();
     })
+  }
+
+  editActivity(item: Activity){
+    console.log(item)
   }
 }

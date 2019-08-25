@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { HTTP } from '@ionic-native/http/ngx'
-import { Action } from 'src/app/classes/action';
+import { Activity } from 'src/app/classes/activity';
 
 // import { StorageService } from '../Storage/storage.service';
 // import { RecorderManagerService } from '../RecorderManager/recorder-manager.service';

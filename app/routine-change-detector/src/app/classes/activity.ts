@@ -1,11 +1,11 @@
-export class Action{
-    actionList: string[]
+export class Activity{
+    activityList: string[]
     timestamp: number
     datetime: Date
     anomaly: boolean
 
     constructor(a_list?: string[], timestamp?: number, anomaly?:boolean){
-        this.actionList = a_list || []
+        this.activityList = a_list || []
         if(anomaly == undefined){
             this.anomaly = undefined
         } else {
