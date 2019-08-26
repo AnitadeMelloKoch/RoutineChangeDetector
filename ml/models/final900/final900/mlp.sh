@@ -12,27 +12,21 @@ trainSplit=0.7
 learningInit=0.001
 
 # Number of epochs to train for
-epochs=800
+epochs=900
 
 # batch size for each training step
 batch=500
 
 # Number of feature discovered by each hidden layer
-hidden_1=220
+hidden_1=205
 hidden_2=200
 hidden_3=180
-hidden_4=160
-hidden_5=140
-hidden_6=120
-hidden_7=100
-hidden_8=90
-hidden_9=80
-hidden_10=70
-hidden_11=60
-hidden_12=50
+hidden_4=150
+hidden_5=110
+hidden_6=90
 
-action_2_layer_1=30
-loc_layer_1=30
+action_2_layer_1=70
+loc_layer_1=50
 
 action_weight_1=0.27
 action_weight_2=0.39
@@ -42,10 +36,10 @@ phone_weight=0.08
 
 # Directories
 
-datadir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data"
-rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/12hidden"
-datascriptdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/dataHandeling"
-mlpdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/mlp"
+datadir="D:\nicho\Documents\RoutineChangeDetector\app\ExtraSensory.per_uuid_features_labels\ExtraSensory"
+rundir="C:\Users\nicho\Desktop\MLPTraining\final900"
+datascriptdir="D:\nicho\Documents\RoutineChangeDetector\ml\dataHandeling"
+mlpdir="D:\nicho\Documents\RoutineChangeDetector\ml\mlp"
 
 # =================================================================================================================
 
@@ -60,10 +54,10 @@ fi
 
 mkdir -p $rundir
 
-cp $mlpdir/MLP.py $rundir
-cp $datascriptdir/format_data.py $rundir
-cp $datascriptdir/get_data.py $rundir
-cp $datascriptdir/parse_data.py $rundir
+# cp $mlpdir/MLP.py $rundir
+# cp $datascriptdir/format_data.py $rundir
+# cp $datascriptdir/get_data.py $rundir
+# cp $datascriptdir/parse_data.py $rundir
 cp mlp.sh $rundir
 
 cd $rundir
@@ -72,7 +66,7 @@ mkdir graph
 
 
 
-python3 MLP.py  --training_directory $datadir \
+python MLP.py  --training_directory $datadir \
                 --checkpoint_directory $rundir/chkpnt/model \
                 --file_number $fileNum \
                 --train_percent $trainSplit \
@@ -89,11 +83,5 @@ python3 MLP.py  --training_directory $datadir \
                 --hidden_4 $hidden_4 \
                 --hidden_5 $hidden_5 \
                 --hidden_6 $hidden_6 \
-                --hidden_7 $hidden_7 \
-                --hidden_8 $hidden_8 \
-                --hidden_9 $hidden_9 \
-                --hidden_10 $hidden_10 \
-                --hidden_11 $hidden_11 \
-                --hidden_12 $hidden_12 \
                 --action_2_layer_1 $action_2_layer_1 \
                 --loc_layer_1 $loc_layer_1

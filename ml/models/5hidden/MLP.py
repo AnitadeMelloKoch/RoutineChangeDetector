@@ -8,7 +8,7 @@ import argparse
 import matplotlib.pyplot as plt
 from sklearn.utils.multiclass import unique_labels
 
-def main(training_dir, checkpointdir, training_files, train_percent, initial_learning_rate, epochs, batch_size, weighting_action_1, weighting_action_2, weighting_loc, weighting_phone, hidden_1, hidden_2, hidden_3, hidden_4, hidden_5,  hidden_6, hidden_7, hidden_8, hidden_9, hidden_10, hidden_11, hidden_12, action_2_layer_1, loc_layer_1, n_input, n_labels, n_output_action_1, n_output_action_2, n_output_loc, n_output_phone, regulariser_rate):
+def main(training_dir, checkpointdir, training_files, train_percent, initial_learning_rate, epochs, batch_size, weighting_action_1, weighting_action_2, weighting_loc, weighting_phone, hidden_1, hidden_2, hidden_3, hidden_4, hidden_5, action_2_layer_1, loc_layer_1, n_input, n_labels, n_output_action_1, n_output_action_2, n_output_loc, n_output_phone, regulariser_rate):
 
         f = open("output.log", "w+")
 
@@ -41,44 +41,18 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         weight_5 = tf.Variable(tf.random.normal([hidden_4, hidden_5]), name="weight_5")
         bias_5 = tf.Variable(tf.random.normal([hidden_5]), name="weight_5_bias")
 
-        # initialize weights for layer 6
-        weight_6 = tf.Variable(tf.random.normal([n_input, hidden_1]), name="weight_1")
-        bias_6 = tf.Variable(tf.random.normal([hidden_1]), name="weight_1_bias")
 
-        # initialize weights for layer 7
-        weight_7 = tf.Variable(tf.random.normal([hidden_1, hidden_2]), name="weight_2")
-        bias_7 = tf.Variable(tf.random.normal([hidden_2]), name="weight_2_bias")
-
-        #initialize weights for layer 8
-        weight_8 = tf.Variable(tf.random.normal([hidden_2, hidden_3]), name="weight_3")
-        bias_8 = tf.Variable(tf.random.normal([hidden_3]), name="weight_3_bias")
-
-        #initialize weights for layer 9
-        weight_9 = tf.Variable(tf.random.normal([hidden_3, hidden_4]), name="weight_4")
-        bias_9 = tf.Variable(tf.random.normal([hidden_4]), name="weight_4_bias")
-
-        #initialize weights for layer 10
-        weight_10 = tf.Variable(tf.random.normal([hidden_4, hidden_5]), name="weight_5")
-        bias_10 = tf.Variable(tf.random.normal([hidden_5]), name="weight_5_bias")
-
-        #initialize weights for layer 11
-        weight_11 = tf.Variable(tf.random.normal([hidden_3, hidden_4]), name="weight_4")
-        bias_11 = tf.Variable(tf.random.normal([hidden_4]), name="weight_4_bias")
-
-        #initialize weights for layer 12
-        weight_12 = tf.Variable(tf.random.normal([hidden_4, hidden_5]), name="weight_5")
-        bias_12 = tf.Variable(tf.random.normal([hidden_5]), name="weight_5_bias")
 
         #initialize weights for action 2 layer 1
-        weight_action_2_layer_1 = tf.Variable(tf.random.normal([hidden_12, action_2_layer_1]), name="weight_action_2_layer_1")
+        weight_action_2_layer_1 = tf.Variable(tf.random.normal([hidden_5, action_2_layer_1]), name="weight_action_2_layer_1")
         bias_action_2_layer_1 = tf.Variable(tf.random.normal([action_2_layer_1]), name="weight_action_2_layer_1_bias")
 
         #initialize weights for location layer 1
-        weight_loc_layer_1 = tf.Variable(tf.random.normal([hidden_12, loc_layer_1]), name="loc_layer_1")
+        weight_loc_layer_1 = tf.Variable(tf.random.normal([hidden_5, loc_layer_1]), name="loc_layer_1")
         bias_loc_layer_1 = tf.Variable(tf.random.normal([loc_layer_1]), name="loc_layer_1_bias")
 
         #initialize output weights for actions
-        weight_out_action_1 = tf.Variable(tf.random.normal([hidden_12, n_output_action_1]), name="weight_out_action_1")
+        weight_out_action_1 = tf.Variable(tf.random.normal([hidden_5, n_output_action_1]), name="weight_out_action_1")
         bias_out_action_1 = tf.Variable(tf.random.normal([n_output_action_1]), name="weight_out_action_1_bias")
 
         weight_out_action_2 = tf.Variable(tf.random.normal([action_2_layer_1, n_output_action_2]), name="weight_out_action_2")
@@ -89,7 +63,7 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         bias_out_loc = tf.Variable(tf.random.normal([n_output_loc]), name="weight_out_loc_bias")
 
         #initialize output weights for phone
-        weight_out_phone = tf.Variable(tf.random.normal([hidden_12, n_output_phone]), name="weight_out_phone")
+        weight_out_phone = tf.Variable(tf.random.normal([hidden_5, n_output_phone]), name="weight_out_phone")
         bias_out_phone = tf.Variable(tf.random.normal([n_output_phone]), name="weight_out_phone_bias")
 
         # layer 1
@@ -109,38 +83,18 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         layer_5 = tf.nn.sigmoid(tf.add(tf.matmul(layer_4, weight_5), bias_5))
 
         # layer 6
-        layer_6 = tf.nn.sigmoid(tf.add(tf.matmul(layer_5, weight_6), bias_6))
-        # haven't added any dropout yet
-
-        # layer 7
-        layer_7 = tf.nn.sigmoid(tf.add(tf.matmul(layer_6, weight_7), bias_7))
-
-        # layer 8
-        layer_8 = tf.nn.sigmoid(tf.add(tf.matmul(layer_7, weight_8), bias_8))
-
-        # layer 9
-        layer_9 = tf.nn.sigmoid(tf.add(tf.matmul(layer_8, weight_9), bias_9))
-
-        # layer 10
-        layer_10 = tf.nn.sigmoid(tf.add(tf.matmul(layer_9, weight_10), bias_10))
-
-        # layer 11
-        layer_11 = tf.nn.sigmoid(tf.add(tf.matmul(layer_10, weight_11), bias_11))
-
-        # layer 12
-        layer_12 = tf.nn.sigmoid(tf.add(tf.matmul(layer_11, weight_12), bias_12))
 
         # action 1 layer 1
-        layer_action_2_layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(layer_12, weight_action_2_layer_1), bias_action_2_layer_1))
+        layer_action_2_layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(layer_5, weight_action_2_layer_1), bias_action_2_layer_1))
 
         # location layer 1
-        layer_location_layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(layer_12, weight_loc_layer_1), bias_loc_layer_1))
+        layer_location_layer_1 = tf.nn.sigmoid(tf.add(tf.matmul(layer_5, weight_loc_layer_1), bias_loc_layer_1))
 
         # output layer
-        predicted_y_action_1 = tf.sigmoid(tf.add(tf.matmul(layer_12, weight_out_action_1), bias_out_action_1), name="predict_action_1")
+        predicted_y_action_1 = tf.sigmoid(tf.add(tf.matmul(layer_5, weight_out_action_1), bias_out_action_1), name="predict_action_1")
         predicted_y_action_2 = tf.sigmoid(tf.add(tf.matmul(layer_action_2_layer_1, weight_out_action_2), bias_out_action_2), name="predict_action_2")
         predicted_y_loc = tf.sigmoid(tf.add(tf.matmul(layer_location_layer_1, weight_out_loc), bias_out_loc), name="predict_loc")
-        predicted_y_phone = tf.sigmoid(tf.add(tf.matmul(layer_12, weight_out_phone),bias_out_phone), name="predict_phone")
+        predicted_y_phone = tf.sigmoid(tf.add(tf.matmul(layer_5, weight_out_phone),bias_out_phone), name="predict_phone")
 
         # loss function for changing weights
         loss = weighting_action_1*(tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(logits=predicted_y_action_1, labels=y_action_1))) \
@@ -160,13 +114,6 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                                                                                 weight_3,
                                                                                 weight_4,
                                                                                 weight_5,
-                                                                                weight_6, 
-                                                                                weight_7, 
-                                                                                weight_8,
-                                                                                weight_9,
-                                                                                weight_10,
-                                                                                weight_11,
-                                                                                weight_12,
                                                                                 weight_action_2_layer_1,
                                                                                 weight_loc_layer_1,
                                                                                 weight_out_action_1,
@@ -178,13 +125,6 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
                                                                                 bias_3,
                                                                                 bias_4,
                                                                                 bias_5,
-                                                                                bias_6, 
-                                                                                bias_7, 
-                                                                                bias_8,
-                                                                                bias_9,
-                                                                                bias_10,
-                                                                                bias_11,
-                                                                                bias_12,
                                                                                 bias_action_2_layer_1,
                                                                                 bias_loc_layer_1,
                                                                                 bias_out_action_1, 
@@ -497,13 +437,6 @@ if __name__ == '__main__':
         AP.add_argument("--hidden_3", type=int, default=225, help="Number of features extracted by third hidden layer")
         AP.add_argument("--hidden_4", type=int, default=225, help="Number of features extracted by fourth hidden layer")
         AP.add_argument("--hidden_5", type=int, default=225, help="Number of features extracted by fifth hidden layer")
-        AP.add_argument("--hidden_6", type=int, default=225, help="Number of features extracted by first hidden layer")
-        AP.add_argument("--hidden_7", type=int, default=225, help="Number of features extracted by second hidden layer")
-        AP.add_argument("--hidden_8", type=int, default=225, help="Number of features extracted by third hidden layer")
-        AP.add_argument("--hidden_9", type=int, default=225, help="Number of features extracted by fourth hidden layer")
-        AP.add_argument("--hidden_10", type=int, default=225, help="Number of features extracted by fifth hidden layer")
-        AP.add_argument("--hidden_11", type=int, default=225, help="Number of features extracted by fourth hidden layer")
-        AP.add_argument("--hidden_12", type=int, default=225, help="Number of features extracted by fifth hidden layer")
         AP.add_argument("--action_2_layer_1", type=int, default=20, help="Number of features extracted by action 2 layer 1")
         AP.add_argument("--loc_layer_1", type=int, default=20, help="Number of features extracted by location layer 1")
         AP.add_argument("--input", type=int, default=225, help="Number of inputs into network")
@@ -532,13 +465,6 @@ if __name__ == '__main__':
                 hidden_3=parsed.hidden_3,
                 hidden_4=parsed.hidden_4,
                 hidden_5=parsed.hidden_5,
-                hidden_6=parsed.hidden_6, 
-                hidden_7=parsed.hidden_7, 
-                hidden_8=parsed.hidden_8,
-                hidden_9=parsed.hidden_9,
-                hidden_10=parsed.hidden_10,
-                hidden_11=parsed.hidden_11,
-                hidden_12=parsed.hidden_12,
                 action_2_layer_1=parsed.action_2_layer_1,
                 loc_layer_1=parsed.loc_layer_1,
                 n_input=parsed.input, 
