@@ -96,7 +96,9 @@ export class StorageService {
       }
       this._activityHistory.push(activity)
       if(this._activityHistory.length > 96){
-        this._activityHistory.shift()
+        while(this._activityHistory.length > 96) {
+          this._activityHistory.shift()
+        }
       }
       this._storage.set(this._activityHistoryKey, this._activityHistory).then(() => {
         resolve()

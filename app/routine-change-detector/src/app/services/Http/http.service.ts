@@ -26,7 +26,6 @@ export class HttpService {
       }
       this._http.post(url, body, headers)
         .then(response => {
-          console.log('Returned from server')
           if(response.status === 200) {
             resolve(JSON.parse(response.data))
           } else if (response.status === 422){
@@ -49,14 +48,11 @@ export class HttpService {
         'uuid': uuid
       }
       this._http.get(url, params, headers).then((response) => {
-        console.log("Returned from Server")
         if(response.status === 200){
           // * Success
-          console.log("Success")
           resolve(JSON.parse(response.data))
         } else if(response.status === 204) {
           // * No Content
-          console.log("No Content")
           resolve({
             success: (JSON.parse(response.data)).success, 
             activity_labels: [], 
@@ -86,15 +82,12 @@ export class HttpService {
       this._http.get(url, params, headers).then((response) => {
         if( response.status === 200 ) {
           // * success
-          console.log("Anomaly detection complete")
           resolve(true)
         } else if ( response.status === 204) {
           // * no new classifications
-          console.log("No new classifications")
           resolve(false)
         } else if ( response.status === 202 ) {
           // * not enough data points to do detection. All assumed to be non-anomalous
-          console.log("Not enough data to run detection")
           resolve(true)
         } else {
           // * anything else

@@ -38,17 +38,13 @@ export class Tab1Page {
   }
 
   loadData(event) {
-    console.log('Load More');
     let uuid = this._device.uuid
     this._http.getNumActivities(uuid).then(num => {
       if (num === this._items.length){
-        console.log("Already showing all")
         event.target.complete();
       } else if ( num <= this._items.length + 96){
         // * get the remaining items
-        console.log("Getting remaining items")
         this._http.getActivityRange(uuid, this._items.length, num).then((response) => {
-          console.log(response)
           let activity_labels = response.activity_labels
           let timestamps = response.timestamps
           let anomaly = response.anomaly
@@ -64,9 +60,7 @@ export class Tab1Page {
         })
       } else {
         // * Get the next 96 items
-        console.log("Getting next 96 items")
         this._http.getActivityRange(uuid, this._items.length, this._items.length + 96).then((response) => {
-          console.log(response)
           let activity_labels = response.activity_labels
           let timestamps = response.timestamps
           let anomaly = response.anomaly

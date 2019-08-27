@@ -19,11 +19,11 @@ export class ServerManagerService {
     console.log(this._storage.getActivityHistory())
   }
   public clearData(){
-    console.log("cleared data")
+    console.log("Cleared data")
     this._storage.clearRecordData()
   }
   public clearActivities(){
-    console.log("clearned activities")
+    console.log("Cleared activities")
     this._storage.clearActivityHistory()
   }
 
@@ -36,7 +36,6 @@ export class ServerManagerService {
         tempRecords.push(recdata)
       })
       this._http.sendData({recordData: data}).then(result => {
-        console.log(result)
         subject.unsubscribe()
         this._storage.clearRecordData().then(() => {
           tempRecords.forEach(element => {
@@ -55,18 +54,16 @@ export class ServerManagerService {
     return new Promise((resolve, reject) => {
       let uuid = this._device.uuid
       this._http.classifyExistingData(uuid).then((response) => {
-        console.log(response)
         if(response.success){
-          console.log("Has returned classifications")
           let activityArr = []
           for(let idx = 0; idx < response.activity_labels.length; idx++){
             let activity = new Activity(response.activity_labels[idx], response.timestamps[idx])
             activityArr.push(activity)
           }
-          this._addFromArray(activityArr)
-          resolve(true)
+          this._addFromArray(activityArr).then(() => {
+            resolve(true)
+          })
         } else {
-          console.log("No new classifications")
           resolve(false)
         }
       }).catch(err => {
@@ -76,18 +73,18 @@ export class ServerManagerService {
     })   
   }
 
-  private _addFromArray(arr: Activity[]){
+  private _addFromArray(arr: Activity[]):Promise<void>{
     return new Promise(resolve => {
       if(arr.length > 1){
         let activity = arr.shift()
         this._storage.addActivityHistory(activity).then(() => {
-          this._addFromArray(arr)
-          resolve()
+          this._addFromArray(arr).then(() => {
+            resolve()
+          })
         })
       } else {
         let activity = arr[0]
         this._storage.addActivityHistory(activity).then(() => {
-          console.log("Has added all activities. Resolving.")
           resolve()
         })
       }
@@ -98,8 +95,6 @@ export class ServerManagerService {
     return new Promise((resolve, reject) => {
       let uuid = this._device.uuid
       this._http.detectAnomalies(uuid).then(status => {
-        console.log("Anomaly Detection complete")
-        console.log(status)
         if(status){
           this.doUpdate().then(() => {
             resolve(true)
@@ -116,7 +111,6 @@ export class ServerManagerService {
       let uuid = this._device.uuid
       let numStoredActivities = this._storage.getActivityHistory().length
       this._http.getActivityRange(uuid, 0, numStoredActivities).then((result) => {
-        console.log(result)
         let activity_labels = result.activity_labels
         let timestamps = result.timestamps
         let anomaly = result.anomaly
