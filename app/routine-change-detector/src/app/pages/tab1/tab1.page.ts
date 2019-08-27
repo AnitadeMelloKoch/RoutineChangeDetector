@@ -1,9 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
-import { IonInfiniteScroll } from '@ionic/angular';
+import { IonInfiniteScroll, NavController } from '@ionic/angular';
 import { StorageService } from '../../services/Storage/storage.service';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/Http/http.service';
 import { Activity } from '../../classes/activity';
+import { Device } from '@ionic-native/device/ngx'
+import { RecorderManagerService } from 'src/app/services/RecorderManager/recorder-manager.service';
+import { ServerManagerService } from 'src/app/services/ServerManager/server-manager.service';
 
 @Component({
   selector: 'app-tab1',
@@ -12,19 +15,23 @@ import { Activity } from '../../classes/activity';
 })
 export class Tab1Page {
   
-  items = [];
+  private _items = [];
+  private _refreshText: string
 
   @ViewChild(IonInfiniteScroll) infiniteScroll: IonInfiniteScroll;
 
-  constructor(private _storage: StorageService, private _http: HttpService) {
-    
+  constructor(private _storage: StorageService, private _http: HttpService, private _navCtrl: NavController, private _device: Device, private _servMan: ServerManagerService) {
+  }
+
+  ngOnInit(){
+    this._refreshText = 'Refreshing...'
   }
 
   ionViewWillEnter() {
     let subject = new Subscription()
     subject = this._storage.getReadySubject().subscribe((isReady) => {
       if (isReady){
-        this.items = this._storage.getActivityHistory().slice().reverse()
+        this._items = this._storage.getActivityHistory().slice().reverse()
         subject.unsubscribe()
       }
     })
@@ -32,15 +39,15 @@ export class Tab1Page {
 
   loadData(event) {
     console.log('Load More');
-    let uuid = '788644910f8e9a57'
+    let uuid = this._device.uuid
     this._http.getNumActivities(uuid).then(num => {
-      if (num === this.items.length){
+      if (num === this._items.length){
         console.log("Already showing all")
         event.target.complete();
-      } else if ( num <= this.items.length + 96){
+      } else if ( num <= this._items.length + 96){
         // * get the remaining items
         console.log("Getting remaining items")
-        this._http.getActivityRange(uuid, this.items.length, num).then((response) => {
+        this._http.getActivityRange(uuid, this._items.length, num).then((response) => {
           console.log(response)
           let activity_labels = response.activity_labels
           let timestamps = response.timestamps
@@ -48,7 +55,7 @@ export class Tab1Page {
           let length = response.length
           for(let idx = 0; idx < length; idx++){
             let activity = new Activity(activity_labels[idx], timestamps[idx], anomaly[idx])
-            this.items.push(activity)
+            this._items.push(activity)
           }
           event.target.complete();
         }).catch(err => {
@@ -58,7 +65,7 @@ export class Tab1Page {
       } else {
         // * Get the next 96 items
         console.log("Getting next 96 items")
-        this._http.getActivityRange(uuid, this.items.length, this.items.length + 96).then((response) => {
+        this._http.getActivityRange(uuid, this._items.length, this._items.length + 96).then((response) => {
           console.log(response)
           let activity_labels = response.activity_labels
           let timestamps = response.timestamps
@@ -66,7 +73,7 @@ export class Tab1Page {
           let length = response.length
           for(let idx = 0; idx < length; idx++){
             let activity = new Activity(activity_labels[idx], timestamps[idx], anomaly[idx])
-            this.items.push(activity)
+            this._items.push(activity)
           }
           event.target.complete();
         }).catch(err => {
@@ -82,6 +89,34 @@ export class Tab1Page {
   }
 
   editActivity(item: Activity){
-    console.log(item)
+    this._navCtrl.navigateForward('/tabs/tab1/editActivity/' + JSON.stringify(item))
+  }
+
+  doRefresh(event){
+    this._refreshText = 'Sending Data...'
+    this._servMan.doSendData().then(() => {
+      this._refreshText = 'Classifying Activities...'
+      this._servMan.doClassification().then((new_classifications) => {
+        if(new_classifications){
+          this.ionViewWillEnter()
+        } 
+        this._refreshText = 'Detecting Anomalies...'
+        this._servMan.doDetection().then((new_anomalies) => {
+          if(new_anomalies){
+            this.ionViewWillEnter()
+          }
+          event.target.complete()
+        }).catch( err => {
+          console.log(err)
+          event.target.complete()
+        })
+      }).catch(err => {
+        console.log(err)
+        event.target.complete()
+      })
+    }).catch(err => {
+      console.log(err)
+      event.target.complete()
+    })
   }
 }

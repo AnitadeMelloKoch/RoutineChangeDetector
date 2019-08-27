@@ -1,17 +1,9 @@
 import { Component } from '@angular/core';
-import { NavController } from '@ionic/angular';
-
-import { fromEvent } from 'rxjs';
-
-import { File } from '@ionic-native/file/ngx'
-import { Platform } from '@ionic/angular';
-
-import { Network } from '@ionic-native/network/ngx'
-
 import { HttpService } from '../../services/Http/http.service';
 import { RecorderManagerService } from '../../services/RecorderManager/recorder-manager.service';
 import { StorageService } from '../../services/Storage/storage.service';
 import { Activity } from 'src/app/classes/activity'
+import { Device } from '@ionic-native/device/ngx'
 
 declare var PhoneCallTrap: any;
 declare var RingerMode: any;
@@ -29,10 +21,9 @@ export class Tab4Page {
   // private filePath: string
 
   private recording: boolean
+  // private result: string
 
-  private result: string
-
-  constructor( private navCtrl: NavController, private _http: HttpService, private _recman: RecorderManagerService, private _storage: StorageService) {
+  constructor( private _http: HttpService, private _recman: RecorderManagerService, private _storage: StorageService, private _device: Device) {
     this.recording = false
   }
 
@@ -83,7 +74,7 @@ export class Tab4Page {
   }
 
   public doClassification(){
-    let uuid = '788644910f8e9a57'
+    let uuid = this._device.uuid
     this._http.classifyExistingData(uuid).then((response) => {
       console.log(response)
       if(response.success){
@@ -121,7 +112,7 @@ export class Tab4Page {
   }
 
   public doDetection(){
-    let uuid = '788644910f8e9a57'
+    let uuid = this._device.uuid
     this._http.detectAnomalies(uuid).then(status => {
       console.log("Anomaly Detection complete")
       console.log(status)
@@ -132,7 +123,7 @@ export class Tab4Page {
   }
 
   public doUpdate(){
-    let uuid = '788644910f8e9a57'
+    let uuid = this._device.uuid
     let numStoredActivities = this._storage.getActivityHistory().length
     this._http.getActivityRange(uuid, 0, numStoredActivities).then((result) => {
       console.log(result)
@@ -154,10 +145,6 @@ export class Tab4Page {
     }).catch((e) => {
       console.log(e)
     })
-  }
-
-  public doGetMore(){
-
   }
 
   ngOnInit() {

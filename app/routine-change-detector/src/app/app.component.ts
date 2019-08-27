@@ -7,6 +7,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx'
 
 import { RecorderManagerService } from 'src/app/services/RecorderManager/recorder-manager.service'
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 
 @Component({
@@ -27,7 +28,8 @@ export class AppComponent {
 
   initializeApp() {
     this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
+      this.statusBar.styleBlackOpaque();
+      this.statusBar.show()
       this.splashScreen.hide();
       this.backgroundMode.enable()
       if(this.platform.is('android')){

@@ -36,6 +36,7 @@ import { PhoneStateService } from 'src/app/services/PhoneState/phone-state.servi
 import { HttpService } from 'src/app/services/Http/http.service'
 import { MFCCService } from 'src/app/services/MFCC/mfcc.service'
 import { StorageService } from 'src/app/services/Storage/storage.service'
+import { ServerManagerService } from './services/ServerManager/server-manager.service';
 
 
 @NgModule({
@@ -70,7 +71,8 @@ import { StorageService } from 'src/app/services/Storage/storage.service'
     PhoneStateService,
     HttpService,
     MFCCService,
-    StorageService
+    StorageService,
+    ServerManagerService
   ],
   bootstrap: [AppComponent]
 })

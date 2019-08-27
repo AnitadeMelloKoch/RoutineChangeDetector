@@ -28,13 +28,10 @@ export class HttpService {
         .then(response => {
           console.log('Returned from server')
           if(response.status === 200) {
-            console.log("Resolved")
             resolve(JSON.parse(response.data))
           } else if (response.status === 422){
-            console.error("Data is not of the correct form")
             reject(Error('422_UNPROCESSABLE_ENTITY'))
           } else {
-            console.error(response)
             reject(Error("GENERAL_ERROR"))
           }
         })
@@ -98,7 +95,7 @@ export class HttpService {
         } else if ( response.status === 202 ) {
           // * not enough data points to do detection. All assumed to be non-anomalous
           console.log("Not enough data to run detection")
-          resolve(false)
+          resolve(true)
         } else {
           // * anything else
           reject(Error("GENERAL_ERROR"))
@@ -142,6 +139,33 @@ export class HttpService {
       this._http.get(url, params, headers).then((response) => {
         resolve(JSON.parse(response.data).num_records)
       }).catch(err => reject(err))
+    })
+  }
+
+  public updateClassification(uuid: string, timestamp: number, activityArr: number[], anomaly: boolean): Promise<boolean>{
+    return new Promise((resolve, reject) => {
+      let url = 'http://192.168.137.1:8000/api/update-classification/' 
+      let headers = {
+        'content-type': 'application/json'
+      }
+      let body = {
+        'uuid': uuid,
+        'timestamp': timestamp,
+        'activityArr': activityArr,
+        'anomaly': anomaly
+      }
+      this._http.post(url, body, headers).then( response => {
+        if (response.status === 200){
+          resolve(true)
+        } else if(response.status === 422){
+          reject(Error("UNPROCESSABLE_ENTITY"))
+        } else {
+          reject(Error("GENERAL_ERROR"))
+        }
+      }).catch( err => {
+        console.log(err)
+        reject(err)
+      })
     })
   }
 }
