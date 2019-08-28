@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Activity } from 'src/app/classes/activity';
-import { HttpService } from 'src/app/services/Http/http.service';
-import { AlertController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 import { ServerManagerService } from 'src/app/services/ServerManager/server-manager.service';
 
 @Component({
@@ -19,12 +18,12 @@ export class EditActivityPage implements OnInit {
   private _saving: boolean
   private _orignalAnomaly: boolean
 
-  private _labels = ["lying down","sitting","walking","running","bicycling","sleeping","driving (driver)","driving (pass)","exercise","shopping", "strolling",
-  "stairs (up)","stairs (down)","standing","lab work","in class","in meeting","cooking","drinking alcohol","shower","cleaning","laundry","washing dishes",
+  private _labels = ["lying down","sitting","walking","running","bicycling","sleeping","driving - driver","driving - pass","exercise","shopping", "strolling",
+  "stairs - up","stairs - down","standing","lab work","in class","in meeting","cooking","drinking alcohol","shower","cleaning","laundry","washing dishes",
       "watching TV","surfing Internet","singing","talking","computer work","eating","toilet","grooming","dressing","with coworker", "with friends",
           "main workplace","indoors","outdoors","in car","on bus","home","restaurant","at a party","at a bar",'beach','at the gym',"elevator","at school"]
   
-  constructor(private _aroute: ActivatedRoute, private _servMan: ServerManagerService, private _alertController: AlertController) {
+  constructor(private _aroute: ActivatedRoute, private _servMan: ServerManagerService, private _alertController: AlertController, private _navCtrl: NavController) {
     this._item = new Activity()
     this._item.datetime = new Date(Date.now())
   }
@@ -59,6 +58,7 @@ export class EditActivityPage implements OnInit {
     this._servMan.updateClassification(this._item.timestamp, activityArr, this._orignalAnomaly, new_anomaly)
       .then( () => {
         this._saving = false
+        this._navCtrl.navigateBack('/')
       })
       .catch(async err => {
         console.log(err)

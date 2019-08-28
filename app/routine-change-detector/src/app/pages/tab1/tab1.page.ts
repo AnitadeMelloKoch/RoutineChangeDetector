@@ -5,7 +5,6 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/Http/http.service';
 import { Activity } from '../../classes/activity';
 import { Device } from '@ionic-native/device/ngx'
-import { RecorderManagerService } from 'src/app/services/RecorderManager/recorder-manager.service';
 import { ServerManagerService } from 'src/app/services/ServerManager/server-manager.service';
 
 @Component({
