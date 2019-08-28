@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Activity } from 'src/app/classes/activity';
 import { HttpService } from 'src/app/services/Http/http.service';
 import { AlertController } from '@ionic/angular';
+import { ServerManagerService } from 'src/app/services/ServerManager/server-manager.service';
 
 @Component({
   selector: 'app-edit-activity',
@@ -16,13 +17,14 @@ export class EditActivityPage implements OnInit {
   private _selectedLabels
   private _anomaly:string
   private _saving: boolean
+  private _orignalAnomaly: boolean
 
   private _labels = ["lying down","sitting","walking","running","bicycling","sleeping","driving (driver)","driving (pass)","exercise","shopping", "strolling",
   "stairs (up)","stairs (down)","standing","lab work","in class","in meeting","cooking","drinking alcohol","shower","cleaning","laundry","washing dishes",
       "watching TV","surfing Internet","singing","talking","computer work","eating","toilet","grooming","dressing","with coworker", "with friends",
           "main workplace","indoors","outdoors","in car","on bus","home","restaurant","at a party","at a bar",'beach','at the gym',"elevator","at school"]
   
-  constructor(private _aroute: ActivatedRoute, private _http: HttpService, private _alertController: AlertController) {
+  constructor(private _aroute: ActivatedRoute, private _servMan: ServerManagerService, private _alertController: AlertController) {
     this._item = new Activity()
     this._item.datetime = new Date(Date.now())
   }
@@ -35,7 +37,7 @@ export class EditActivityPage implements OnInit {
     this._item = new Activity(temp.activityList, temp.timestamp, temp.anomaly)
     this._datetime = this._item.datetime.toISOString()
     this._item.anomaly ? this._anomaly = 'true' : this._anomaly = 'false'
-
+    this._orignalAnomaly = this._item.anomaly
     this._item.activityList.forEach(activity => {
       this._selectedLabels.push(this._labels.indexOf(activity).toString())
     });
@@ -53,10 +55,9 @@ export class EditActivityPage implements OnInit {
     this._anomaly === 'true' ? new_anomaly = true : new_anomaly = false 
     console.log(new_anomaly)
 
-    let uuid = '788644910f8e9a57'
-    this._http.updateClassification(uuid, this._item.timestamp, activityArr, new_anomaly)
-      .then( (resp) => {
-        console.log(resp)
+    
+    this._servMan.updateClassification(this._item.timestamp, activityArr, this._orignalAnomaly, new_anomaly)
+      .then( () => {
         this._saving = false
       })
       .catch(async err => {

@@ -97,6 +97,32 @@ export class HttpService {
     }) 
   }
 
+  public detectAnomalyOnRecord(uuid: string, timestamp: number): Promise<boolean>{
+    return new Promise((resolve, reject) => {
+      let url = 'http://192.168.137.1:8000/api/detect-one-anomaly/'
+      let headers = {
+        'content-type': 'application/json'
+      }
+      let params = {
+        'uuid': uuid,
+        'timestamp': timestamp.toString()
+      }
+      this._http.get(url, params, headers)
+        .then( response => {
+          if(response.status === 200){
+            resolve(true)
+          } else if ( response.status === 202){
+            resolve(false)
+          } else {
+            reject(Error("UNABLE TO PROCESS"))
+          }
+        })
+        .catch( err => {
+          reject(err)
+        })
+    })
+  }
+
   public getActivityRange(uuid: string, start: number, end: number): Promise<any>{
     return new Promise((resolve, reject) => {
       let url = 'http://192.168.137.1:8000/api/get-anomalies/'
@@ -135,7 +161,7 @@ export class HttpService {
     })
   }
 
-  public updateClassification(uuid: string, timestamp: number, activityArr: number[], anomaly: boolean): Promise<boolean>{
+  public updateClassification(uuid: string, timestamp: number, activityArr: number[], anomaly: boolean): Promise<void>{
     return new Promise((resolve, reject) => {
       let url = 'http://192.168.137.1:8000/api/update-classification/' 
       let headers = {
@@ -149,7 +175,7 @@ export class HttpService {
       }
       this._http.post(url, body, headers).then( response => {
         if (response.status === 200){
-          resolve(true)
+          resolve()
         } else if(response.status === 422){
           reject(Error("UNPROCESSABLE_ENTITY"))
         } else {

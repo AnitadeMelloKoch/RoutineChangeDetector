@@ -106,6 +106,53 @@ export class ServerManagerService {
     })
   }
 
+  public updateClassification(timestamp: number, activityArr, originalAnomaly, newAnomaly): Promise<void>{
+    return new Promise ((resolve, reject) => {
+      console.log("Updating Classification")
+      let uuid = this._device.uuid
+      this._http.updateClassification(uuid, timestamp, activityArr, newAnomaly)
+        .then( () => {
+          if( originalAnomaly === newAnomaly){
+            console.log("Updating Anomaly Status")
+            this.doDetectionOnRecord(timestamp)
+            .then(() => {
+              console.log("Finished Updating Anomaly Status")
+              this.doUpdate().then(() => {
+                resolve()
+              })
+            })
+            .catch( err => {
+              reject(err)
+            })
+          } else {
+            this.doUpdate().then(() => {
+              resolve()
+            })
+          }
+        })
+    })
+  }
+
+  public doDetectionOnRecord(timestamp: number): Promise<void>{
+    return new Promise ((resolve, reject) => {
+      let uuid = this._device.uuid
+      this._http.detectAnomalyOnRecord(uuid, timestamp)
+        .then( (didChange) => {
+          console.log("Finished Detecting One Record")
+          if(didChange){
+            console.log("May have changed")
+            resolve()
+          } else {
+            console.log("No Possible Change")
+            resolve()
+          }
+        })
+        .catch( err => {
+          reject(err)
+        })
+    })
+  }
+
   private doUpdate() : Promise <void>{
     return new Promise((resolve, reject) => {
       let uuid = this._device.uuid

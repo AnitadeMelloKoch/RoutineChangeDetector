@@ -117,14 +117,14 @@ export class Tab4Page {
       console.log("Anomaly Detection complete")
       console.log(status)
       if(status){
-        this.doUpdate()
+        // this.doUpdate()
       }
     }).catch(err => console.log(err))
   }
 
   public doUpdate(){
     let uuid = this._device.uuid
-    let numStoredActivities = this._storage.getActivityHistory().length
+    let numStoredActivities = 96// this._storage.getActivityHistory().length
     this._http.getActivityRange(uuid, 0, numStoredActivities).then((result) => {
       console.log(result)
       let activity_labels = result.activity_labels
