@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 import get_data as get
 
@@ -197,6 +198,9 @@ test_data_x = data_x[training_num:]
 output_train = data_x[timesteps:training_num]
 output_test = data_x[training_num+timesteps:]
 
+train_acc = []
+test_acc = []
+
 with tf.compat.v1.Session() as sess:
     sess.run(tf.compat.v1.global_variables_initializer())
     print("starting training")
@@ -210,8 +214,20 @@ with tf.compat.v1.Session() as sess:
         vali_accuracy = sess.run(accuracy, feed_dict={x: test_data_x, y_true: output_test})
         train_cost = sess.run(cost, feed_dict={x: train_data_x, y_true: output_train})
 
+        train_acc.append(train_accuracy)
+        test_acc.append(vali_accuracy)
+
         print("Epoch "+str(epoch+1)+" completed ")
         print("\tAccuracy:")
         print ("\t- Training Accuracy:\t{}".format(train_accuracy))
         print ("\t- Validation Accuracy:\t{}".format(vali_accuracy))
         print("\t- Cost: \t\t{}".format(train_cost))
+
+iterations = list(range(epochs))
+plt.figure()
+plt.plot(iterations, train_acc, label='Training accuracy')
+plt.plot(iterations, test_acc, label='Testing accuracy')
+plt.ylabel('Accuracy')
+plt.xlabel('iterations')
+plt.legend()
+plt.savefig('accuracy.png')

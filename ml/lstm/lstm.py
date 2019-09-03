@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.metrics import roc_auc_score, accuracy_score
 import random
 import pandas as pd
+import matplotlib.pyplot as plt
 
 labels = ["day",
 "hour",
@@ -151,6 +152,10 @@ for one_input in range(0, len(input_test) - timesteps):
 
 index = random.randint(0, len(input_train) - timesteps - 1)
 
+test_acc = []
+
+num_elems = 0
+
 print("Start training")
 for step in range(iterations):
         if index > (len(input_train) - timesteps - 1):
@@ -164,6 +169,7 @@ for step in range(iterations):
         index += 1
 
         if ((step + 1) % display_steps == 0):
+                num_elems += 1
                 training_accuracy.append(acc_total/step)
                 training_loss.append(loss_total/step)
                 print("Step:{0}, Train loss average:{1:.2f} Train acc {2:.3f}".format(step, (loss_total/step), (acc_total/step)))
@@ -174,6 +180,16 @@ for step in range(iterations):
                         count += 1
                         testing_acc += sess.run(accuracy, feed_dict={x: np.reshape(test_data_x[test],[1, timesteps, n_output]), y: np.reshape(output_test[test], [1, -1])})
                 print("Testing acc: {0:.3f}".format(testing_acc/(count)))
+                test_acc.append(testing_acc/(count))
+
+iterations = list(range(num_elems))
+plt.figure()
+plt.plot(iterations, training_accuracy, label='Training accuracy')
+plt.plot(iterations, test_acc, label='Testing accuracy')
+plt.ylabel('Accuracy')
+plt.xlabel('iterations')
+plt.legend()
+plt.savefig('accuracy.png')
         
 
 print("finished")
