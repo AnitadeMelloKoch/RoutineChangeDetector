@@ -42,32 +42,32 @@ def main(training_dir, checkpointdir, training_files, train_percent, initial_lea
         bias_5 = tf.Variable(tf.random.normal([hidden_5]), name="weight_5_bias")
 
         # initialize weights for layer 6
-        weight_6 = tf.Variable(tf.random.normal([n_input, hidden_1]), name="weight_1")
-        bias_6 = tf.Variable(tf.random.normal([hidden_1]), name="weight_1_bias")
+        weight_6 = tf.Variable(tf.random.normal([hidden_5, hidden_6]), name="weight_6")
+        bias_6 = tf.Variable(tf.random.normal([hidden_6]), name="weight_6_bias")
 
         # initialize weights for layer 7
-        weight_7 = tf.Variable(tf.random.normal([hidden_1, hidden_2]), name="weight_2")
-        bias_7 = tf.Variable(tf.random.normal([hidden_2]), name="weight_2_bias")
+        weight_7 = tf.Variable(tf.random.normal([hidden_6, hidden_7]), name="weight_7")
+        bias_7 = tf.Variable(tf.random.normal([hidden_7]), name="weight_7_bias")
 
         #initialize weights for layer 8
-        weight_8 = tf.Variable(tf.random.normal([hidden_2, hidden_3]), name="weight_3")
-        bias_8 = tf.Variable(tf.random.normal([hidden_3]), name="weight_3_bias")
+        weight_8 = tf.Variable(tf.random.normal([hidden_7, hidden_8]), name="weight_8")
+        bias_8 = tf.Variable(tf.random.normal([hidden_8]), name="weight_8_bias")
 
         #initialize weights for layer 9
-        weight_9 = tf.Variable(tf.random.normal([hidden_3, hidden_4]), name="weight_4")
-        bias_9 = tf.Variable(tf.random.normal([hidden_4]), name="weight_4_bias")
+        weight_9 = tf.Variable(tf.random.normal([hidden_8, hidden_9]), name="weight_9")
+        bias_9 = tf.Variable(tf.random.normal([hidden_9]), name="weight_9_bias")
 
         #initialize weights for layer 10
-        weight_10 = tf.Variable(tf.random.normal([hidden_4, hidden_5]), name="weight_5")
-        bias_10 = tf.Variable(tf.random.normal([hidden_5]), name="weight_5_bias")
+        weight_10 = tf.Variable(tf.random.normal([hidden_9, hidden_10]), name="weight_10")
+        bias_10 = tf.Variable(tf.random.normal([hidden_10]), name="weight_10_bias")
 
         #initialize weights for layer 11
-        weight_11 = tf.Variable(tf.random.normal([hidden_3, hidden_4]), name="weight_4")
-        bias_11 = tf.Variable(tf.random.normal([hidden_4]), name="weight_4_bias")
+        weight_11 = tf.Variable(tf.random.normal([hidden_10, hidden_11]), name="weight_11")
+        bias_11 = tf.Variable(tf.random.normal([hidden_11]), name="weight_11_bias")
 
         #initialize weights for layer 12
-        weight_12 = tf.Variable(tf.random.normal([hidden_4, hidden_5]), name="weight_5")
-        bias_12 = tf.Variable(tf.random.normal([hidden_5]), name="weight_5_bias")
+        weight_12 = tf.Variable(tf.random.normal([hidden_11, hidden_12]), name="weight_12")
+        bias_12 = tf.Variable(tf.random.normal([hidden_12]), name="weight_12_bias")
 
         #initialize weights for action 2 layer 1
         weight_action_2_layer_1 = tf.Variable(tf.random.normal([hidden_12, action_2_layer_1]), name="weight_action_2_layer_1")
