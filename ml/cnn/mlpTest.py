@@ -60,11 +60,11 @@ labels = ["day",
 timesteps = 100
 
 # Placeholder variables
-x = tf.compat.v1.placeholder(tf.float32, shape=[None, 51*timesteps], name='X')
+x = tf.compat.v1.placeholder(tf.float32, shape=[None, 50*timesteps], name='X')
 # Reshape into [num_images, img_height, img_width, num_channels]
 #x_image = tf.reshape(x, [-1, timesteps, 51, 1])
 
-y_true = tf.compat.v1.placeholder(tf.float32, shape=[None, 51], name='y_true')
+y_true = tf.compat.v1.placeholder(tf.float32, shape=[None, 50], name='y_true')
 #y_true_cls = tf.argmax(y_true, axis=1)
 
 # function for new convolutional layer
@@ -125,7 +125,7 @@ def new_fc_layer(input, num_inputs, num_outputs, name):
 # print(num_features)
 
 # first fully connected layer
-layer_fc1 = new_fc_layer(x, num_inputs=51*timesteps, num_outputs=4100, name="fc1")
+layer_fc1 = new_fc_layer(x, num_inputs=50*timesteps, num_outputs=4100, name="fc1")
 
 layer_fc2 = new_fc_layer(layer_fc1, num_inputs=4100, num_outputs=4200, name="fc2")
 
@@ -143,7 +143,7 @@ layer_fc8 = new_fc_layer(layer_fc7, num_inputs=1000, num_outputs=800, name="fc8"
 
 layer_fc9 = new_fc_layer(layer_fc8, num_inputs=800, num_outputs=365, name="fc9")
 
-out = new_fc_layer(input=layer_fc9, num_inputs=365, num_outputs=51, name="out")
+out = new_fc_layer(input=layer_fc9, num_inputs=365, num_outputs=50, name="out")
 
 with tf.compat.v1.variable_scope("Softmax"):
     y_pred = tf.nn.softmax(out)
@@ -195,8 +195,8 @@ for one_input in range(0, len(data_x_in) - timesteps):
 
 train_data_x = data_x[:training_num - timesteps]
 test_data_x = data_x[training_num:]
-output_train = data_x[timesteps:training_num]
-output_test = data_x[training_num+timesteps:]
+output_train = data_x_in[timesteps:training_num]
+output_test = data_x_in[training_num+timesteps:]
 
 train_acc = []
 test_acc = []

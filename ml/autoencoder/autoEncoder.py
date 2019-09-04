@@ -98,7 +98,7 @@ loss = tf.reduce_mean(tf.square(layer_out - x))
 optimizer = tf.train.AdamOptimizer(initial_learning_rate)
 train = optimizer.minimize(loss)
 
-correct_pred = tf.equal(tf.argmax(layer_out, 1), tf.argmax(y, 1))
+correct_pred = tf.equal(tf.argmax(layer_out, 1), tf.argmax(x, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 
 data = pd.read_csv("./text.csv", names=labels)
@@ -149,7 +149,7 @@ for epoch in range(epochs):
         sess.run(train, feed_dict={x:np.reshape(train_data_x[iteration], [1,-1])})
 
     train_loss = loss.eval(session=sess, feed_dict={x:train_data_x})
-    train_acc.append(sess.run(accuracy, feed_dict={x:train_data_x, y:train_data_x}))
-    test_acc.append(sess.run(accuracy, feed_dict={x:test_data_x, y:test_data_x}))
+    train_acc.append(sess.run(accuracy, feed_dict={x:train_data_x}))
+    test_acc.append(sess.run(accuracy, feed_dict={x:test_data_x}))
 
     print("epoch {} loss {} train {} test {}".format(epoch, train_loss, train_acc[epoch], test_acc[epoch]))
