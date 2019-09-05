@@ -183,8 +183,8 @@ for one_input in range(0, len(data_x_in) - timesteps):
 
 train_data_x = data_x[:training_num - timesteps]
 test_data_x = data_x[training_num:]
-output_train = data_x[timesteps:training_num]
-output_test = data_x[training_num+timesteps:]
+output_train = data_x_in[timesteps:training_num]
+output_test = data_x_in[training_num+timesteps:]
 
 train_acc = []
 test_acc = []
