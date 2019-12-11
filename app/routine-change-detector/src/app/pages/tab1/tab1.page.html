@@ -1,0 +1,53 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>
+      Routine Change Detector
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot='fixed' (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="Pull to refresh"
+      refreshingSpinner="crescent"
+      refreshingText="{{_refreshText}}">
+    </ion-refresher-content>
+  </ion-refresher>
+  <div class="ion-padding">
+    
+    <ion-list>
+      <ion-item *ngFor="let item of _items" (click)="editActivity(item)" >
+        <ion-label>
+          <h2>{{item.datetime | date:'HH:mm, E d MMMM y'}}
+            <ion-chip *ngIf="item.anomaly===true" color='warning'>
+              <ion-label>
+                Anomaly
+              </ion-label>
+            </ion-chip>
+            <ion-chip *ngIf="item.anomaly===false" color='primary'>
+              <ion-label>
+                Regular
+              </ion-label>
+            </ion-chip>
+            <ion-chip outline *ngIf="item.anomaly===undefined" color='primary'>
+              <ion-label>
+                Un-classified
+              </ion-label>
+            </ion-chip>
+          </h2>
+          <p>{{item.activityList}}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-infinite-scroll threshold="250px" (ionInfinite)="loadData($event)">
+      <ion-infinite-scroll-content
+        loadingSpinner="crescent"
+        loadingText="Loading more data...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
+  </div>
+</ion-content>

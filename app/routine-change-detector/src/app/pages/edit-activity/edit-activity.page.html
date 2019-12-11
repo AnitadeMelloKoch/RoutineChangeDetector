@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Edit Activity</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="ion-padding">
+    <ion-item>
+      <ion-label>
+        Date
+      </ion-label>
+      <ion-datetime display-format="H:mm D MMM YYYY" [(ngModel)]="_datetime" readonly></ion-datetime>
+    </ion-item>
+    <ion-item>
+      <ion-label>Activities</ion-label>
+      <ion-select multiple [(ngModel)]="_selectedLabels">
+        <ion-select-option *ngFor="let activity of _labels" value="{{_labels.indexOf(activity)}}">
+          {{activity}}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Anomaly</ion-label>
+      <ion-select [(ngModel)]="_anomaly">
+        <ion-select-option value="true"> True </ion-select-option>
+        <ion-select-option value="false"> False </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+</ion-content>
+<ion-footer>
+  <ion-button expand="full" size='large' primary (click)="save()" name="save" [disabled]="_saving"> 
+    Save
+    <ion-spinner name="crescent" *ngIf="_saving"></ion-spinner>
+  </ion-button>
+</ion-footer>
