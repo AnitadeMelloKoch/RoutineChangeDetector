@@ -1,0 +1,46 @@
+Start training
+[[   -1  3040]
+ [    1 10062]]
+performance check
+10050 2960 12 80
+Accuracy: 0.7731644023813158
+Sensitivity: 0.7724827056110684
+Specificity: 0.8695652173913043
+(kernel='rbf', gamma=0.01, nu=0.2)
+
+[[  -1 8342]
+ [   1 4760]]
+performance check
+4760 8250 0 92
+Accuracy: 0.3703251411998168
+Sensitivity: 0.36587240584166025
+Specificity: 1.0
+(kernel='rbf', gamma=0.01, nu=0.6)
+
+[[   -1 11982]
+ [    1  1120]]
+performance check
+1120 11890 0 92
+Accuracy: 0.09250496107464509
+Sensitivity: 0.08608762490392007
+Specificity: 1.0
+(kernel='rbf', gamma=0.01, nu=0.9)
+
+[[   -1  2684]
+ [    1 10418]]
+performance check
+10381 2629 37 55
+Accuracy: 0.7965196153259044
+Sensitivity: 0.797924673328209
+Specificity: 0.5978260869565217
+(kernel='linear', gamma=0.01, nu=0.2)
+
+[[   -1  2668]
+ [    1 10434]]
+performance check
+10394 2616 40 52
+Accuracy: 0.7972828575789955
+Sensitivity: 0.798923904688701
+Specificity: 0.5652173913043478
+(kernel='poly', gamma=0.01, nu=0.2)
+

@@ -3,7 +3,7 @@
 # Parameters to change
 # ===============================================================================================================
 # Number of files to use from the directory. -1 uses all files
-fileNum=5
+fileNum=-1
 
 # Percentage of data to be used for training. Rest is used for validation
 trainSplit=0.7
@@ -12,36 +12,51 @@ trainSplit=0.7
 learningInit=0.001
 
 # Number of epochs to train for
-epochs=5
+epochs=800
 
 # batch size for each training step
-batch=50
+batch=500
 
 # Number of feature discovered by each hidden layer
-hidden_1=255
-hidden_2=205
-hidden_3=155
-hidden_4=105
-hidden_5=95
+hidden_1=220
+hidden_2=200
+hidden_3=180
+hidden_4=160
+hidden_5=140
+hidden_6=120
+hidden_7=100
+hidden_8=90
+hidden_9=80
+hidden_10=70
+hidden_11=60
+hidden_12=50
 
-action_1=70
+action_2_layer_1=30
+loc_layer_1=30
 
-
-action_weight=0.67
-loc_weight=0.255
+action_weight_1=0.27
+action_weight_2=0.39
+loc_weight=0.25
 phone_weight=0.08
 # =================================================================================================================
 
 # Directories
 
 datadir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/data/data"
-rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/model9"
+rundir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/models/12hidden"
 datascriptdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/dataHandeling"
 mlpdir="/mnt/c/Users/Anita/Documents/4thyear/labproject/repo/ml/mlp"
 
 # =================================================================================================================
 
 # Run training
+
+if [ -d $rundir ]; then
+  read -p "Directory already exists. Do you wish to continue? [y,n]" conti
+  if [$conti=="n"]; then
+    exit
+  fi
+fi
 
 mkdir -p $rundir
 
@@ -53,6 +68,8 @@ cp mlp.sh $rundir
 
 cd $rundir
 
+mkdir graph
+
 
 
 python3 MLP.py  --training_directory $datadir \
@@ -62,7 +79,8 @@ python3 MLP.py  --training_directory $datadir \
                 --initial_learning $learningInit \
                 --epochs $epochs \
                 --batchsize $batch \
-                --action_weighting $action_weight \
+                --action_weighting_1 $action_weight_1 \
+                --action_weighting_2 $action_weight_2 \
                 --loc_weighting $loc_weight \
                 --phone_weighting $phone_weight \
                 --hidden_1 $hidden_1 \
@@ -70,4 +88,12 @@ python3 MLP.py  --training_directory $datadir \
                 --hidden_3 $hidden_3 \
                 --hidden_4 $hidden_4 \
                 --hidden_5 $hidden_5 \
-                --action_1 $action_1 
+                --hidden_6 $hidden_6 \
+                --hidden_7 $hidden_7 \
+                --hidden_8 $hidden_8 \
+                --hidden_9 $hidden_9 \
+                --hidden_10 $hidden_10 \
+                --hidden_11 $hidden_11 \
+                --hidden_12 $hidden_12 \
+                --action_2_layer_1 $action_2_layer_1 \
+                --loc_layer_1 $loc_layer_1
