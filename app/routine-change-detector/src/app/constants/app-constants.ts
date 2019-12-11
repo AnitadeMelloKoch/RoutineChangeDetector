@@ -1,0 +1,3 @@
+export const RECORD_TIME = 20*1000
+export const RECORD_INTERVAL = 15*60*1000
+export const RECORD_DELAY = RECORD_INTERVAL - RECORD_TIME

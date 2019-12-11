@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Device Status</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-button primary (click)="record()" *ngIf="!recording">Record</ion-button>
+  <ion-button primary *ngIf="recording">Recording</ion-button>
+  <ion-button (click)="logData()" >Log Data</ion-button>
+  <ion-button (click)="logActivities()" >Log Activities</ion-button>
+  <ion-button (click)="clearData()" >Clear Data</ion-button>
+  <ion-button (click)="clearActivities()" >Clear Activities</ion-button>
+  <ion-button (click)="doSendData()">Send Data</ion-button> 
+  <ion-button (click)="doClassification()">Do Classification</ion-button> 
+  <ion-button (click)="doDetection()">Do Detection</ion-button>
+  <ion-button (click)="doUpdate()">Update Activity List</ion-button>
+</ion-content>

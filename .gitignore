@@ -135,6 +135,42 @@ plugins/android.json
 plugins/ios.json
 www/
 
+# Ionic Generated Gitignore
+# Specifies intentionally untracked files to ignore when using Git
+# http://git-scm.com/docs/gitignore
+
+*~
+*.sw[mnpcod]
+*.log
+*.tmp
+*.tmp.*
+log.txt
+*.sublime-project
+*.sublime-workspace
+.vscode/
+npm-debug.log*
+
+.idea/
+.ionic/
+.sourcemaps/
+.sass-cache/
+.tmp/
+.versions/
+coverage/
+www/
+node_modules/
+tmp/
+temp/
+platforms/
+plugins/
+plugins/android.json
+plugins/ios.json
+$RECYCLE.BIN/
+
+.DS_Store
+Thumbs.db
+UserInterfaceState.xcuserstate
+
 # Trash data
 $RECYCLE.BIN/
 .DS_Store
@@ -736,8 +772,12 @@ fabric.properties
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.gitignore.io/api/git,node,latex,python,ionic3,android,androidstudio,visualstudiocode
-azure_web/
-
-app/cordova-plugin-ringermode/
 
 app/ExtraSensory\.per_uuid_features_labels/
+
+### Ignores for Nick ###
+app/README.txt
+app/ExtraSensory.per_uuid_features_labels.zip
+app/ExtraSensory.per_uuid_features_labels/
+app/cordova-plugin-ringermode/
+azure_web/
